@@ -23,7 +23,9 @@ export default function Navbar() {
               <NavLink to={item.path}>{item.name}</NavLink>
             ))}
           </div>
-          <Drawer />
+          <div className="md:hidden">
+            <Drawer />
+          </div>
         </div>
       </nav>
     </>
