@@ -6,11 +6,23 @@ import Footer from './components/Footer'
 export default function MainLayouts() {
   return (
     <>
+    <header>
+      <div className="container">
     <Navbar />
+      </div>
+    </header>
+
     <main>
+      <div className='container'>
         <Outlet />
+      </div>
     </main>
+
+    <footer>
+      <div className='container'>
     <Footer />
+      </div>
+    </footer>
     </>
   )
 }
