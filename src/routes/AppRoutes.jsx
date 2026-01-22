@@ -14,12 +14,10 @@ const Signup = lazy(() => import("@/pages/auth/Signup.jsx"));
 const ForgotPassword = lazy(() => import("@/pages/auth/ForgotPassword.jsx"));
 const Jobs = lazy(() => import("@/pages/Jobs.jsx"));
 const JobDetails = lazy(() => import("@/pages/JobDetails.jsx"));
-const DashboardHome = lazy(() =>
-  import("@/pages/dashboard/DashboardHome.jsx")
-);
-const DashboardJobs = lazy(() =>
-  import("@/pages/dashboard/DashboardJobs.jsx")
-);
+const AboutUs = lazy(() => import("@/pages/AboutUs.jsx"));
+const ContactUs = lazy(() => import("@/pages/ContactUs.jsx"));
+const DashboardHome = lazy(() => import("@/pages/dashboard/DashboardHome.jsx"));
+const DashboardJobs = lazy(() => import("@/pages/dashboard/DashboardJobs.jsx"));
 
 export const router = createBrowserRouter([
   {
@@ -30,10 +28,10 @@ export const router = createBrowserRouter([
       </Suspense>
     ),
     children: [
-      { path: "login", element:  <Login /> },
+      { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
-      { path: "forgot-password", element: <ForgotPassword /> }
-    ]
+      { path: "forgot-password", element: <ForgotPassword /> },
+    ],
   },
   {
     path: "/",
@@ -47,7 +45,7 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <Suspense fallback={<SuspenseUi />}>
-            <HomePage/>
+            <HomePage />
           </Suspense>
         ),
       },
@@ -64,6 +62,22 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<SuspenseUi />}>
             <JobDetails />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/about",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <AboutUs />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/contact",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <ContactUs />
           </Suspense>
         ),
       },
