@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 import SuspenseUi from "@/components/SuspenseUi.jsx";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import HomePage from "@/pages/HomePage";
 
 // lazy layouts
 const MainLayout = lazy(() => import("@/layouts/MainLayout.jsx"));
@@ -51,7 +52,7 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <Suspense fallback={<SuspenseUi />}>
-            <Jobs />
+            <HomePage/>
           </Suspense>
         ),
       },
