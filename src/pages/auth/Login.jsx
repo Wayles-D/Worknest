@@ -6,10 +6,10 @@ import { Link, useNavigate } from "react-router";
 import ErrorAlert from "@/components/ErrorAlert";
 import { validatedSignInSchema } from "@/utils/dataSchema";
 import useMetaArgs from "@/hooks/UseMeta";
-import { useAuth } from "@/store/Index";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "@/api/api";
 import { toast } from "sonner";
+import { useAuth} from "@/store/index"
 
 export default function Login() {
   useMetaArgs({

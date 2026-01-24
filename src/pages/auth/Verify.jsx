@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router";
 import useMetaArgs from "@/hooks/UseMeta";
 import { resendVerificationCode, verifyAccount } from "@/api/api";
 import ErrorAlert from "@/components/ErrorAlert";
-import { useAuth } from "@/store/Index";
+import { useAuth } from "@/store/index";
 
 export default function Verify() {
   useMetaArgs({

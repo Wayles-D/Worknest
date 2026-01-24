@@ -5,7 +5,7 @@ import FieldBody from "@/components/FieldBody";
 import { validatedSignUpSchema } from "@/utils/dataSchema";
 import { Link, useNavigate } from "react-router";
 import ErrorAlert from "@/components/ErrorAlert";
-import { useAuth } from "@/store/Index";
+import { useAuth } from "@/store/index";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/api/api";
 import { toast } from "sonner";
