@@ -1,9 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router";
 import { navLink } from "@/libs/constant";
-import { navAuthLink } from "@/libs/constant";
 import Logo from "@/components/Logo";
-import Drawer from "@/components/Drawer";
+import ProfileMenu from "@/components/ProfileMenu";
 
 export default function Navbar() {
   return (
@@ -14,17 +13,20 @@ export default function Navbar() {
 
           <div className="hidden md:flex gap-5 items-center">
             {navLink.map((item) => (
-              <NavLink to={item.path}>{item.name}</NavLink>
+              <NavLink
+                key={item.name}
+                to={item.path}
+                className={({ isActive }) =>
+                  `text-[18px] transition-colors duration-200 ${isActive ? "text-[#F75D1F]" : "text-[#000000] hover:text-[#F75D1F]"}`
+                }
+              >
+                {item.name}
+              </NavLink>
             ))}
           </div>
 
-          <div className="hidden md:flex  gap-5 items-center">
-            {navAuthLink.map((item) => (
-              <NavLink to={item.path}>{item.name}</NavLink>
-            ))}
-          </div>
-          <div className="md:hidden">
-            <Drawer />
+          <div>
+            <ProfileMenu />
           </div>
         </div>
       </nav>

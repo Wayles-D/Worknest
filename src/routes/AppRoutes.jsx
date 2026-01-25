@@ -18,6 +18,10 @@ const AboutUs = lazy(() => import("@/pages/AboutUs.jsx"));
 const ContactUs = lazy(() => import("@/pages/ContactUs.jsx"));
 const DashboardHome = lazy(() => import("@/pages/dashboard/DashboardHome.jsx"));
 const DashboardJobs = lazy(() => import("@/pages/dashboard/DashboardJobs.jsx"));
+const Applications = lazy(() => import("@/pages/dashboard/Applications.jsx"));
+const Profile = lazy(() => import("@/pages/dashboard/Profile.jsx"));
+const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy.jsx"));
+const TermsOfService = lazy(() => import("@/pages/TermsOfService.jsx"));
 
 export const router = createBrowserRouter([
   {
@@ -81,6 +85,22 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "/privacy-policy",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <PrivacyPolicy />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/terms-of-service",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <TermsOfService />
+          </Suspense>
+        ),
+      }
     ],
   },
 
@@ -108,6 +128,22 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "applications",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <Applications />
+          </Suspense>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <Profile />
+          </Suspense>
+        ),
+      }
     ],
   },
 ]);

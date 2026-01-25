@@ -19,8 +19,8 @@ export default function MainLayouts() {
     </main>
 
     <footer>
-      <div className='container'>
-    <Footer />
+      <div className='w-full'>
+       <Footer />
       </div>
     </footer>
     </>
