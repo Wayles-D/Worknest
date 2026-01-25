@@ -87,7 +87,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "jobs",
+        path: "dashboard-jobs",
         element: (
           <Suspense fallback={<SuspenseUi />}>
             <DashboardJobs />
