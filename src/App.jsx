@@ -1,10 +1,19 @@
-import React from 'react'
-import AppRoutes from './routes/AppRoutes'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AppRoutes from "./routes/AppRoutes";
+import { Toaster } from "sonner";
+import AuthProvider from "./store/AuthProvider";
+
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
     <>
-      <AppRoutes/>
+      <Toaster position="bottom-right" richColors />
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </QueryClientProvider>
     </>
-  )
+  );
 }
