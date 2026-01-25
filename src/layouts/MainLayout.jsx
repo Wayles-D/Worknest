@@ -8,19 +8,19 @@ export default function MainLayouts() {
     <>
     <header>
       <div className="container">
-    <Navbar />
+     <Navbar />
       </div>
     </header>
 
     <main>
-      <div className='container'>
+      <div className='container pt-25'>
         <Outlet />
       </div>
     </main>
 
     <footer>
-      <div className='container'>
-    <Footer />
+      <div className='w-full'>
+       <Footer />
       </div>
     </footer>
     </>

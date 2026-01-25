@@ -17,8 +17,14 @@ const ResetPassword = lazy(() => import("@/pages/auth/ResetPassword.jsx"));
 const Verify = lazy(() => import("@/pages/auth/Verify.jsx"));
 const Jobs = lazy(() => import("@/pages/Jobs.jsx"));
 const JobDetails = lazy(() => import("@/pages/JobDetails.jsx"));
+const AboutUs = lazy(() => import("@/pages/AboutUs.jsx"));
+const ContactUs = lazy(() => import("@/pages/ContactUs.jsx"));
 const DashboardHome = lazy(() => import("@/pages/dashboard/DashboardHome.jsx"));
 const DashboardJobs = lazy(() => import("@/pages/dashboard/DashboardJobs.jsx"));
+const Applications = lazy(() => import("@/pages/dashboard/Applications.jsx"));
+const Profile = lazy(() => import("@/pages/dashboard/Profile.jsx"));
+const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy.jsx"));
+const TermsOfService = lazy(() => import("@/pages/TermsOfService.jsx"));
 
 export const router = createBrowserRouter([
   {
@@ -52,7 +58,7 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <Suspense fallback={<SuspenseUi />}>
-            <HomePage/>
+            <HomePage />
           </Suspense>
         ),
       },
@@ -72,6 +78,38 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "/about",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <AboutUs />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/contact",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <ContactUs />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/privacy-policy",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <PrivacyPolicy />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/terms-of-service",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <TermsOfService />
+          </Suspense>
+        ),
+      }
     ],
   },
 
@@ -101,6 +139,22 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "applications",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <Applications />
+          </Suspense>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <Profile />
+          </Suspense>
+        ),
+      }
     ],
   },
 ]);
