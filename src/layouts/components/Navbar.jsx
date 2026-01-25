@@ -10,6 +10,9 @@ export default function Navbar() {
       <nav className="fixed top-0 left-0 w-full shadow z-50 bg-white ">
         <div className="container mx-auto flex justify-between items-center p-4">
           <Logo />
+    <><nav className='fixed top-0 left-0 w-full shadow z-50'>
+      <div className='flex justify-between items-center p-4'>
+        <img src="/worknestLogo.png" alt="logo" />
 
           <div className="hidden md:flex gap-5 items-center">
             {navLink.map((item) => (
