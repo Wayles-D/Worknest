@@ -25,6 +25,8 @@ import { Link } from "react-router";
 
 const HomePage = () => {
   const [active, setActive] = useState(0);
+  // const [search, setSearch] = useState("");
+  // const [location, setLocation] = useState("");
 
   const jobs = [
     {
@@ -56,8 +58,17 @@ const HomePage = () => {
       payRange: "₦150K - ₦250k",
     },
   ];
+
+  // const filteredJobs = jobs.filter((job) => {
+  //   const matchesSearch =
+  //     job.position.toLowerCase().includes(search).toLowerCase() ||
+  //     job.skills.toLowerCase().includes(search).toLowerCase();
+
+  //   const matchesLocation = job.location.toLowerCase
+  // });
+
   return (
-    <div className="sm:mt-[91px] mt-[40px] px-[]">
+    <div className="sm:mt-[91px] mt-[40px]">
       <div className="grid lg:grid-cols-2 items-center sm:justify-between gap-10">
         <div className="w-full lg:w-[549px]  flex flex-col gap-12">
           <div className="flex flex-col items-start gap-[42px]">
@@ -77,21 +88,29 @@ const HomePage = () => {
             <div className=" flex flex-col sm:flex-row  border border-[#00000036] rounded-[20px] p-5 sm:justify-between lg:gap-[41px] gap-4 w-full">
               <div className="flex items-center gap-[11px] ">
                 <Search className="w-[16px] h-[16px] text-[#292D32]" />
-                <p className="text-[18px] font-medium text-[#6B7280]">
-                  Search roles or skills...
-                </p>
+                <input
+                  type="text"
+                  // value={search}
+                  placeholder="Search roles or skills..."
+                  className="text-[18px] font-medium text-[#6B7280] outline-none"
+                />
               </div>
+
               <div className="border border-[#000000] sm:h-[35px]"></div>
               <div className="flex items-center gap-[7px]">
                 <MapPin className="w-[14px] lg:w-[14px] sm:w-[20px] h-5 text-[#6B7280]" />
-                <p className="text-[18px] font-medium text-[#6B7280]">
-                  City or remote
-                </p>
+
+                <input
+                  type="text"
+                  value={location}
+                  placeholder=" City or remote"
+                  className="text-[18px] font-medium text-[#6B7280] outline-none"
+                />
               </div>
             </div>
           </div>
 
-          <button className="lg:w-[505px] w-full bg-[#F86021] py-[30px] px-5 text-[24px] font-medium leading-[22px] rounded-[15px]">
+          <button className="lg:w-[505px] w-full bg-[#F86021] py-[30px] px-5 text-[24px] font-medium leading-[22px] rounded-[15px] text-white ">
             Search Job
           </button>
         </div>
@@ -166,7 +185,7 @@ const HomePage = () => {
               <MoveRight className="text-[#F86021]  w-3 h-3" />
             </div>
           </div>
-          <div className="grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[19px]">
+          <div className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[19px]">
             <div
               onClick={() => setActive(0)}
               className={`border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer ${active === 0 ? "bg-[#F9DFD5]" : "bg-[#ffffff]"}`}
@@ -250,8 +269,8 @@ const HomePage = () => {
             </p>
           </div>
 
-          {jobs.map((job) => (
-            <div className="border border-[#B0B6BE] p-5 sm:p-[30px] flex flex-col sm:flex-row gap-5 sm:gap-[30px] sm:gap-[55px] items-center rounded-[15px]">
+          {jobs.map((job, index) => (
+            <div key={index} className="border border-[#B0B6BE] p-5 sm:p-[30px] flex flex-col sm:flex-row gap-5 sm:gap-[30px] lg:gap-[55px] items-center rounded-[15px]">
               <img src={job.image} alt="" className="w-[63px] sm:w-auto" />
 
               <div className="flex flex-col lg:flex-row gap-10 justify-between flex-1 items-center sm:items-stretch ">
@@ -281,16 +300,14 @@ const HomePage = () => {
                       </p>
                     </div>
 
-
-                      <div className="flex items-center gap-3 ">
+                    <div className="flex items-center gap-3 ">
                       <img src={location} alt="" />
                       <p className="lg:text-[24px] text-[20px] font-medium leading-[24px] text-[#636E7C]">
                         {job.location}
                       </p>
                     </div>
 
-
-                      <div className="flex items-center gap-3 ">
+                    <div className="flex items-center gap-3 ">
                       <img src={money} alt="" />
                       <p className="lg:text-[24px] text-[18px] font-medium leading-[24px] text-[#636E7C]">
                         {job.payRange}
@@ -299,7 +316,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="flex items-end lg:self-end ">
-                  <button className="bg-[#F85E1E] py-[15px] px-[34px] rounded-[10px] text-[22px] font-semibold whitespace-nowrap shrink-0 cursor-pointer  w-full lg:w-auto">
+                  <button className="bg-[#F85E1E] py-[15px] px-[34px] rounded-[10px] text-[22px] font-semibold whitespace-nowrap shrink-0 cursor-pointer  w-full lg:w-auto text-white ">
                     Apply Now
                   </button>
                 </div>
@@ -317,7 +334,7 @@ const HomePage = () => {
       {/*  */}
 
       <div className="flex lg:flex-row flex-col sm:items-start items-center sm:gap-[153px] gap-[40px] sm:mt-[146px] mt-[100px]">
-        <div className="sm:w-[557px] w-full gap-[39px] flex flex-col">
+        <div className="lg:w-[557px] w-full gap-[39px] flex flex-col">
           <h4 className="sm:text-[40px] text-[25px] font-bold leading-[100%] ">
             Empowering tools for the modern job hunter
           </h4>
@@ -326,11 +343,11 @@ const HomePage = () => {
             <div className="bg-[#F89E85] py-[15px] px-[18px] rounded-[30px]">
               <FileDown className="w-4 h-5" />
             </div>
-            <div className="flex flex-col gap-2 w-full sm:w-[429px]">
+            <div className="flex flex-col gap-2 w-full lg:w-[429px]">
               <h6 className=" lg:text-[24px] sm:text-[32px] text-[20px] font-semibold leading-[100%] ">
                 Smart CV Upload
               </h6>
-              <p className="lg:text-[16px] sm:text-[20px] text-[14px] leading-[22px] text-[#636E7C]">
+              <p className="lg:text-[16px] sm:text-[20px] text-[14px] lg:leading-[22px] text-[#636E7C]">
                 Your CV is instantly transformed into a searchable profile that
                 attracts recruiter attention.
               </p>
@@ -341,7 +358,7 @@ const HomePage = () => {
             <div className="bg-[#F89E85] py-[15px] px-[18px] rounded-[30px]">
               <FileSymlink className="w-4 h-5" />
             </div>
-            <div className="flex flex-col gap-2 w-full sm:w-[429px] ">
+            <div className="flex flex-col gap-2 w-full lg:w-[429px] ">
               <h6 className=" lg:text-[24px] sm:text-[32px] text-[20px] font-semibold leading-[100%] ">
                 Portfolio Integration
               </h6>
@@ -356,7 +373,7 @@ const HomePage = () => {
             <div className="bg-[#F89E85] py-[15px] px-[18px] rounded-[30px]">
               <BellRing className="w-4 h-5" />
             </div>
-            <div className="flex flex-col gap-2 w-full sm:w-[429px] ">
+            <div className="flex flex-col gap-2 w-full lg:w-[429px] ">
               <h6 className="lg:text-[24px] sm:text-[32px] text-[20px] font-semibold leading-[100%] ">
                 Real-time Tracking
               </h6>
@@ -394,13 +411,13 @@ const HomePage = () => {
               Ready to find your{" "}
               <span className="text-[#F85E1E]">next career</span> step?
             </h4>
-            <p className="text-[#FFFDFD] sm:text-[24px] text-[18px] leading-[38px] lg:pe-[20px] ">
+            <p className="text-[#FFFDFD] text-center sm:text-[24px] text-[18px] leading-[38px] lg:px-[30px] ">
               Create your profile and let our platform curators match you with
               verified, high-quality opportunities
             </p>
           </div>
 
-          <button className="text-[24px] font-semibold leading-[100%] bg-[#F85E1E] py-[17px] px-[34px] rounded-[10px] mx-auto cursor-pointer flex ">
+          <button className="text-[24px] font-semibold leading-[100%] bg-[#F85E1E] py-[17px] px-[34px] rounded-[10px] mx-auto cursor-pointer flex text-white ">
             Explore All Jobs
           </button>
         </div>
