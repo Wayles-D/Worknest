@@ -7,6 +7,10 @@
 
 /* @plugin "daisyui" */
 
+@theme {
+  /* --color- */
+}
+
 * {
   scroll-behavior: smooth;
 }
