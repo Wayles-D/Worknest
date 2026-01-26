@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink } from "react-router";
 
 export default function Logo() {
@@ -10,3 +9,7 @@ export default function Logo() {
     </>
   );
 }
+//        <Link to="/"><img src='/logo.jpg' alt='logo' className='w-30 mb-3'/></Link>
+//     </>
+//   )
+// }
