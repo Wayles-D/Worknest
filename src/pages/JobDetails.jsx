@@ -1,28 +1,28 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { getJobsById } from "@/api/jobs.js";
+import { useQuery } from "@tanstack/react-query";
+import { fetchJobById } from "../api/jobs";
 
 export default function JobDetails() {
   const { id } = useParams();
-  const [job, setJob] = useState(null);
 
-  useEffect(() => {
-    const fetchJob = async () => {
-      const data = await getJobsById(id);
-      setJob(data);
-    };
+  const { data: job, isLoading } = useQuery({
+    queryKey: ["job", id],
+    queryFn: () => fetchJobById(id),
+  });
 
-    fetchJob();
-  }, [id]);
-
-  if (!job) return <p>Loading job...</p>;
+  if (isLoading) return <p>Loading job...</p>;
+  if (!job) return <p>Job not found</p>;
 
   return (
     <>
+    <div>
       <h1>{job.title}</h1>
-      <p>{job.description}</p>
       <p>{job.company}</p>
-      <p>{job.location}</p>
+    </div>
+
+    <div>
+      <p>{job.description}</p>
+    </div>
     </>
   );
 }
