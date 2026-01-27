@@ -1,15 +1,13 @@
 import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Camera } from "lucide-react";
+import { Camera, User, Mail, Phone, CheckCircle, Edit2 } from "lucide-react";
 import AvatarPlaceholder from "@/assets/images/avatar-placeholder.png";
-
 
 const submitProfile = async (data) => {
   await new Promise((res) => setTimeout(res, 1000));
   console.log("Profile saved:", data);
   return data;
 };
-
 
 const Profile = () => {
   const fileInputRef = useRef(null);
@@ -86,60 +84,127 @@ const Profile = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-1">Full Name</label>
-            <input
-              name="fullName"
-              value={form.fullName}
-              onChange={handleChange}
-              placeholder="Enter your full name"
-              className="w-full border rounded-md px-4 py-3 text-sm"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Email Address
-              </label>
-              <input
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="w-full border rounded-md px-4 py-3 text-sm"
-              />
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">Full Name</label>
+              <button
+                type="button"
+                className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800"
+              >
+                <Edit2 size={14} />
+                <span>Edit</span>
+              </button>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Phone Number
-              </label>
+            <div className="relative">
               <input
-                name="phone"
-                value={form.phone}
+                name="fullName"
+                value={form.fullName}
                 onChange={handleChange}
-                placeholder="+234 000 000 000"
-                className="w-full border rounded-md px-4 py-3 text-sm"
+                placeholder="Saidi"
+                className="w-full border rounded-md px-4 py-3 text-sm pr-10"
+              />
+              <User
+                size={18}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Date of birth
-              </label>
-              <input
-                name="dob"
-                type="date"
-                value={form.dob}
-                onChange={handleChange}
-                className="w-full border rounded-md px-4 py-3 text-sm"
-              />
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">
+                  Email Address
+                </label>
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  <Edit2 size={14} />
+                  <span>Edit</span>
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="Saidimoney@work.com"
+                  className="w-full border rounded-md px-4 py-3 text-sm pr-10"
+                />
+                <Mail
+                  size={18}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Country</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">
+                  Phone Number
+                </label>
+                <div className="flex items-center gap-1 text-sm">
+                  <Edit2 size={14} />
+                  <span>Verified</span>
+                </div>
+              </div>
+              <div className="relative">
+                <input
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  placeholder="+234 815 555 5559"
+                  className="w-full border rounded-md px-4 py-3 text-sm pr-10"
+                />
+                <Phone
+                  size={18}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">
+                  Date of birth
+                </label>
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  <Edit2 size={14} />
+                  <span>Edit</span>
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  name="dob"
+                  type="text"
+                  value={form.dob}
+                  onChange={handleChange}
+                  placeholder="20 Jan 1990"
+                  className="w-full border rounded-md px-4 py-3 text-sm pr-10"
+                />
+                <User
+                  size={18}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium">Country</label>
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800"
+                >
+                  <Edit2 size={14} />
+                  <span>Edit</span>
+                </button>
+              </div>
               <select
                 name="country"
                 value={form.country}
@@ -167,13 +232,19 @@ const Profile = () => {
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end pt-6">
+          <div className="flex justify-end gap-10 pt-6">
             <button
               type="submit"
               disabled={mutation.isLoading}
-              className="px-6 py-2 rounded-md bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
+              className="px-6 py-2 my-1 font-semibold rounded-md bg-orange-500 text-black hover:bg-orange-600 disabled:opacity-50"
             >
-              {mutation.isLoading ? "Saving..." : "Save Changes"}
+              {mutation.isLoading ? "Saving..." : "Update"}
+            </button>
+            <button
+              type="button"
+              className="px-6 py-2 my-1 font-semibold rounded-md border border-orange-500 text-orange-500 hover:bg-orange-50"
+            >
+              Cancel
             </button>
           </div>
         </form>
