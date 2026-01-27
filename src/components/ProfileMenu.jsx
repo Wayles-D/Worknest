@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/store/AuthProvider";
 import { navAuthLink } from "@/libs/constant";
 import UserDropdown from "./UserDropdown";
 import Drawer from "@/components/Drawer";
