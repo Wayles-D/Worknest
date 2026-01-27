@@ -64,7 +64,7 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      {
+{
         path: "profile",
         element: (
           <Suspense fallback={<SuspenseUi />}>

@@ -14,7 +14,7 @@ export const navAuthLink = [
 ];
 
 export const profileLinks = [
-  { name: "Profile", path: "/dashboard/profile", icon: User },
+  { name: "Profile", path: "/profile", icon: User },
   { name: "Applications", path: "/dashboard/applications", icon: FileText },
   { name: "Saved Jobs", path: "/dashboard/jobs", icon: Bookmark },
 ];
