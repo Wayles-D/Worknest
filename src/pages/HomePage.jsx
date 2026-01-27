@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import hero from "/faa45cca433fba8069bed652372bc00b9b9ec941.jpg";
+import hero from "/hero-img.png";
 import {
   Search,
   Play,
@@ -14,59 +14,26 @@ import {
   FileDown,
   FileSymlink,
 } from "lucide-react";
-import monie from "/moniepoint.png";
-import palmpay from "/palmpay.png";
-import canon from "/canonical.png";
+
 import office from "/icomoon-free_office.png";
 import location from "/mdi_location.png";
 import money from "/temaki_money-hand.png";
 import frame2 from "/Frame 2.png";
 import { Link } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { fetchJobs } from "@/api/fetchJobs";
 
 const HomePage = () => {
-  const [active, setActive] = useState(0);
-  // const [search, setSearch] = useState("");
-  // const [location, setLocation] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [locationTerm, setLocationTerm] = useState("");
 
-  const jobs = [
-    {
-      image: monie,
-      position: "Senior Product Designer",
-      status: "New",
-      jobType: "Full-time",
-      company: "Moniepoint Group, Nigeria",
-      location: "Remote",
-      payRange: "₦200K - ₦350k",
-    },
+  const { data: jobs = [] } = useQuery({
+    queryKey: ["jobs", searchTerm, locationTerm],
+    queryFn: () => fetchJobs({ search: searchTerm, location: locationTerm }),
+  });
 
-    {
-      image: palmpay,
-      position: "Full Stack Developer",
-      jobType: "Full-time",
-      company: "Palmpay, Nigeria ",
-      location: "Ebute Island",
-      payRange: "₦300K - ₦380k",
-    },
-
-    {
-      image: canon,
-      position: "UX Designer ",
-      status: "New",
-      jobType: "Full-time",
-      company: "Canonical, Nigeria",
-      location: "Remote",
-      payRange: "₦150K - ₦250k",
-    },
-  ];
-
-  // const filteredJobs = jobs.filter((job) => {
-  //   const matchesSearch =
-  //     job.position.toLowerCase().includes(search).toLowerCase() ||
-  //     job.skills.toLowerCase().includes(search).toLowerCase();
-
-  //   const matchesLocation = job.location.toLowerCase
-  // });
-
+  console.log(jobs);
+  
   return (
     <div className="sm:mt-[91px] mt-[40px]">
       <div className="grid lg:grid-cols-2 items-center sm:justify-between gap-10">
@@ -90,7 +57,8 @@ const HomePage = () => {
                 <Search className="w-[16px] h-[16px] text-[#292D32]" />
                 <input
                   type="text"
-                  // value={search}
+                  value={searchTerm}
+                  onChange={(e) =>setSearchTerm (e.target.value)}
                   placeholder="Search roles or skills..."
                   className="text-[18px] font-medium text-[#6B7280] outline-none"
                 />
@@ -102,7 +70,8 @@ const HomePage = () => {
 
                 <input
                   type="text"
-                  value={location}
+                  value={locationTerm}
+                  onChange={(e) => setLocationTerm(e.target.value)}
                   placeholder=" City or remote"
                   className="text-[18px] font-medium text-[#6B7280] outline-none"
                 />
@@ -118,7 +87,7 @@ const HomePage = () => {
           <img
             src={hero}
             alt=""
-            className="rounded-[20px] w-full sm:w-[800px] lg:w-[641px]"
+            className="rounded-[20px] w-full max-w-[100%] sm:w-[100%] lg:w-[641px]"
           />{" "}
         </div>
       </div>
@@ -137,34 +106,34 @@ const HomePage = () => {
               The journey to a better career starts here
             </p>
           </div>
-          <div className="grid sm:grid-cols-3 gap-[116px] items-center ">
-            <div className="gap-[29px] items-center flex flex-col ">
+          <div className="sm:grid sm:grid-cols-3 gap-6 md:gap-10 items-center flex flex-row sm:flex-none overflow-x-auto snap-x snap-mandatory">
+            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
               <div className="bg-[#D1DDF4] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <Search className="text-[#1C3FCB]  w-[18px] h-[18px]" />
               </div>
-              <h6 className="font-bold text-[22px] "> 1. Search</h6>
+              <h6 className="font-bold text-[22px] whitespace-nowrap "> 1. Search</h6>
               <p className="text-[18px] font-medium leading-[25px] text-center text-[#6B7280]">
                 Filter by role, salary, and tech stack to find your fit.
               </p>
             </div>
 
-            <div className="gap-[29px] items-center flex flex-col ">
+            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
               <div className="bg-[#CCC5F0] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <Play className="text-[#3A20BC] w-5 h-5 " />
               </div>
 
-              <h6 className="font-bold text-[22px] "> 2. Apply</h6>
+              <h6 className="font-bold text-[22px] whitespace-nowrap  "> 2. Apply</h6>
               <p className="text-[18px] font-medium leading-[25px] text-center text-[#6B7280]">
                 Apply with one click using your saved profile and portfolio.
               </p>
             </div>
 
-            <div className="gap-[29px] items-center flex flex-col ">
+            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
               <div className="bg-[#EBD9D5] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <BarChart className="text-[#F86021]  w-5 h-5" />
               </div>
 
-              <h6 className="font-bold text-[22px] "> 3. Track</h6>
+              <h6 className="font-bold text-[22px] whitespace-nowrap "> 3. Track</h6>
               <p className="text-[18px] font-medium leading-[25px] text-center text-[#6B7280]">
                 Monitor your application status in real-time on your dashboard.
               </p>
@@ -178,76 +147,59 @@ const HomePage = () => {
               Explore Categories
             </h4>
             <div className="flex items-center gap-[6px] ">
-              <Link className="sm:text-[20px] text-[16px] font-medium text-[#F86021] leading-[33px]">
+              <Link
+                to={"/jobs"}
+                className="sm:text-[20px] text-[16px] font-medium text-[#F86021] leading-[33px]"
+              >
                 All Job Roles
               </Link>
 
               <MoveRight className="text-[#F86021]  w-3 h-3" />
             </div>
           </div>
-          <div className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[19px]">
-            <div
-              onClick={() => setActive(0)}
-              className={`border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer ${active === 0 ? "bg-[#F9DFD5]" : "bg-[#ffffff]"}`}
-            >
-              <div
-                className={`rounded-[15px] py-5 px-[15px] gap-[10px] w-[54px] h-[64px] flex items-center ${active === 0 ? "bg-[#FEEEEA]" : "bg-[#FABBA8] "}`}
-              >
-                <LayoutGrid className="text-[#000000]  w-6 h-6" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[19px]">
+            <div className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition">
+              <div className="rounded-[15px] py-5 px-[15px] w-[54px] h-[64px] flex items-center bg-[#FABBA8] group-hover:bg-[#FEEEEA] transition">
+                <LayoutGrid className="text-[#000000] w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h6 className="text-[22px] font-bold ">Development</h6>
+                <h6 className="text-[22px] font-bold">Development</h6>
                 <p className="text-[#6B7280] text-[18px] font-medium">
                   Software & Apps
                 </p>
               </div>
             </div>
 
-            <div
-              onClick={() => setActive(1)}
-              className={`border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer ${active === 1 ? "bg-[#F9DFD5]" : "bg-[#ffffff]"}`}
-            >
-              <div
-                className={`rounded-[15px] py-5 px-[15px] gap-[10px] w-[54px] h-[64px] flex items-center  ${active === 1 ? "bg-[#FEEEEA]" : "bg-[#FABBA8] "}`}
-              >
-                <PanelsLeftBottom className="text-[#000000]  w-6 h-6" />
+            <div className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition">
+              <div className="rounded-[15px] py-5 px-[15px] w-[54px] h-[64px] flex items-center bg-[#FABBA8] group-hover:bg-[#FEEEEA] transition">
+                <PanelsLeftBottom className="text-[#000000] w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h6 className="text-[22px] font-bold ">Design</h6>
+                <h6 className="text-[22px] font-bold">Design</h6>
                 <p className="text-[#6B7280] text-[18px] font-medium">
                   UI/UX & Graphics
                 </p>
               </div>
             </div>
 
-            <div
-              onClick={() => setActive(2)}
-              className={`border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer ${active === 2 ? "bg-[#F9DFD5]" : "bg-[#ffffff]"}`}
-            >
-              <div
-                className={`rounded-[15px] py-5 px-[15px] gap-[10px] w-[54px] h-[64px] flex items-center ${active === 2 ? "bg-[#FEEEEA]" : "bg-[#FABBA8] "}`}
-              >
-                <PenLine className="text-[#000000]  w-6 h-6" />
+            <div className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition">
+              <div className="rounded-[15px] py-5 px-[15px] w-[54px] h-[64px] flex items-center bg-[#FABBA8] group-hover:bg-[#FEEEEA] transition">
+                <PenLine className="text-[#000000] w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h6 className="text-[22px] font-bold ">Writing</h6>
+                <h6 className="text-[22px] font-bold">Writing</h6>
                 <p className="text-[#6B7280] text-[18px] font-medium">
                   Copy & Content
                 </p>
               </div>
             </div>
 
-            <div
-              onClick={() => setActive(3)}
-              className={`border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer ${active === 3 ? "bg-[#F9DFD5]" : "bg-[#ffffff]"}`}
-            >
-              <div
-                className={`rounded-[15px] py-5 px-[15px] gap-[10px] w-[54px] h-[64px] flex items-center ${active === 3 ? "bg-[#FEEEEA]" : "bg-[#FABBA8] "}`}
-              >
-                <Megaphone className="text-[#000000] w-6 h-6 " />
+            <div className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition">
+              <div className="rounded-[15px] py-5 px-[15px] w-[54px] h-[64px] flex items-center bg-[#FABBA8] group-hover:bg-[#FEEEEA] transition">
+                <Megaphone className="text-[#000000] w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h6 className="text-[22px] font-bold ">Marketing</h6>
+                <h6 className="text-[22px] font-bold">Marketing</h6>
                 <p className="text-[#6B7280] text-[18px] font-medium">
                   Growth & SEO
                 </p>
@@ -270,7 +222,10 @@ const HomePage = () => {
           </div>
 
           {jobs.map((job, index) => (
-            <div key={index} className="border border-[#B0B6BE] p-5 sm:p-[30px] flex flex-col sm:flex-row gap-5 sm:gap-[30px] lg:gap-[55px] items-center rounded-[15px]">
+            <div
+              key={index}
+              className="border border-[#B0B6BE] p-5 sm:p-[20px] lg:p-[30px] flex flex-col sm:flex-row gap-5 sm:gap-6 lg:gap-[55px] items-center rounded-[15px]"
+            >
               <img src={job.image} alt="" className="w-[63px] sm:w-auto" />
 
               <div className="flex flex-col lg:flex-row gap-10 justify-between flex-1 items-center sm:items-stretch ">
@@ -316,7 +271,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="flex items-end lg:self-end ">
-                  <button className="bg-[#F85E1E] py-[15px] px-[34px] rounded-[10px] text-[22px] font-semibold whitespace-nowrap shrink-0 cursor-pointer  w-full lg:w-auto text-white ">
+                  <button className="bg-[#F85E1E] py-[15px] px-[34px] rounded-[10px] text-[22px] font-semibold whitespace-nowrap shrink-0 cursor-pointer sm:w-auto  w-full md:w-full lg:w-auto text-white ">
                     Apply Now
                   </button>
                 </div>
@@ -325,7 +280,7 @@ const HomePage = () => {
           ))}
         </div>
 
-        <Link className="mx-auto flex justify-center ">
+        <Link to={"/jobs"} className="mx-auto flex justify-center ">
           <button className="border border-[#0000001A] py-[17px] px-[22px] rounded-[20px] text-[22px] font-semibold cursor-pointer">
             View all curated jobs
           </button>
@@ -335,7 +290,7 @@ const HomePage = () => {
 
       <div className="flex lg:flex-row flex-col sm:items-start items-center sm:gap-[153px] gap-[40px] sm:mt-[146px] mt-[100px]">
         <div className="lg:w-[557px] w-full gap-[39px] flex flex-col">
-          <h4 className="sm:text-[40px] text-[25px] font-bold leading-[100%] ">
+          <h4 className="sm:text-[40px] lg:text-start sm:text-center text-[25px] font-bold leading-[100%] ">
             Empowering tools for the modern job hunter
           </h4>
 
@@ -386,7 +341,7 @@ const HomePage = () => {
         </div>
 
         <div className="relative">
-          <img src={frame2} alt="" className="lg:w-[520px] sm:w-[750px]" />
+          <img src={frame2} alt="" className="lg:w-[520px] md:w-[900px] sm:w-[800px]" />
           <div className="absolute sm:bottom-[-20px] bottom-[-50px] sm:left-[-10px] sm:w-[316.57px] rounded-[9.23px] border-[0.92px] border-[#F89E85] bg-white py-[23.07px] px-[15.69px] flex flex-col gap-[18.46px] shadow-xl">
             <div className="flex items-center gap-[18px]">
               <p className="bg-[#009E2A] rounded-full w-[9.23px] h-[9.23px]"></p>
@@ -411,7 +366,7 @@ const HomePage = () => {
               Ready to find your{" "}
               <span className="text-[#F85E1E]">next career</span> step?
             </h4>
-            <p className="text-[#FFFDFD] text-center sm:text-[24px] text-[18px] leading-[38px] lg:px-[30px] ">
+            <p className="text-[#FFFDFD] text-center sm:text-[23px] text-[18px] leading-[38px] md:px-20 lg:px-[30px] sm:px-9 ">
               Create your profile and let our platform curators match you with
               verified, high-quality opportunities
             </p>
