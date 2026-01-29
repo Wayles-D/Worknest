@@ -7,8 +7,8 @@ import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 export default function TopFooter() {
   return (
     <div className="pt-8">
-      <div className="flex-col flex md:flex-row justify-between md:items-center">
-        <div className="w-90">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+        <div>
           <div className="mb-5">
             <Logo />
           </div>
@@ -18,41 +18,46 @@ export default function TopFooter() {
             above all.
           </p>
         </div>
-        <div className="flex-col flex md:flex-row md:items-center gap-8 pt-9">
+
+        <div>
+          <h2 className="font-extrabold text-[16px] text-[#000000]">JOBS</h2>
           <div>
-            <h2 className="font-extrabold text-[16px] text-[#000000]">JOBS</h2>
-            <div>
-              {footerJobs.map((item) => (
-                <NavLink
-                  to={item.path}
-                  key={item.name}
-                  className="block my-4 text-[14px] md:text-[18px] text-[#000000]"
-                >
-                  {item.name}
-                </NavLink>
-              ))}
-            </div>
+            {footerJobs.map((item) => (
+              <NavLink
+                to={item.path}
+                key={item.name}
+                className="block my-4 text-[14px] md:text-[18px] text-[#000000]"
+              >
+                {item.name}
+              </NavLink>
+            ))}
           </div>
+        </div>
+
+        <div>
+          <h2 className="font-extrabold text-[16px] text-[#000000]">COMPANY</h2>
           <div>
-            <h2 className="font-extrabold text-[16px] text-[#000000]">COMPANY</h2>
-            <div>
-              {footerCompany.map((item) => (
-                <NavLink
-                  to={item.path}
-                  key={item.name}
-                  className="block my-4 text-[14px] md:text-[18px] text-[#000000]"
-                >
-                  {item.name}
-                </NavLink>
-              ))}
-            </div>
+            {footerCompany.map((item) => (
+              <NavLink
+                to={item.path}
+                key={item.name}
+                className="block my-4 text-[14px] md:text-[18px] text-[#000000]"
+              >
+                {item.name}
+              </NavLink>
+            ))}
           </div>
+        </div>
+
+        <div>
+          <h2 className="font-extrabold text-[24px] text-[#000000]">
+            Stay Updated
+          </h2>
+          <p className="text-[14px] md:text-[18px] text-[#000000] mt-3">
+            Subscribe to our newsletter to get our latest news
+          </p>
           <div>
-            <h2 className="font-extrabold text-[24px] text-[#000000]">Stay Updated</h2>
-            <p className="text-[14px] md:text-[18px] text-[#000000] mt-3">Subscribe to our newsletter to get our latest news</p>
-            <div>
-              <Email />
-            </div>
+            <Email />
           </div>
         </div>
       </div>
@@ -65,4 +70,3 @@ export default function TopFooter() {
     </div>
   );
 }
-

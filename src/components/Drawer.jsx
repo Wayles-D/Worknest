@@ -26,11 +26,10 @@ export default function Drawer() {
       {/* logged in user sees avatar */}
       {user && (
         <button onClick={() => setOpen(true)} aria-label="Open profile menu">
-          <img src={user.avatar || "/tempAvatar.png"} alt="User Avatar"
-          className="w-12 h-12 rounded-full" />
+          <Menu className="w-6 h-6" />
         </button>
       )}
-      
+
       {/* overlay */}
       {open && (
         <div
@@ -56,8 +55,19 @@ export default function Drawer() {
           {/* user info only when logged in */}
           {user && (
             <div className="mb-6 border-b pb-4">
-             <p className="font-medium text-[20px] text-[#0E0E0E]">{user.name}</p>
-             <p className="text-[16px] text-[#F89E85] font-light">{user.role}</p> 
+              <div className="flex items-center gap-4 mb-2">
+                <img
+                  src={user.avatar || "/tempAvatar.png"}
+                  alt="User Avatar"
+                  className="w-12 h-12 rounded-full"
+                />
+                <p className="font-medium text-[20px] text-[#0E0E0E]">
+                  {user.name}
+                </p>
+              </div>
+              <p className="text-[16px] text-[#F89E85] font-light">
+                {user.role}
+              </p>
             </div>
           )}
 
@@ -68,9 +78,11 @@ export default function Drawer() {
                 key={item.name}
                 to={item.path}
                 onClick={() => setOpen(false)}
-                className={({ isActive }) => `text-[18px] ${isActive ? 'text-[#F75D1F]' : 'text-[#0E0E0E] hover:text-[#F75D1F]'}`}
+                className={({ isActive }) =>
+                  `text-[18px] ${isActive ? "text-[#F75D1F]" : "text-[#0E0E0E] hover:text-[#F75D1F]"}`
+                }
               >
-              {item.name}
+                {item.name}
               </NavLink>
             ))}
           </nav>
@@ -82,7 +94,9 @@ export default function Drawer() {
                 <NavLink
                   key={item.name}
                   to={item.path}
-                  className={({ isActive }) => `text-[18px] ${isActive ? 'text-[#F75D1F]' : 'text-[#0E0E0E] hover:text-[#F75D1F]'}`}
+                  className={({ isActive }) =>
+                    `text-[18px] text-[#0E0E0E] ${isActive ? "text-[#F75D1F]" : "text-[#0E0E0E] hover:text-[#F75D1F]"}`
+                  }
                   onClick={() => setOpen(false)}
                 >
                   {item.name}
@@ -102,7 +116,7 @@ export default function Drawer() {
                       key={link.name}
                       to={link.path}
                       onClick={() => setOpen?.(false)}
-                      className="flex items-center gap-2  py-2 text-[#0E0E0E] text-[18px]  hover:bg-gray-100 text-sm"
+                      className="flex items-center gap-2  py-2 text-[#0E0E0E] text-[18px] text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md"
                     >
                       {Icon && <Icon className="w-6 h-6 text-[#292D32]" />}
                       <span>{link.name}</span>
@@ -111,7 +125,7 @@ export default function Drawer() {
                 })}
 
                 <button
-                  className=" flex items-center gap-2 w-full py-2 hover:bg-gray-100 text-sm"
+                  className=" flex items-center gap-2 w-full py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md"
                   onClick={handleSignOut}
                 >
                   <LogOut className="w-6 h-6 text-[#292D32]" />

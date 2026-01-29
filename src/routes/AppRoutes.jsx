@@ -27,6 +27,9 @@ const AdminApplications = lazy(() =>
 const Profile = lazy(() => import("@/pages/Profile.jsx"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy.jsx"));
 const TermsOfService = lazy(() => import("@/pages/TermsOfService.jsx"));
+const CandidateApplicationForm = lazy(() => import("@/pages/CandidateApplicationForm.jsx"));
+const MyApplications = lazy(() => import("@/pages/MyApplication.jsx"));
+const SavedJobs = lazy(() => import("@/pages/SavedJobs.jsx"));
 
 export const router = createBrowserRouter([
   {
@@ -150,13 +153,13 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "applications",
+        path: "application",
         element: (
           <Suspense fallback={<SuspenseUi />}>
             <AdminApplications />
           </Suspense>
         ),
       },
-    ],
+   ],
   },
 ]);
