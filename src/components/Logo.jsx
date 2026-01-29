@@ -9,3 +9,7 @@ export default function Logo() {
     </>
   );
 }
+//        <Link to="/"><img src='/logo.jpg' alt='logo' className='w-30 mb-3'/></Link>
+//     </>
+//   )
+// }

@@ -14,7 +14,7 @@ export const navAuthLink = [
 ];
 
 export const profileLinks = [
-  { name: "Profile", path: "/dashboard/profile", icon: User },
+  { name: "Profile", path: "/profile", icon: User },
   { name: "Applications", path: "/dashboard/applications", icon: FileText },
   { name: "Saved Jobs", path: "/dashboard/dashboard-jobs", icon: Bookmark },
   { name: "Change Password", path: "/auth/reset-password", icon: LockKeyhole},
