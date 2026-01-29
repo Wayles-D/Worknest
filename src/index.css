@@ -135,3 +135,9 @@ body {
   opacity: 1;
 }
 
+.swiper-pagination-bullet-active {
+  background: #f75f20;
+}
+
+
+
