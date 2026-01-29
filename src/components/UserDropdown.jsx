@@ -65,9 +65,9 @@ export default function UserDropdown() {
                   key={link.name}
                   to={link.path}
                   onClick={() => setOpen?.(false)}
-                  className="flex items-center gap-3  py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md mb-1"
+                  className="flex items-center gap-2 py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md mb-1 px-2"
                 >
-                {Icon && <Icon className="w-6 h-6 text-[#292D32] mr-2" />}
+                {Icon && <Icon className="w-5 h-5 text-[#292D32] mr-2" />}
                   <span className="text-[18px] text-[#0E0E0E]">{link.name}</span>
                 </NavLink>
               )
@@ -78,9 +78,9 @@ export default function UserDropdown() {
             <div>
                <button
                  onClick={handleSignOut}
-                 className="flex items-center gap-3 w-full px-1 py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md"
+                 className="flex items-center gap-2 w-full p-2 text-sm hover:bg-red-400 active:bg-red-500 rounded-md"
                 >
-                 <LogOut className="w-6 h-6 text-[#292D32] mr-2 " />
+                 <LogOut className="w-5 h-5 text-[#292D32] mr-2 " />
                  <span className="text-[18px] text-[#0E0E0E]">Sign Out</span>
                </button>
             </div>
