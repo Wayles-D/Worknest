@@ -200,7 +200,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={formData.salaryRange}
                   onChange={handleChange}
                   placeholder="e.g. $80,000 - $120,000"
-                  className="w-full px-4 py-2.5 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="w-full px-4 py-2.5 bg-primary  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                 />
               </div>
             </div>
@@ -229,7 +229,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.company}
                 onChange={handleChange}
                 placeholder="e.g. TechCorp Inc."
-                className="w-full px-4 py-2.5 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                 required
               />
             </div>
@@ -243,7 +243,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.companyWebsite}
                 onChange={handleChange}
                 placeholder="https://example.com"
-                className="w-full px-4 py-2.5 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
               />
             </div>
             <div className="md:col-span-2 space-y-1.5">
@@ -256,7 +256,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.logo}
                 onChange={handleChange}
                 placeholder="https://example.com/logo.png"
-                className="w-full px-4 py-2.5 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
               />
             </div>
           </div>
