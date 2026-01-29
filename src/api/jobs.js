@@ -1,9 +1,10 @@
-import { jobs as rawJobs } from "../data/jobs.js";
+import { jobs as rawJobs } from "@/data/jobs";
 
 export function fetchJobs({
   jobType,
   industry,
   salaryRange,
+  status,
   search,
   page = 1,
   limit = 10,
@@ -25,6 +26,11 @@ export function fetchJobs({
       // Filtering by Salary Range (Exact match based on string in schema)
       if (salaryRange) {
         result = result.filter((job) => job.salaryRange === salaryRange);
+      }
+
+      // Filtering by Status
+      if (status) {
+        result = result.filter((job) => job.status === status);
       }
 
       // Search by Keyword (Title)
@@ -49,7 +55,6 @@ export function fetchJobs({
     }, 500); // 500ms delay to simulate network latency
   });
 }
-
 
 export function fetchJobById(id) {
   return new Promise((resolve) => {
