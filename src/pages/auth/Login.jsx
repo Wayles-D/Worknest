@@ -9,7 +9,7 @@ import useMetaArgs from "@/hooks/UseMeta";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "@/api/api";
 import { toast } from "sonner";
-import { useAuth} from "@/store/index"
+import { useAuth } from "@/store/index";
 
 export default function Login() {
   useMetaArgs({

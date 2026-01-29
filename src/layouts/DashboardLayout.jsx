@@ -45,17 +45,7 @@ export default function DashboardLayout() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-100">
-          {/* <div className="flex items-center gap-3 px-4 py-2 text-gray-600">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">
-              AD
-            </div>
-            <div className="text-sm">
-              <p className="font-medium">Admin User</p>
-              <p className="text-xs text-gray-400">admin@worknest.com</p>
-            </div>
-          </div> */}
-        </div> 
+        <div className="p-4 border-t border-gray-100"></div>
       </aside>
 
       {/* Main Content Area */}
@@ -66,7 +56,7 @@ export default function DashboardLayout() {
           </h2>
         </header> */}
         <div className="p-0">
-          <Outlet/>
+          <Outlet />
         </div>
       </main>
     </div>
