@@ -152,7 +152,7 @@ export default function ApplicationForm() {
   };
 
   const handleViewApplications = () => {
-    window.location.href = '/my-application';
+    window.location.href = '/dashboard/my-applications';
   };
 
   return (

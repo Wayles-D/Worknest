@@ -218,14 +218,15 @@ const JobDetails = lazy(() => import("@/pages/JobDetails.jsx"));
 const AboutUs = lazy(() => import("@/pages/AboutUs.jsx"));
 const ContactUs = lazy(() => import("@/pages/ContactUs.jsx"));
 const DashboardHome = lazy(() => import("@/pages/dashboard/DashboardHome.jsx"));
-const DashboardJobs = lazy(() => import("@/pages/dashboard/DashboardJobs.jsx"));
-const Applications = lazy(() => import("@/pages/dashboard/Applications.jsx"));
-const Profile = lazy(() => import("@/pages/dashboard/Profile.jsx"));
+const AdminJobs = lazy(() => import("@/pages/dashboard/AdminJobs.jsx"));
+const AdminApplications = lazy(() =>
+  import("@/pages/dashboard/AdminApplications.jsx")
+);
+const Profile = lazy(() => import("@/pages/Profile.jsx"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy.jsx"));
 const TermsOfService = lazy(() => import("@/pages/TermsOfService.jsx"));
 const CandidateApplicationForm = lazy(() => import("@/pages/CandidateApplicationForm.jsx"));
-const MyApplication = lazy(() => import("@/pages/MyApplication.jsx"));
-
+const MyApplications = lazy(() => import("@/pages/MyApplication.jsx"));
 const SavedJobs = lazy(() => import("@/pages/SavedJobs.jsx"));
 
 export const router = createBrowserRouter([
@@ -261,6 +262,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<SuspenseUi />}>
             <HomePage />
+          </Suspense>
+        ),
+      },
+{
+        path: "profile",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <Profile />
           </Suspense>
         ),
       },
@@ -312,9 +321,16 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      // MOVED THESE ROUTES HERE TO SHOW NAVBAR AND FOOTER
       {
-        path: "/candidate-application",
+        path: "/dashboard/profile",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <Profile />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/dashboard/applications",
         element: (
           <Suspense fallback={<SuspenseUi />}>
             <CandidateApplicationForm />
@@ -322,27 +338,27 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/my-application",
-        element: (
-          <Suspense fallback={<SuspenseUi />}>
-            <MyApplication />
-          </Suspense>
-        ),
-      },
-    
-      {
-        path: "/saved-jobs",
+        path: "/dashboard/saved-jobs",
         element: (
           <Suspense fallback={<SuspenseUi />}>
             <SavedJobs />
           </Suspense>
         ),
       },
+       {
+        path: "/dashboard/my-applications",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <MyApplications />
+          </Suspense>
+        ),
+      }
+   
     ],
   },
 
   {
-    path: "/dashboard",
+    path: "/admin",
     element: (
       <Suspense fallback={<SuspenseUi />}>
         <DashboardLayout />
@@ -360,10 +376,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "dashboard-jobs",
+        path: "jobs",
         element: (
           <Suspense fallback={<SuspenseUi />}>
-            <DashboardJobs />
+            <AdminJobs />
           </Suspense>
         ),
       },
@@ -371,18 +387,10 @@ export const router = createBrowserRouter([
         path: "application",
         element: (
           <Suspense fallback={<SuspenseUi />}>
-            <Applications />
+            <AdminApplications />
           </Suspense>
         ),
       },
-      {
-        path: "profile",
-        element: (
-          <Suspense fallback={<SuspenseUi />}>
-            <Profile />
-          </Suspense>
-        ),
-      },
-    ],
+   ],
   },
 ]);

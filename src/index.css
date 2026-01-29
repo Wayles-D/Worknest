@@ -7,6 +7,12 @@
 
 /* @plugin "daisyui" */
 
+@theme {
+   --color-primary: #FFE2D6;
+   --sidebar-color: #0A0A0A;
+   --sidebar-active-color: #F57450
+};
+
 * {
   scroll-behavior: smooth;
 }
