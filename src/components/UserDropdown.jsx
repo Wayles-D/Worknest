@@ -67,7 +67,7 @@ export default function UserDropdown() {
                   onClick={() => setOpen?.(false)}
                   className="flex items-center gap-3  py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md mb-1"
                 >
-                {Icon && <Icon className="w-6 h-6 text-[#292D32] mr-2" />}
+                {Icon && <Icon className="w-5 h-5 text-[#292D32] mr-2" />}
                   <span className="text-[18px] text-[#0E0E0E]">{link.name}</span>
                 </NavLink>
               )
@@ -80,7 +80,7 @@ export default function UserDropdown() {
                  onClick={handleSignOut}
                  className="flex items-center gap-3 w-full px-1 py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md"
                 >
-                 <LogOut className="w-6 h-6 text-[#292D32] mr-2 " />
+                 <LogOut className="w-5 h-5 text-[#292D32] mr-2 " />
                  <span className="text-[18px] text-[#0E0E0E]">Sign Out</span>
                </button>
             </div>
