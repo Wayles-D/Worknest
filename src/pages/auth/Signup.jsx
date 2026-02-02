@@ -27,7 +27,7 @@ export default function Signup({ toggle }) {
 
   const termsAgreed = watch("agreeToTerms");
 
-  const { setAccessToken, user } = useAuth();
+   const { setAccessToken, user } = useAuth();
   const navigate = useNavigate();
   const mutation = useMutation({
     mutationFn: registerUser,
@@ -47,13 +47,13 @@ export default function Signup({ toggle }) {
   });
 
   const onSubmit = (data) => {
-    mutation.mutate(data);
+    mutation.mutate(data)
   };
   return (
     <section>
-      <div>
+      <div className="py-4 md:py-12">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-2 text-blue-950">
+          <div className="flex flex-col gap-2">
             <h1 className="text-2xl md:text-3xl font-semibold w-xs text-center md:text-start">
               Find Your Job On Worknest
             </h1>
@@ -113,27 +113,27 @@ export default function Signup({ toggle }) {
 
             <label htmlFor="terms" className="text-sm text-gray-600">
               I agree to the{" "}
-              <a
-                href="/terms"
+              <Link
+                href="/terms-of-service"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="text-orange-500 underline"
               >
                 Terms of Service
-              </a>{" "}
+              </Link>{" "}
               &{" "}
-              <a
-                href="/privacy"
+              <Link
+                href="/privacy-policy"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="text-orange-500 underline"
               >
                 Privacy Policy
-              </a>
+              </Link>
             </label>
           </div>
           {errors.agreeToTerms && (
-            <p className="text-red-500 text-sm mt-2">
-              {errors.agreeToTerms.message}
-            </p>
+            <p className="text-red-500 text-sm mt-2">{errors.agreeToTerms.message}</p>
           )}
 
           <button
@@ -141,9 +141,7 @@ export default function Signup({ toggle }) {
             className="btn bg-[rgba(247,95,32,1)] text-white mt-4 w-full rounded-lg h-11 hover:bg-[rgba(247,95,32,0.8)] flex items-center justify-center cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={mutation.isPending || isSubmitting || !termsAgreed}
           >
-            {mutation.isPending || isSubmitting
-              ? "Creating..."
-              : "Create Account"}
+            {mutation.isPending || isSubmitting ? "Creating..." : "Create Account"}
           </button>
         </form>
         {/* or */}
@@ -153,17 +151,16 @@ export default function Signup({ toggle }) {
           <div className="flex-1 h-px bg-gray-300" />
         </div>
         {/* google */}
-        <button
-          type="button"
-          className="btn border border-[rgba(247,95,32,1)] text-[rgba(247,95,32,1)] mt-4 w-full rounded-lg h-11 hover:bg-[#FFA366] hover:text-white flex items-center justify-center cursor-pointer transition-all duration-300"
-          disabled={isSubmitting}
-        >
-          <img src="/gog.svg" className="w-5 h-5 mr-2" alt="google" /> Continue
-          with Google
-        </button>
-        <div className="text-blue-950 text-sm text-center mt-2">
+           <button
+            type="button"
+            className="btn border border-[rgba(247,95,32,1)] text-[rgba(247,95,32,1)] mt-4 w-full rounded-lg h-11 hover:bg-[#FFA366] hover:text-white flex items-center justify-center cursor-pointer transition-all duration-300"
+            disabled={isSubmitting}
+          >
+         <img src="/gog.svg" className="w-5 h-5 mr-2" alt="google" /> Continue with Google
+          </button>
+        <div className="text-sm text-center mt-2">
           <Link to="/auth/login">
-            Already have an account?{"   "}
+            Already have an account?{"   "} 
             <button
               type="button"
               onClick={toggle}
