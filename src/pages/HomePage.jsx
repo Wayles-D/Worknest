@@ -33,20 +33,20 @@ const HomePage = () => {
   });
 
   console.log(jobs);
-  
+
   return (
     <div className="sm:mt-[91px] mt-[40px]">
       <div className="grid lg:grid-cols-2 items-center sm:justify-between gap-10">
         <div className="w-full lg:w-[549px]  flex flex-col gap-12">
-          <div className="flex flex-col items-start gap-[42px]">
+          <div className="flex flex-col items-start gap-5 sm:gap-[42px]">
             <p className="bg-[#FEEEEA] text-[14px] py-2.5 px-5 w-[227px] rounded-[15px] text-[#000000] font-medium">
               OVER 5,O00+ ACTIVE JOBS
             </p>
-            <h1 className="sm:text-[48px] lg:text-[65px] text-[40px] font-extrabold sm:leading-[70px]  text-[#000000]">
+            <h1 className="sm:text-[48px] lg:text-[65px] text-[42px] font-extrabold sm:leading-[70px]  leading-[50px] text-[#000000]">
               Unlock your next
               <span className="text-[#F86021]"> career milestone</span>
             </h1>
-            <p className="text-[20px] font-medium text-[#555859] leading-[30px]">
+            <p className="sm:text-[20px] text-[16px] font-medium text-[#555859] leading-[30px]">
               Skip the noise. Every listing on WorkNest is hand-picked,
               verified, and posted directly by our platform administrators to
               ensure high-quality career matches.
@@ -58,7 +58,7 @@ const HomePage = () => {
                 <input
                   type="text"
                   value={searchTerm}
-                  onChange={(e) =>setSearchTerm (e.target.value)}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search roles or skills..."
                   className="text-[18px] font-medium text-[#6B7280] outline-none"
                 />
@@ -79,7 +79,7 @@ const HomePage = () => {
             </div>
           </div>
 
-          <button className="lg:w-[505px] w-full bg-[#F86021] py-[30px] px-5 text-[24px] font-medium leading-[22px] rounded-[15px] text-white ">
+          <button className="lg:w-[505px] w-full bg-[#F86021] py-5 sm:py-[30px] px-5 text-[24px] font-medium leading-[22px] rounded-[15px] text-white ">
             Search Job
           </button>
         </div>
@@ -111,7 +111,10 @@ const HomePage = () => {
               <div className="bg-[#D1DDF4] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <Search className="text-[#1C3FCB]  w-[18px] h-[18px]" />
               </div>
-              <h6 className="font-bold text-[22px] whitespace-nowrap "> 1. Search</h6>
+              <h6 className="font-bold text-[22px] whitespace-nowrap ">
+                {" "}
+                1. Search
+              </h6>
               <p className="text-[18px] font-medium leading-[25px] text-center text-[#6B7280]">
                 Filter by role, salary, and tech stack to find your fit.
               </p>
@@ -122,7 +125,10 @@ const HomePage = () => {
                 <Play className="text-[#3A20BC] w-5 h-5 " />
               </div>
 
-              <h6 className="font-bold text-[22px] whitespace-nowrap  "> 2. Apply</h6>
+              <h6 className="font-bold text-[22px] whitespace-nowrap  ">
+                {" "}
+                2. Apply
+              </h6>
               <p className="text-[18px] font-medium leading-[25px] text-center text-[#6B7280]">
                 Apply with one click using your saved profile and portfolio.
               </p>
@@ -133,7 +139,10 @@ const HomePage = () => {
                 <BarChart className="text-[#F86021]  w-5 h-5" />
               </div>
 
-              <h6 className="font-bold text-[22px] whitespace-nowrap "> 3. Track</h6>
+              <h6 className="font-bold text-[22px] whitespace-nowrap ">
+                {" "}
+                3. Track
+              </h6>
               <p className="text-[18px] font-medium leading-[25px] text-center text-[#6B7280]">
                 Monitor your application status in real-time on your dashboard.
               </p>
@@ -143,7 +152,7 @@ const HomePage = () => {
 
         <div className="flex flex-col gap-[50px] ">
           <div className="flex justify-between items-center">
-            <h4 className="sm:text-[36px] text-[22px] font-semibold ">
+            <h4 className="sm:text-[36px] text-[20px] font-semibold ">
               Explore Categories
             </h4>
             <div className="flex items-center gap-[6px] ">
@@ -210,7 +219,10 @@ const HomePage = () => {
       </div>
       {/*  */}
 
-      <div className="mt-[132px] space-y-[55px] ">
+      <hr
+        className=" sm:hidden block border mt-15 border-[#d7d7d7]"
+      />
+      <div className="sm:mt-[132px]  mt-[60px] space-y-[55px] ">
         <div className="space-y-[45px]">
           <div className="flex flex-col gap-[21px]  text-center ">
             <h4 className="sm:text-[40px] text-[30px] font-bold">
@@ -281,7 +293,7 @@ const HomePage = () => {
         </div>
 
         <Link to={"/jobs"} className="mx-auto flex justify-center ">
-          <button className="border border-[#0000001A] py-[17px] px-[22px] rounded-[20px] text-[22px] font-semibold cursor-pointer">
+          <button className="border-2 border-[#0000001A] py-[17px] px-[22px] rounded-[20px] sm:text-[22px] text-[18px] font-semibold cursor-pointer text-[#636E7C] ">
             View all curated jobs
           </button>
         </Link>
@@ -341,7 +353,11 @@ const HomePage = () => {
         </div>
 
         <div className="relative">
-          <img src={frame2} alt="" className="lg:w-[520px] md:w-[900px] sm:w-[800px]" />
+          <img
+            src={frame2}
+            alt=""
+            className="lg:w-[520px] md:w-[900px] sm:w-[800px]"
+          />
           <div className="absolute sm:bottom-[-20px] bottom-[-50px] sm:left-[-10px] sm:w-[316.57px] rounded-[9.23px] border-[0.92px] border-[#F89E85] bg-white py-[23.07px] px-[15.69px] flex flex-col gap-[18.46px] shadow-xl">
             <div className="flex items-center gap-[18px]">
               <p className="bg-[#009E2A] rounded-full w-[9.23px] h-[9.23px]"></p>
