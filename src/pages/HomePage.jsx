@@ -22,8 +22,15 @@ import location from "/mdi_location.png";
 import money from "/temaki_money-hand.png";
 import frame2 from "/Frame 2.png";
 import { Link } from "react-router";
+import useMetaArgs from "@/hooks/UseMeta";
 
 const HomePage = () => {
+    useMetaArgs({
+      title: "Home - Worknest",
+      description:
+        "Home to your Worknest account to start looking for your dream job.",
+      keywords: "Worknest, Home, account",
+    });
   const [active, setActive] = useState(0);
 
   const jobs = [
