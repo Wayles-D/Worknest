@@ -11,6 +11,7 @@ const AuthLayout = lazy(() => import("@/layouts/AuthLayout.jsx"));
 
 // lazy pages
 const Login = lazy(() => import("@/pages/auth/Login.jsx"));
+const AdminLogin = lazy(() => import("@/pages/auth/AdminLogin.jsx"));
 const Signup = lazy(() => import("@/pages/auth/Signup.jsx"));
 const ForgotPassword = lazy(() => import("@/pages/auth/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("@/pages/auth/ResetPassword.jsx"));
@@ -21,13 +22,15 @@ const AboutUs = lazy(() => import("@/pages/AboutUs.jsx"));
 const ContactUs = lazy(() => import("@/pages/ContactUs.jsx"));
 const DashboardHome = lazy(() => import("@/pages/dashboard/DashboardHome.jsx"));
 const AdminJobs = lazy(() => import("@/pages/dashboard/AdminJobs.jsx"));
-const AdminApplications = lazy(() =>
-  import("@/pages/dashboard/AdminApplications.jsx")
+const AdminApplications = lazy(
+  () => import("@/pages/dashboard/AdminApplications.jsx"),
 );
 const Profile = lazy(() => import("@/pages/Profile.jsx"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy.jsx"));
 const TermsOfService = lazy(() => import("@/pages/TermsOfService.jsx"));
-const CandidateApplicationForm = lazy(() => import("@/pages/CandidateApplicationForm.jsx"));
+const CandidateApplicationForm = lazy(
+  () => import("@/pages/CandidateApplicationForm.jsx"),
+);
 const MyApplications = lazy(() => import("@/pages/MyApplication.jsx"));
 const SavedJobs = lazy(() => import("@/pages/SavedJobs.jsx"));
 
@@ -47,6 +50,7 @@ export const router = createBrowserRouter([
       { path: "forgot-password", element: <ForgotPassword /> },
       { path: "reset-password", element: <ResetPassword /> },
       { path: "verify", element: <Verify /> },
+      { path: "admin/login", element: <AdminLogin /> },
     ],
   },
   {
@@ -67,7 +71,7 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
-{
+      {
         path: "profile",
         element: (
           <Suspense fallback={<SuspenseUi />}>
@@ -169,13 +173,13 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "application",
+        path: "applications",
         element: (
           <Suspense fallback={<SuspenseUi />}>
             <AdminApplications />
           </Suspense>
         ),
       },
-   ],
+    ],
   },
 ]);

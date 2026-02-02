@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { useJobs } from "@/hooks/useJobs";
 import JobCard from "@/components/JobCard";
+import useMetaArgs from "@/hooks/UseMeta";
 
 export default function Jobs() {
+    useMetaArgs({
+      title: "Job - Worknest",
+      description:
+        "Jobs - start looking for your dream job.",
+      keywords: "Worknest, Job, career, dream, job, money, account",
+    });
   const [filters, setFilters] = useState({
     jobType: "",
     industry: "",
