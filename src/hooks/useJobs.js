@@ -5,5 +5,6 @@ export function useJobs(filters) {
   return useQuery({
     queryKey: ["jobs", filters],
     queryFn: () => fetchJobs(filters),
+    keepPreviousData: true,
   });
 }

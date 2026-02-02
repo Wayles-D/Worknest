@@ -5,16 +5,15 @@ import { Search, MapPin } from "lucide-react";
 import useMetaArgs from "@/hooks/UseMeta";
 
 export default function Jobs() {
-    useMetaArgs({
-      title: "Job - Worknest",
-      description:
-        "Jobs - start looking for your dream job.",
-      keywords: "Worknest, Job, career, dream, job, money, account",
-    });
+  useMetaArgs({
+    title: "Job - Worknest",
+    description: "Jobs - start looking for your dream job.",
+    keywords: "Worknest, Job, career, dream, job, money, account",
+  });
   const [filters, setFilters] = useState({
-    jobType: "",
-    industry: "",
-    salaryRange: "",
+    jobType: [],
+    industry: [],
+    salaryRange: [],
     search: "",
     location: "",
   });
@@ -29,26 +28,22 @@ export default function Jobs() {
   // because API returns { jobs, total, page, limit }
   const jobs = data?.jobs || [];
 
-  const handleTypeChange = (value) => {
-    setFilters((prev) => ({
-      ...prev,
-      jobType: prev.jobType === value ? "" : value,
-    }));
+  const toggleFilter = (key, value) => {
+    setFilters((prev) => {
+      const current = prev[key];
+      const isSelected = current.includes(value);
+      return {
+        ...prev,
+        [key]: isSelected
+          ? current.filter((item) => item !== value)
+          : [...current, value],
+      };
+    });
   };
 
-  const handleIndustryChange = (value) => {
-    setFilters((prev) => ({
-      ...prev,
-      industry: prev.industry === value ? "" : value,
-    }));
-  };
-
-  const handleSalaryChange = (value) => {
-    setFilters((prev) => ({
-      ...prev,
-      salaryRange: prev.salaryRange === value ? "" : value,
-    }));
-  };
+  const handleTypeChange = (value) => toggleFilter("jobType", value);
+  const handleIndustryChange = (value) => toggleFilter("industry", value);
+  const handleSalaryChange = (value) => toggleFilter("salaryRange", value);
 
   const handleSearch = () => {
     setFilters((prev) => ({
@@ -58,7 +53,7 @@ export default function Jobs() {
     }));
   };
 
-  if (isLoading) return <p>Loading jobs...</p>;
+  // if (isLoading) return <p>Loading jobs...</p>;
 
   return (
     <div className="flex flex-col gap-12">
@@ -112,6 +107,7 @@ export default function Jobs() {
             </div>
 
             <button
+              type="button"
               onClick={handleSearch}
               className="w-full md:w-auto px-10 py-4 bg-[#F57450] text-white font-bold rounded-xl hover:bg-[#E06440] transition-all shadow-lg shadow-[#F57450]/20 whitespace-nowrap"
             >
@@ -142,7 +138,7 @@ export default function Jobs() {
               >
                 <input
                   type="checkbox"
-                  checked={filters.jobType === type}
+                  checked={filters.jobType.includes(type)}
                   onChange={() => handleTypeChange(type)}
                   className="w-4 h-4 rounded border-gray-300 text-[#F57450] focus:ring-[#F57450]"
                 />
@@ -171,7 +167,7 @@ export default function Jobs() {
               >
                 <input
                   type="checkbox"
-                  checked={filters.industry === industry}
+                  checked={filters.industry.includes(industry)}
                   onChange={() => handleIndustryChange(industry)}
                   className="w-4 h-4 rounded border-gray-300 text-[#F57450] focus:ring-[#F57450]"
                 />
@@ -200,7 +196,7 @@ export default function Jobs() {
               >
                 <input
                   type="checkbox"
-                  checked={filters.salaryRange === salary}
+                  checked={filters.salaryRange.includes(salary)}
                   onChange={() => handleSalaryChange(salary)}
                   className="w-4 h-4 rounded border-gray-300 text-[#F57450] focus:ring-[#F57450]"
                 />

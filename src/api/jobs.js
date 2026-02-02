@@ -15,24 +15,41 @@ export function fetchJobs({
       let result = [...rawJobs];
 
       // Filtering by Job Type
-      if (jobType) {
-        result = result.filter((job) => job.jobType === jobType);
+      if (jobType && jobType.length > 0) {
+        if (Array.isArray(jobType)) {
+          result = result.filter((job) => jobType.includes(job.jobType));
+        } else {
+          result = result.filter((job) => job.jobType === jobType);
+        }
       }
 
       // Filtering by Industry
-      if (industry) {
-        result = result.filter((job) => job.industry === industry);
+      if (industry && industry.length > 0) {
+        if (Array.isArray(industry)) {
+          result = result.filter((job) => industry.includes(job.industry));
+        } else {
+          result = result.filter((job) => job.industry === industry);
+        }
       }
 
       // Filtering by Salary Range (Exact match based on string in schema)
-
-      if (salaryRange) {
-        result = result.filter((job) => job.salaryRange === salaryRange);
+      if (salaryRange && salaryRange.length > 0) {
+        if (Array.isArray(salaryRange)) {
+          result = result.filter((job) =>
+            salaryRange.includes(job.salaryRange)
+          );
+        } else {
+          result = result.filter((job) => job.salaryRange === salaryRange);
+        }
       }
 
       // Filtering by Status
-      if (status) {
-        result = result.filter((job) => job.status === status);
+      if (status && status.length > 0) {
+        if (Array.isArray(status)) {
+          result = result.filter((job) => status.includes(job.status));
+        } else {
+          result = result.filter((job) => job.status === status);
+        }
       }
 
       // Search by Keyword (Title)
