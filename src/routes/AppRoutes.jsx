@@ -123,6 +123,22 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: "/my-applications",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <MyApplications />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/saved-jobs",
+        element: (
+          <Suspense fallback={<SuspenseUi />}>
+            <SavedJobs />
+          </Suspense>
+        ),
+      },
     ],
   },
 
