@@ -4,6 +4,7 @@ export function fetchJobs({
   jobType,
   industry,
   salaryRange,
+  location: locationFilter,
   status,
   search,
   page = 1,
@@ -24,6 +25,7 @@ export function fetchJobs({
       }
 
       // Filtering by Salary Range (Exact match based on string in schema)
+
       if (salaryRange) {
         result = result.filter((job) => job.salaryRange === salaryRange);
       }
@@ -38,6 +40,14 @@ export function fetchJobs({
         const query = search.toLowerCase();
         result = result.filter((job) =>
           job.title.toLowerCase().includes(query)
+        );
+      }
+
+      // Search by Location
+      if (locationFilter) {
+        const query = locationFilter.toLowerCase();
+        result = result.filter((job) =>
+          job.location.toLowerCase().includes(query)
         );
       }
 

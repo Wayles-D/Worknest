@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Plus,
-  Edit2,
-  Search,
-  Filter,
-  ChevronDown,
-  Eye,
-  X,
-} from "lucide-react";
+import { Plus, Edit2, Search, Filter, ChevronDown, Eye, X } from "lucide-react";
 import JobForm from "@/components/dashboard/JobForm";
 import { jobs as initialJobs } from "@/data/jobs";
 import { toast } from "sonner";
@@ -116,7 +108,7 @@ const AdminJobs = () => {
         </div>
         <button
           onClick={handleCreateNew}
-          className="flex items-center gap-2 bg-[var(--sidebar-active-color)] text-white px-5 py-2.5 rounded-lg font-medium hover:bg-black/90 transition-all"
+          className="flex items-center gap-2 bg-(--sidebar-active-color) text-white px-5 py-2.5 rounded-lg font-medium hover:bg-black/90 transition-all font-inter"
         >
           <Plus size={18} />
           Create Job
