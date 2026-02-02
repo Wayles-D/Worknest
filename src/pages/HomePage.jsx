@@ -35,53 +35,22 @@ const HomePage = () => {
 
   console.log(jobs);
 
-    useMetaArgs({
-      title: "Home - Worknest",
-      description:
-        "Home to your Worknest account to start looking for your dream job.",
-      keywords: "Worknest, Home, account",
-    });
-  const [active, setActive] = useState(0);
+  useMetaArgs({
+    title: "Home - Worknest",
+    description:
+      "Home to your Worknest account to start looking for your dream job.",
+    keywords: "Worknest, Home, account",
+  });
 
-  const jobs = [
-    {
-      image: monie,
-      position: "Senior Product Designer",
-      status: "New",
-      jobType: "Full-time",
-      company: "Moniepoint Group, Nigeria",
-      location: "Remote",
-      payRange: "₦200K - ₦350k",
-    },
-
-    {
-      image: palmpay,
-      position: "Full Stack Developer",
-      jobType: "Full-time",
-      company: "Palmpay, Nigeria ",
-      location: "Ebute Island",
-      payRange: "₦300K - ₦380k",
-    },
-
-    {
-      image: canon,
-      position: "UX Designer ",
-      status: "New",
-      jobType: "Full-time",
-      company: "Canonical, Nigeria",
-      location: "Remote",
-      payRange: "₦150K - ₦250k",
-    },
-  ];
   return (
     <div className="sm:mt-[91px] mt-[40px]">
-      <div className="grid lg:grid-cols-2 items-center sm:justify-between gap-10">
+      <div className="lg:px-[100px] px-4 sm:px-6 grid lg:grid-cols-2 items-center sm:justify-between gap-10">
         <div className="w-full lg:w-[549px]  flex flex-col gap-12">
           <div className="flex flex-col items-start gap-5 sm:gap-[42px]">
             <p className="bg-[#FEEEEA] text-[14px] py-2.5 px-5 w-[227px] rounded-[15px] text-[#000000] font-medium">
               OVER 5,O00+ ACTIVE JOBS
             </p>
-            <h1 className="sm:text-[48px] lg:text-[65px] text-[42px] font-extrabold sm:leading-[70px]  leading-[50px] text-[#000000]">
+            <h1 className="sm:text-[65px]  text-[38px] font-extrabold sm:leading-[70px]  leading-[50px] text-[#000000]">
               Unlock your next
               <span className="text-[#F86021]"> career milestone</span>
             </h1>
@@ -136,7 +105,7 @@ const HomePage = () => {
         className="flex flex-col gap-[80px] mt-[89px]
 "
       >
-        <div className="flex flex-col gap-[63px] py-[60px] px-[72px]">
+        <div className="lg:px-[100px] px-4 sm:px-6  flex flex-col gap-[63px] py-[60px] px-[72px]">
           <div className="items-center mx-auto flex flex-col gap-[14px] sm:w-[438px] w-full">
             <h4 className="sm:text-[40px] text-[26px] font-semibold whitespace-nowrap">
               How it works for job seekers
@@ -145,7 +114,7 @@ const HomePage = () => {
               The journey to a better career starts here
             </p>
           </div>
-          <div className="sm:grid sm:grid-cols-3 gap-6 md:gap-10 items-center flex flex-row sm:flex-none overflow-x-auto snap-x snap-mandatory">
+          <div className="sm:grid sm:grid-cols-3 gap-6 md:gap-10 items-center flex flex-row sm:flex-none overflow-x-auto snap-x snap-mandatory scrollbar">
             <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
               <div className="bg-[#D1DDF4] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <Search className="text-[#1C3FCB]  w-[18px] h-[18px]" />
@@ -187,9 +156,16 @@ const HomePage = () => {
               </p>
             </div>
           </div>
+
+          {/* dots – mobile only */}
+          <div className="flex justify-center gap-2 mt-6 sm:hidden">
+            <span className="h-2 w-4 rounded-full bg-black" />
+            <span className="h-2 w-2 rounded-full bg-gray-300" />
+            <span className="h-2 w-2 rounded-full bg-gray-300" />
+          </div>
         </div>
 
-        <div className="flex flex-col gap-[50px] ">
+        <div className="flex flex-col gap-[50px] lg:px-[100px] px-4 sm:px-6 ">
           <div className="flex justify-between items-center">
             <h4 className="sm:text-[36px] text-[20px] font-semibold ">
               Explore Categories
@@ -258,10 +234,8 @@ const HomePage = () => {
       </div>
       {/*  */}
 
-      <hr
-        className=" sm:hidden block border mt-15 border-[#d7d7d7]"
-      />
-      <div className="sm:mt-[132px]  mt-[60px] space-y-[55px] ">
+      <hr className=" sm:hidden block border mt-15 border-[#d7d7d7]" />
+      <div className="sm:mt-[132px]  mt-[60px] space-y-[55px] lg:px-[100px] px-4 sm:px-6  ">
         <div className="space-y-[45px]">
           <div className="flex flex-col gap-[21px]  text-center ">
             <h4 className="sm:text-[40px] text-[30px] font-bold">
@@ -339,7 +313,7 @@ const HomePage = () => {
       </div>
       {/*  */}
 
-      <div className="flex lg:flex-row flex-col sm:items-start items-center sm:gap-[153px] gap-[40px] sm:mt-[146px] mt-[100px]">
+      <div className="lg:px-[100px] px-4 sm:px-6  flex lg:flex-row flex-col sm:items-start items-center sm:gap-[153px] gap-[40px] sm:mt-[146px] mt-[100px]">
         <div className="lg:w-[557px] w-full gap-[39px] flex flex-col">
           <h4 className="sm:text-[40px] lg:text-start sm:text-center text-[25px] font-bold leading-[100%] ">
             Empowering tools for the modern job hunter
@@ -414,20 +388,20 @@ const HomePage = () => {
 
       {/*  */}
 
-      <div className="mt-[124px] bg-[#000000]  py-[67px] rounded-[30px]">
+      <div className="mt-[124px] lg:mx-[100px] mx-4 sm:mx-6  bg-[#000000]  py-[67px] rounded-[30px]">
         <div className="lg:w-[854px]  mx-auto  flex flex-col gap-[48px]">
           <div className=" text-center space-y-5">
-            <h4 className=" lg:text-[48px] sm:text-[38px] text-[30px] font-extrabold text-white leding-[100%] sm:whitespace-nowrap">
+            <h4 className=" lg:text-[48px] sm:text-[35px] text-[35px] font-extrabold text-white leding-[100%] sm:whitespace-nowrap">
               Ready to find your{" "}
               <span className="text-[#F85E1E]">next career</span> step?
             </h4>
-            <p className="text-[#FFFDFD] text-center sm:text-[23px] text-[18px] leading-[38px] md:px-20 lg:px-[30px] sm:px-9 ">
+            <p className="text-[#FFFDFD] text-center sm:text-[23px] text-[18px] leading-[38px] px-2 md:px-15 lg:px-[30px]  ">
               Create your profile and let our platform curators match you with
               verified, high-quality opportunities
             </p>
           </div>
 
-          <button className="text-[24px] font-semibold leading-[100%] bg-[#F85E1E] py-[17px] px-[34px] rounded-[10px] mx-auto cursor-pointer flex text-white ">
+          <button className="sm:text-[24px] text-[18px] font-semibold leading-[100%] bg-[#F85E1E] py-[17px] px-[34px] rounded-[10px] mx-auto cursor-pointer flex text-white ">
             Explore All Jobs
           </button>
         </div>
