@@ -2,7 +2,7 @@ import { Menu, Bell, Search, ChevronDown } from "lucide-react";
 
 export default function AdminTopBar({ onMenuClick }) {
   return (
-    <header className="bg-white shadow-sm h-16 border-b px-6 flex items-center justify-between">
+    <header className="bg-white shadow-sm h-16 px-6 flex items-center justify-between">
       
         <div className="flex items-center gap-4">
           {/* mobile menu */}
@@ -23,7 +23,7 @@ export default function AdminTopBar({ onMenuClick }) {
           </div>
         </div>
         {/* Right actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <Bell size={18} />
           <div className="flex items-center gap-2 cursor-pointer">
             <img
