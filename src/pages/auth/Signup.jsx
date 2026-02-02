@@ -51,9 +51,9 @@ export default function Signup({ toggle }) {
   };
   return (
     <section>
-      <div>
+      <div className="py-4 md:py-12">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-2 text-blue-950">
+          <div className="flex flex-col gap-2">
             <h1 className="text-2xl md:text-3xl font-semibold w-xs text-center md:text-start">
               Find Your Job On Worknest
             </h1>
@@ -113,21 +113,23 @@ export default function Signup({ toggle }) {
 
             <label htmlFor="terms" className="text-sm text-gray-600">
               I agree to the{" "}
-              <a
-                href="/terms"
+              <Link
+                href="/terms-of-service"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="text-orange-500 underline"
               >
                 Terms of Service
-              </a>{" "}
+              </Link>{" "}
               &{" "}
-              <a
-                href="/privacy"
+              <Link
+                href="/privacy-policy"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="text-orange-500 underline"
               >
                 Privacy Policy
-              </a>
+              </Link>
             </label>
           </div>
           {errors.agreeToTerms && (
@@ -156,7 +158,7 @@ export default function Signup({ toggle }) {
           >
          <img src="/gog.svg" className="w-5 h-5 mr-2" alt="google" /> Continue with Google
           </button>
-        <div className="text-blue-950 text-sm text-center mt-2">
+        <div className="text-sm text-center mt-2">
           <Link to="/auth/login">
             Already have an account?{"   "} 
             <button

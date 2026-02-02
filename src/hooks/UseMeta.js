@@ -39,7 +39,7 @@ export default function useMetaArgs(args) {
     // Clean up on unmount
     return () => {
       if (title) {
-        document.title = "Alulu - Invest In Your Future";
+        document.title = "Worknest - Find Your Dream Job";
       }
       if (description) {
         const metaDescription = document.querySelector(

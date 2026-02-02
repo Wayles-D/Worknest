@@ -12,10 +12,8 @@ export default function MainLayouts() {
         </div>
       </header>
 
-      <main>
-        <div className="container pt-25">
-          <Outlet />
-        </div>
+      <main className="pt-25">
+        <Outlet />
       </main>
 
       <footer>

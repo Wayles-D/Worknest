@@ -8,8 +8,10 @@
 /* @plugin "daisyui" */
 
 @theme {
-  /* --color- */
-}
+   --color-primary: #FFE2D6;
+   --sidebar-color: #0A0A0A;
+   --sidebar-active-color: #F57450
+};
 
 * {
   scroll-behavior: smooth;
@@ -132,4 +134,9 @@ body {
   background: rgba(255, 255, 255, 0.5);
   opacity: 1;
 }
+
+.swiper-pagination-bullet-active {
+  background: #f75f20;
+}
+
 

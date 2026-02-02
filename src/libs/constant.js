@@ -1,4 +1,4 @@
-import { User, FileText, Bookmark,} from "lucide-react";
+import { User, FileText, Bookmark, LockKeyhole,} from "lucide-react";
 
 
 export const navLink = [
@@ -14,16 +14,18 @@ export const navAuthLink = [
 ];
 
 export const profileLinks = [
-  { name: "Profile", path: "/dashboard/profile", icon: User },
-  { name: "Applications", path: "/dashboard/applications", icon: FileText },
-  { name: "Saved Jobs", path: "/dashboard/jobs", icon: Bookmark },
+  { name: "Profile", path: "/profile", icon: User },
+  { name: "Applications", path: "/dashboard/my-applications", icon: FileText },
+  { name: "Saved Jobs", path: "/dashboard/saved-jobs", icon: Bookmark },
+  // { name: "My Applications", path: "/dashboard/my-applications", icon: Bookmark },
+  { name: "Change Password", path: "/auth/reset-password", icon: LockKeyhole},
 ];
 
 export const footerJobs = [
   { name: "Browse Jobs", path: "/jobs" },
   { name: "Job Applications", path: "/dashboard/applications" },
   { name: "Upload Resume", path: "/dashboard/applications" },
-  { name: "Job Alerts", path: "/dashboard/DashboardHome" },
+  { name: "Job Alerts", path: "/dashboard" },
 ]
 
 export const footerCompany = [

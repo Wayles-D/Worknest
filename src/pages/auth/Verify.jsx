@@ -91,10 +91,8 @@ export default function Verify() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    mutation.mutate({ verificationToken, accessToken });    
+    mutation.mutate({ verificationToken, accessToken });
   };
-  
-
 
   const handleResendCode = async (e) => {
     e.preventDefault();

@@ -22,6 +22,7 @@ import frame2 from "/Frame 2.png";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchJobs } from "@/api/fetchJobs";
+import useMetaArgs from "@/hooks/UseMeta";
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,6 +35,44 @@ const HomePage = () => {
 
   console.log(jobs);
 
+    useMetaArgs({
+      title: "Home - Worknest",
+      description:
+        "Home to your Worknest account to start looking for your dream job.",
+      keywords: "Worknest, Home, account",
+    });
+  const [active, setActive] = useState(0);
+
+  const jobs = [
+    {
+      image: monie,
+      position: "Senior Product Designer",
+      status: "New",
+      jobType: "Full-time",
+      company: "Moniepoint Group, Nigeria",
+      location: "Remote",
+      payRange: "₦200K - ₦350k",
+    },
+
+    {
+      image: palmpay,
+      position: "Full Stack Developer",
+      jobType: "Full-time",
+      company: "Palmpay, Nigeria ",
+      location: "Ebute Island",
+      payRange: "₦300K - ₦380k",
+    },
+
+    {
+      image: canon,
+      position: "UX Designer ",
+      status: "New",
+      jobType: "Full-time",
+      company: "Canonical, Nigeria",
+      location: "Remote",
+      payRange: "₦150K - ₦250k",
+    },
+  ];
   return (
     <div className="sm:mt-[91px] mt-[40px]">
       <div className="grid lg:grid-cols-2 items-center sm:justify-between gap-10">
