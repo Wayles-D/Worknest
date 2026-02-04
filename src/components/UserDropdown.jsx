@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { profileLinks } from "@/libs/constant";
-import { useAuth } from "@/store/AuthProvider";
+import { useAuth } from "@/store";
 import { ChevronDown, LogOut} from "lucide-react";
 
 export default function UserDropdown() {

@@ -2,6 +2,7 @@ import { resetPassword } from "@/api/api";
 import ErrorAlert from "@/components/ErrorAlert";
 import FieldBody from "@/components/FieldBody";
 import useMetaArgs from "@/hooks/UseMeta";
+import { useAuth } from "@/store";
 import { validateResetPasswordSchema } from "@/utils/dataSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -24,6 +25,7 @@ export default function ResetPassword() {
     resolver: zodResolver(validateResetPasswordSchema),
   });
   const [error, setError] = useState(null);
+  const { user } = useAuth;
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   // look for values on our url bar
@@ -33,12 +35,19 @@ export default function ResetPassword() {
   const mutation = useMutation({
     mutationFn: resetPassword,
     onSuccess: (response) => {
-      toast.success(response?.data?.message);
-      navigate("/auth/signin");
+      toast.success(
+        response?.data?.data?.message || "Password reset successfully",
+      );
+      if (user?.role === "admin") {
+        navigate("/auth/admin/login");
+      } else {
+        navigate("/auth/login");
+      }
     },
     onError: (error) => {
       import.meta.env.DEV && console.log(error);
       setError(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Password reset failed");
     },
   });
   const onSubmit = (data) => {

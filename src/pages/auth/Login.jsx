@@ -7,9 +7,9 @@ import ErrorAlert from "@/components/ErrorAlert";
 import { validatedSignInSchema } from "@/utils/dataSchema";
 import useMetaArgs from "@/hooks/UseMeta";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "@/api/api";
+import { useAuth } from "@/store";
 import { toast } from "sonner";
-import { useAuth } from "@/store/index";
+import { loginUser } from "@/api/api";
 
 export default function Login() {
   useMetaArgs({
@@ -33,15 +33,19 @@ export default function Login() {
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (response) => {
-      toast.success(response?.data?.message || "Login successful");
+      console.log(response)
+      toast.success(response?.data?.data?.message || "Login successful");
       setAccessToken(response?.data?.data?.accessToken);
       if (user && !user?.isVerified) {
         navigate("/auth/verify");
+      } else {
+        navigate("/")
       }
     },
     onError: (error) => {
       import.meta.env.DEV && console.log(error);
       setError(error?.response?.data?.message || "Login failed");
+      toast.error(error?.response?.data?.message || "Login failed");
     },
   });
 
