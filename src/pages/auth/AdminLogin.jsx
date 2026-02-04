@@ -30,15 +30,18 @@ export default function AdminLogin() {
   const mutation = useMutation({
     mutationFn: loginAdmin,
     onSuccess: (response) => {
-      toast.success(response?.data?.message || "Login successful");
+      toast.success(response?.data?.data?.message || "Login successful");
       setAccessToken(response?.data?.data?.accessToken);
       if (user && !user?.isVerified) {
         navigate("/auth/verify");
+      } else {
+        navigate("/admin")
       }
     },
     onError: (error) => {
       import.meta.env.DEV && console.log(error);
-      setError(error?.response?.data?.message || "Login failed");
+      setError(error?.response?.data?.data?.message || "Login failed");
+       toast.error(error?.response?.data?.data?.message || "Login failed");
     },
   });
 

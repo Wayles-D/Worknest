@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router";
 import useMetaArgs from "@/hooks/UseMeta";
 import { resendVerificationCode, verifyAccount } from "@/api/api";
 import ErrorAlert from "@/components/ErrorAlert";
-import { useAuth } from "@/store/index";
+import { useAuth } from "@/store";
 
 export default function Verify() {
   useMetaArgs({
@@ -32,6 +32,7 @@ export default function Verify() {
       const remaining = Math.max(0, endTime - now);
 
       if (remaining > 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTimer(remaining);
         setIsResendDisabled(true);
       } else {
@@ -44,6 +45,7 @@ export default function Verify() {
     let interval;
     // Stop the timer if verification was successful
     if (timer > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsResendDisabled(true);
       interval = setInterval(() => {
         setTimer((prev) => {
@@ -108,10 +110,10 @@ export default function Verify() {
     sendResendToken.mutate(accessToken);
   };
   const redirect = () => {
-    if (user?.role === "applicant") {
-      navigate("/jobs");
+    if (user?.role === "admin") {
+      navigate("/admin");
     } else {
-      navigate("/dashboard");
+      navigate("/");
     }
   };
 

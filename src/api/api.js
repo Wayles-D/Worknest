@@ -14,9 +14,17 @@ export const getAuthenticatedUser = async (accessToken) => {
 
 export const refreshAccessToken = async () => {
   return await axiosInstance.post("/auth/refresh-token", {
-    withCredentials: true, //inject cookie value automatically to the server
+    withCredentials: true,
   });
 };
+
+export const logoutUser = async (accessToken) => {
+  return await axiosInstance.post("/auth/logout", {}, {
+    ...headers(accessToken),
+    withCredentials: true,
+  });
+};
+
 
 export const verifyAccount = async ({ verificationToken, accessToken }) => {
   return await axiosInstance.patch(

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import { NavLink, useNavigate } from "react-router";
 import { profileLinks, navLink, navAuthLink } from "@/libs/constant";
-import { useAuth } from "@/store/AuthProvider";
+import { useAuth } from "@/store";
 
 export default function Drawer() {
   const { user, logout } = useAuth();

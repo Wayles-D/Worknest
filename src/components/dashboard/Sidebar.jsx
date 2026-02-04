@@ -1,6 +1,7 @@
 import { NavLink, Link } from "react-router";
 import { LayoutDashboard, Briefcase, FileText, Settings, LogOut } from "lucide-react";
 import Logo from "../Logo";
+import Logout from "../Logout";
 
 export default function Sidebar({ isOpen, onClose }) {
   const navItems = [
@@ -61,15 +62,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 Settings
               </Link>
             </div>
-            <div className="px-4 py-3 flex items-center gap-3">
-                <LogOut size={20} className="" />
-              <Link
-                to="/admin/logout"
-                className="text-sm text-white font-medium hover:text-gray-300"
-              >
-                Logout
-              </Link>
-            </div>
+           <Logout/>
           </div>
         </div>
       </aside>
