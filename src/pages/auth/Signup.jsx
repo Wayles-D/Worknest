@@ -5,10 +5,10 @@ import FieldBody from "@/components/FieldBody";
 import { validatedSignUpSchema } from "@/utils/dataSchema";
 import { Link, useNavigate } from "react-router";
 import ErrorAlert from "@/components/ErrorAlert";
-import { useAuth } from "@/store/index";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/api/api";
 import { toast } from "sonner";
+import { useAuth } from "@/store";
 
 export default function Signup({ toggle }) {
   const [error, setError] = useState(null);
@@ -27,13 +27,13 @@ export default function Signup({ toggle }) {
 
   const termsAgreed = watch("agreeToTerms");
 
-   const { setAccessToken, user } = useAuth();
+  const { setAccessToken, user } = useAuth();
   const navigate = useNavigate();
   const mutation = useMutation({
     mutationFn: registerUser,
     onSuccess: (response) => {
       //what you want to do if api call is a success
-      toast.success(response?.data?.message || "Registration successful");
+      toast.success(response?.data?.data?.message || "Registration successful");
       //save accessToken
       setAccessToken(response?.data?.data?.accessToken);
       if (user && !user?.isVerified) {
@@ -42,12 +42,13 @@ export default function Signup({ toggle }) {
     },
     onError: (error) => {
       console.error(error);
-      setError(error?.response?.data?.message || "Registration failed");
+      setError(error?.response?.data?.data?.message || "Registration failed");
+      toast.error(error?.response?.data?.data?.message || "Registration failed");
     },
   });
 
   const onSubmit = (data) => {
-    mutation.mutate(data)
+    mutation.mutate(data);
   };
   return (
     <section>
@@ -133,7 +134,9 @@ export default function Signup({ toggle }) {
             </label>
           </div>
           {errors.agreeToTerms && (
-            <p className="text-red-500 text-sm mt-2">{errors.agreeToTerms.message}</p>
+            <p className="text-red-500 text-sm mt-2">
+              {errors.agreeToTerms.message}
+            </p>
           )}
 
           <button
@@ -141,7 +144,9 @@ export default function Signup({ toggle }) {
             className="btn bg-[rgba(247,95,32,1)] text-white mt-4 w-full rounded-lg h-11 hover:bg-[rgba(247,95,32,0.8)] flex items-center justify-center cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={mutation.isPending || isSubmitting || !termsAgreed}
           >
-            {mutation.isPending || isSubmitting ? "Creating..." : "Create Account"}
+            {mutation.isPending || isSubmitting
+              ? "Creating..."
+              : "Create Account"}
           </button>
         </form>
         {/* or */}
@@ -151,16 +156,17 @@ export default function Signup({ toggle }) {
           <div className="flex-1 h-px bg-gray-300" />
         </div>
         {/* google */}
-           <button
-            type="button"
-            className="btn border border-[rgba(247,95,32,1)] text-[rgba(247,95,32,1)] mt-4 w-full rounded-lg h-11 hover:bg-[#FFA366] hover:text-white flex items-center justify-center cursor-pointer transition-all duration-300"
-            disabled={isSubmitting}
-          >
-         <img src="/gog.svg" className="w-5 h-5 mr-2" alt="google" /> Continue with Google
-          </button>
+        <button
+          type="button"
+          className="btn border border-[rgba(247,95,32,1)] text-[rgba(247,95,32,1)] mt-4 w-full rounded-lg h-11 hover:bg-[#FFA366] hover:text-white flex items-center justify-center cursor-pointer transition-all duration-300"
+          disabled={isSubmitting}
+        >
+          <img src="/gog.svg" className="w-5 h-5 mr-2" alt="google" /> Continue
+          with Google
+        </button>
         <div className="text-sm text-center mt-2">
           <Link to="/auth/login">
-            Already have an account?{"   "} 
+            Already have an account?{"   "}
             <button
               type="button"
               onClick={toggle}
