@@ -23,8 +23,8 @@ export const profileLinks = [
 
 export const footerJobs = [
   { name: "Browse Jobs", path: "/jobs" },
-  { name: "Job Applications", path: "/my-applications" },
-  { name: "Upload Resume", path: "/my-applications" },
+  { name: "Job Applications", path: "/applications" },
+  { name: "Upload Resume", path: "/applications" },
   { name: "Job Alerts", path: "/dashboard" },
 ]
 

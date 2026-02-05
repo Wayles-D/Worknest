@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchJobs } from "@/api/jobs";
+import { getAllJobs } from "@/api/api";
+import { useAuth } from "@/store";
 
 export function useJobs(filters) {
   return useQuery({
     queryKey: ["jobs", filters],
-    queryFn: () => fetchJobs(filters),
+    queryFn: () => getAllJobs(),
+    keepPreviousData: true,
   });
 }

@@ -20,7 +20,7 @@ export default function DashboardLayout() {
       )}
 
       {/* Right section */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col lg:ml-64">
         <AdminTopBar onMenuClick={() => setSidebarOpen(true)} />
         {/* main content area */}
         <main className="flex-1 bg-[#F4F4F4] p-6">
@@ -33,7 +33,7 @@ export default function DashboardLayout() {
             <Outlet />
           </div>
         </main>
-      </div> 
+      </div>
     </div>
   );
 }

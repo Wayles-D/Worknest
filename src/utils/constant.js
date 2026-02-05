@@ -16,6 +16,7 @@ export const slideShow = [
 ];
 
 export const headers = (accessToken) => {
+  if (!accessToken) return {};
   return {
     headers: {
       Authorization: `Bearer ${accessToken}`,
