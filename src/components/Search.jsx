@@ -33,12 +33,12 @@ export default function Search({ id, children }) {
     <>
       <div className="flex justify-between items-center md:gap-2 w-full md:w-auto">
         <form role="search" id={id} className="relative flex-1">
-          <label className="relative input w-full max-w-[220px]">
+          <label className="relative input w-full">
             <SearchIcon className="text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
             <input
               onChange={debouncedSubmit}
               type="search"
-              className="w-full grow border rounded-xl py-2 pl-9 pr-8"
+              className="w-full grow rounded-xl py-2 pl-9 pr-8"
               placeholder="Search Candidates...."
               name="query"
               aria-label="Search"

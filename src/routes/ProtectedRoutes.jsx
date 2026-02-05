@@ -4,55 +4,61 @@ import { useLocation, useNavigate } from "react-router";
 export function PublicRoutes({ children, accessToken, user }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const isAdminAuth = location.pathname.startsWith("/auth/admin");
-  const fallbackFrom = user?.role === "admin" || isAdminAuth ? "/admin" : "/";
-  const stateFrom = location.state?.from;
-  const from = isAdminAuth
-    ? "/admin"
-    : typeof stateFrom === "string"
-      ? stateFrom
-      : stateFrom?.pathname || fallbackFrom;
 
   useEffect(() => {
-    if (accessToken && user && !user?.isVerified) {
-      navigate("/auth/verify", { replace: true });
+    if (!accessToken || !user) return;
+
+    if (!user.isVerified) {
+      if (location.pathname !== "/auth/verify") {
+        navigate("/auth/verify", { replace: true });
+      }
       return;
     }
 
-    if (accessToken && user) {
-      navigate(from, {
-        state: { from: location },
-        replace: true,
-      });
+    const isAdminAuth = location.pathname.startsWith("/auth/admin");
+    const stateFrom = location.state?.from;
+
+    const from = isAdminAuth
+      ? user.role === "admin"
+        ? "/admin"
+        : "/" // non-admin should not go to /admin
+      : typeof stateFrom === "string"
+        ? stateFrom
+        : stateFrom?.pathname || "/";
+
+    if (location.pathname !== from) {
+      navigate(from, { state: { from: location }, replace: true });
     }
-  }, [accessToken, from, location, navigate, user]);
+  }, [accessToken, user, location, navigate]);
+
   return children;
 }
 
-export function PrivateRoutes({
-  children,
-  accessToken,
-  isAuthenticating,
-  user,
-}) {
+
+export function PrivateRoutes({ children, accessToken, isAuthenticating, user }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   useEffect(() => {
     if (isAuthenticating) return;
-    if (!accessToken) {
-      const loginPath = location.pathname.startsWith("/admin")
-        ? "/auth/admin/login"
-        : "/auth/login";
-      navigate(loginPath, {
-        state: { from: location },
-        replace: true,
-      });
+
+    const loginPath = isAdminRoute ? "/auth/admin/login" : "/auth/login";
+
+    if (!accessToken && location.pathname !== loginPath) {
+      navigate(loginPath, { state: { from: location }, replace: true });
       return;
     }
+
+    if (accessToken && user && isAdminRoute && user.role !== "admin") {
+      navigate("/", { replace: true });
+      return;
+    }
+
     if (user && !user.isVerified && location.pathname !== "/auth/verify") {
       navigate("/auth/verify", { replace: true });
     }
-  }, [accessToken, isAuthenticating, location, navigate, user]);
+  }, [accessToken, isAuthenticating, user, location, navigate, isAdminRoute]);
+
   return children;
 }
