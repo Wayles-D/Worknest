@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, } from "react-router";
 import { toast } from "sonner";
 
 export default function AdminLogin() {
@@ -25,23 +24,17 @@ export default function AdminLogin() {
     resolver: zodResolver(validatedSignInSchema),
   });
   const [error, setError] = useState(null);
-  const { setAccessToken, user } = useAuth();
-  const navigate = useNavigate();
+  const { setAccessToken } = useAuth();
   const mutation = useMutation({
     mutationFn: loginAdmin,
     onSuccess: (response) => {
       toast.success(response?.data?.data?.message || "Login successful");
       setAccessToken(response?.data?.data?.accessToken);
-      if (user && !user?.isVerified) {
-        navigate("/auth/verify");
-      } else {
-        navigate("/admin")
-      }
     },
     onError: (error) => {
       import.meta.env.DEV && console.log(error);
-      setError(error?.response?.data?.data?.message || "Login failed");
-       toast.error(error?.response?.data?.data?.message || "Login failed");
+      setError(error?.response?.data?.message || "Login failed");
+       toast.error(error?.response?.data?.message || "Login failed");
     },
   });
 

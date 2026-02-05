@@ -115,7 +115,7 @@ export default function Signup({ toggle }) {
             <label htmlFor="terms" className="text-sm text-gray-600">
               I agree to the{" "}
               <Link
-                href="/terms-of-service"
+                to="/terms-of-service"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-orange-500 underline"
@@ -124,7 +124,7 @@ export default function Signup({ toggle }) {
               </Link>{" "}
               &{" "}
               <Link
-                href="/privacy-policy"
+                to="/privacy-policy"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-orange-500 underline"

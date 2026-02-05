@@ -4,6 +4,7 @@ import SuspenseUi from "@/components/SuspenseUi.jsx";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import HomePage from "@/pages/HomePage";
 import { PrivateRoutes, PublicRoutes } from "@/routes/ProtectedRoutes";
+import { useAuth } from "@/store";
 
 // lazy layouts
 const MainLayout = lazy(() => import("@/layouts/MainLayout.jsx"));
@@ -36,13 +37,18 @@ const MyApplications = lazy(() => import("@/pages/MyApplication.jsx"));
 const SavedJobs = lazy(() => import("@/pages/SavedJobs.jsx"));
 
 export default function AppRoutes() {
+  const { accessToken, user, isAuthenticating } = useAuth();
+  const privateRouteProps = { accessToken, isAuthenticating, user };
+
   const routes = [
     {
       path: "/auth",
       element: (
-        <Suspense fallback={<SuspenseUi />}>
-          <AuthLayout />
-        </Suspense>
+        <PublicRoutes accessToken={accessToken} user={user}>
+          <Suspense fallback={<SuspenseUi />}>
+            <AuthLayout />
+          </Suspense>
+        </PublicRoutes>
       ),
       errorElement: <ErrorBoundary />,
 
@@ -92,17 +98,21 @@ export default function AppRoutes() {
         {
           path: "jobs/:id",
           element: (
-            <Suspense fallback={<SuspenseUi />}>
-              <JobDetails />
-            </Suspense>
+            <PrivateRoutes {...privateRouteProps}>
+              <Suspense fallback={<SuspenseUi />}>
+                <JobDetails />
+              </Suspense>
+            </PrivateRoutes>
           ),
         },
         {
           path: "apply/:id",
           element: (
-            <Suspense fallback={<SuspenseUi />}>
-              <CandidateApplicationForm />
-            </Suspense>
+            <PrivateRoutes {...privateRouteProps}>
+              <Suspense fallback={<SuspenseUi />}>
+                <CandidateApplicationForm />
+              </Suspense>
+            </PrivateRoutes>
           ),
         },
         {
@@ -140,17 +150,21 @@ export default function AppRoutes() {
         {
           path: "/my-applications",
           element: (
-            <Suspense fallback={<SuspenseUi />}>
-              <MyApplications />
-            </Suspense>
+            <PrivateRoutes {...privateRouteProps}>
+              <Suspense fallback={<SuspenseUi />}>
+                <MyApplications />
+              </Suspense>
+            </PrivateRoutes>
           ),
         },
         {
           path: "/saved-jobs",
           element: (
-            <Suspense fallback={<SuspenseUi />}>
-              <SavedJobs />
-            </Suspense>
+            <PrivateRoutes {...privateRouteProps}>
+              <Suspense fallback={<SuspenseUi />}>
+                <SavedJobs />
+              </Suspense>
+            </PrivateRoutes>
           ),
         },
       ],
@@ -159,9 +173,11 @@ export default function AppRoutes() {
     {
       path: "/admin",
       element: (
-        <Suspense fallback={<SuspenseUi />}>
-          <DashboardLayout />
-        </Suspense>
+        <PrivateRoutes {...privateRouteProps}>
+          <Suspense fallback={<SuspenseUi />}>
+            <DashboardLayout />
+          </Suspense>
+        </PrivateRoutes>
       ),
       errorElement: <ErrorBoundary />,
 
