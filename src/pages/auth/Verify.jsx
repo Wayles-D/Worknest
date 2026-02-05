@@ -189,16 +189,6 @@ export default function Verify() {
                   {isResendDisabled ? `Resend in ${timer}s` : "Resend Code"}
                 </button>
               </p>
-
-              <Link
-                to="/auth/forgot-password"
-                className="text-gray-600 text-sm"
-              >
-                Don’t have an account?{" "}
-                <span className="hover:underline text-[rgba(247,95,32,1)] cursor-pointer">
-                  Change email
-                </span>
-              </Link>
             </form>
           </div>
         </div>
