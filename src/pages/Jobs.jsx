@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useJobs } from "@/hooks/useJobs";
+import { getSavedJobs } from "@/api/api";
+import { useAuth } from "@/store";
+import { useQuery } from "@tanstack/react-query";
 import JobCard from "@/components/JobCard";
 import { Search, MapPin } from "lucide-react";
 import useMetaArgs from "@/hooks/UseMeta";
+import { getAllJobs } from "@/api/api";
 
 export default function Jobs() {
-  useMetaArgs({
-    title: "Job - Worknest",
-    description: "Jobs - start looking for your dream job.",
-    keywords: "Worknest, Job, career, dream, job, money, account",
-  });
+  const { accessToken } = useAuth();
   const [filters, setFilters] = useState({
     jobType: [],
     industry: [],
@@ -23,10 +23,42 @@ export default function Jobs() {
     location: "",
   });
 
-  const { data, isLoading } = useJobs(filters);
+  const { data: jobResponse, isLoading } = useJobs(filters);
+  const responseData = jobResponse?.data;
+  const jobs = Array.isArray(responseData)
+    ? responseData
+    : responseData?.data || responseData?.jobs || [];
+  const finalJobs = Array.isArray(jobs) ? jobs : jobs?.jobs || [];
 
-  // because API returns { jobs, total, page, limit }
-  const jobs = data?.jobs || [];
+  // const { data: savedJobsResponse } = useQuery({
+  //   queryKey: ["savedJobs", accessToken],
+  //   queryFn: async () => {
+  //     if (!accessToken) return null;
+  //     const res = await getSavedJobs(accessToken);
+  //     if (res.status === 200) {
+  //       const rawData = res.data.data || [];
+  //       return Array.isArray(rawData) ? rawData : rawData.jobs || [];
+  //     }
+  //     return null; // Return null if status is not 200 or data is not available
+  //   },
+  //   enabled: !!accessToken,
+  // });
+  const { data: allJobs } = useQuery({
+    queryKey: ["allJobs", accessToken],
+    queryFn: async () => {
+      if (!accessToken) return null;
+      const res = await getAllJobs(accessToken);
+      console.log(res);
+      // if (res.status === 200) {
+      //   const rawData = res.data.data || [];
+      //   return Array.isArray(rawData) ? rawData : rawData.jobs || [];
+      // }
+      return null; // Return null if status is not 200 or data is not available
+    },
+    enabled: !!accessToken,
+  });
+
+  //const savedJobIds = new Set(savedJobsResponse?.map((j) => j._id));
 
   const toggleFilter = (key, value) => {
     setFilters((prev) => {
@@ -213,13 +245,15 @@ export default function Jobs() {
           <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-2">
             <p className="text-gray-600 font-medium">
               Showing{" "}
-              <span className="text-[#F57450] font-bold">{jobs.length}</span>{" "}
+              <span className="text-[#F57450] font-bold">
+                {finalJobs.length}
+              </span>{" "}
               curated opportunities
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            {jobs.length === 0 && (
+            {finalJobs.length === 0 && (
               <div className="col-span-full py-20 text-center bg-white rounded-2xl border-2 border-dashed border-gray-100">
                 <p className="text-gray-400 text-lg">
                   No jobs found matching your criteria.
@@ -227,8 +261,12 @@ export default function Jobs() {
               </div>
             )}
 
-            {jobs.map((job) => (
-              <JobCard key={job.id} job={job} />
+            {finalJobs.map((job) => (
+              <JobCard
+                key={job._id || job.id}
+                job={job}
+                isSavedInitial={savedJobIds.has(job._id)}
+              />
             ))}
           </div>
         </div>

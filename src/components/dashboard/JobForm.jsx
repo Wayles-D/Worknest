@@ -7,23 +7,30 @@ import {
   Send,
   Trash2,
   ChevronDown,
+  Loader2,
 } from "lucide-react";
+import { createJob, updateJob } from "@/api/api";
+import { useAuth } from "@/store";
+import { toast } from "sonner";
 
 const JobForm = ({ job, onSave, onCancel }) => {
+  const { accessToken } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     jobType: "Full-time",
     location: "",
-    seniority: "Mid Level",
-    salaryRange: "",
-    company: "",
+    experienceLevel: "Mid",
+    salaryRange: { min: "", max: "" },
+    companyName: "",
     companyWebsite: "",
-    logo: "",
-    description: "",
+    companyLogo: "",
+    category: "",
+    jobDescription: "",
     responsibilities: "",
-    requirements: "",
+    requirement: "",
     benefits: "",
-    questions: [""],
+    applicationQuestions: [""],
   });
 
   useEffect(() => {
@@ -31,10 +38,12 @@ const JobForm = ({ job, onSave, onCancel }) => {
       setFormData({
         ...formData,
         ...job,
+        experienceLevel: job.experienceLevel || "Mid",
+        salaryRange: job.salaryRange || { min: "", max: "" },
         responsibilities: job.responsibilities?.join("\n") || "",
-        requirements: job.skillsAndExperience?.join("\n") || "", // Map skillsAndExperience to requirements
-        benefits: job.benefitsAndPerks?.join("\n") || "", // Map benefitsAndPerks to benefits
-        questions: job.questions || [""],
+        requirement: job.requirement?.join("\n") || "",
+        benefits: job.benefits?.join("\n") || "",
+        applicationQuestions: job.applicationQuestions || [""],
       });
     }
   }, [job]);
@@ -45,43 +54,82 @@ const JobForm = ({ job, onSave, onCancel }) => {
   };
 
   const handleQuestionChange = (index, value) => {
-    const newQuestions = [...formData.questions];
+    const newQuestions = [...formData.applicationQuestions];
     newQuestions[index] = value;
-    setFormData((prev) => ({ ...prev, questions: newQuestions }));
+    setFormData((prev) => ({ ...prev, applicationQuestions: newQuestions }));
   };
 
   const addQuestion = () => {
-    setFormData((prev) => ({ ...prev, questions: [...prev.questions, ""] }));
+    setFormData((prev) => ({
+      ...prev,
+      applicationQuestions: [...prev.applicationQuestions, ""],
+    }));
   };
 
   const removeQuestion = (index) => {
-    if (formData.questions.length > 1) {
-      const newQuestions = formData.questions.filter((_, i) => i !== index);
-      setFormData((prev) => ({ ...prev, questions: newQuestions }));
+    if (formData.applicationQuestions.length > 1) {
+      const newQuestions = formData.applicationQuestions.filter(
+        (_, i) => i !== index,
+      );
+      setFormData((prev) => ({ ...prev, applicationQuestions: newQuestions }));
     }
   };
 
-  const handleSubmit = (e, status = "Active") => {
+  const handleSalaryChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      salaryRange: {
+        ...prev.salaryRange,
+        [name]: value === "" ? "" : Number(value),
+      },
+    }));
+  };
+
+  const handleSubmit = async (e, status = "active") => {
     if (e) e.preventDefault();
-    const formattedData = {
-      ...formData,
-      status,
-      responsibilities: formData.responsibilities
-        .split("\n")
-        .filter((line) => line.trim() !== ""),
-      skillsAndExperience: formData.requirements
-        .split("\n")
-        .filter((line) => line.trim() !== ""),
-      benefitsAndPerks: formData.benefits
-        .split("\n")
-        .filter((line) => line.trim() !== ""),
-      questions: formData.questions.filter((q) => q.trim() !== ""),
-    };
-    onSave(formattedData);
+    setLoading(true);
+    try {
+      const formattedData = {
+        ...formData,
+        status: status.toLowerCase(),
+        responsibilities: formData.responsibilities
+          .split("\n")
+          .filter((line) => line.trim() !== ""),
+        requirement: formData.requirement
+          .split("\n")
+          .filter((line) => line.trim() !== ""),
+        benefits: formData.benefits
+          .split("\n")
+          .filter((line) => line.trim() !== ""),
+        applicationQuestions: formData.applicationQuestions.filter(
+          (q) => q.trim() !== "",
+        ),
+      };
+
+      let res;
+      if (job?._id) {
+        res = await updateJob(job._id, formattedData, accessToken);
+      } else {
+        res = await createJob(formattedData, accessToken);
+      }
+
+      if (res.status === 201 || res.status === 200) {
+        toast.success(
+          job ? "Job updated successfully" : "Job created successfully",
+        );
+        onSave();
+      }
+    } catch (error) {
+      console.error("Error saving job:", error);
+      toast.error(error?.response?.data?.message || "Failed to save job");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="max-w-5xl mx-auto pb-20 bg-[var(--color-primary)]">
+    <div className="max-w-5xl mx-auto pb-20 bg-primary">
       {/* Top Navigation */}
       <button
         onClick={onCancel}
@@ -124,7 +172,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="e.g. Senior Frontend Developer"
-                  className="w-full px-4 py-2.5 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   required
                 />
               </div>
@@ -138,7 +186,21 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={formData.location}
                   onChange={handleChange}
                   placeholder="e.g. New York, NY or Remote"
-                  className="w-full px-4 py-2.5 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  Category *
+                </label>
+                <input
+                  type="text"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  placeholder="e.g. Design, Development"
+                  className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   required
                 />
               </div>
@@ -155,7 +217,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                     name="jobType"
                     value={formData.jobType}
                     onChange={handleChange}
-                    className="w-full appearance-none px-4 py-2.5 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
+                    className="w-full appearance-none px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
                   >
                     <option>Full-time</option>
                     <option>Part-time</option>
@@ -174,15 +236,15 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 </label>
                 <div className="relative">
                   <select
-                    name="seniority"
-                    value={formData.seniority}
+                    name="experienceLevel"
+                    value={formData.experienceLevel}
                     onChange={handleChange}
-                    className="w-full appearance-none px-4 py-2.5 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
+                    className="w-full appearance-none px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
                   >
-                    <option>Entry Level</option>
-                    <option>Mid Level</option>
-                    <option>Senior</option>
-                    <option>Lead / Manager</option>
+                    <option value="Entry">Entry</option>
+                    <option value="Mid">Mid</option>
+                    <option value="Senior">Senior</option>
+                    <option value="Lead/Manager">Lead / Manager</option>
                   </select>
                   <ChevronDown
                     size={14}
@@ -192,16 +254,26 @@ const JobForm = ({ job, onSave, onCancel }) => {
               </div>
               <div className="space-y-1.5 md:col-span-2 lg:col-span-1">
                 <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Salary Range (optional)
+                  Salary Range (min/max)
                 </label>
-                <input
-                  type="text"
-                  name="salaryRange"
-                  value={formData.salaryRange}
-                  onChange={handleChange}
-                  placeholder="e.g. $80,000 - $120,000"
-                  className="w-full px-4 py-2.5 bg-primary  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    name="min"
+                    value={formData.salaryRange.min}
+                    onChange={handleSalaryChange}
+                    placeholder="Min"
+                    className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  />
+                  <input
+                    type="number"
+                    name="max"
+                    value={formData.salaryRange.max}
+                    onChange={handleSalaryChange}
+                    placeholder="Max"
+                    className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -225,8 +297,8 @@ const JobForm = ({ job, onSave, onCancel }) => {
               </label>
               <input
                 type="text"
-                name="company"
-                value={formData.company}
+                name="companyName"
+                value={formData.companyName}
                 onChange={handleChange}
                 placeholder="e.g. TechCorp Inc."
                 className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
@@ -252,8 +324,8 @@ const JobForm = ({ job, onSave, onCancel }) => {
               </label>
               <input
                 type="url"
-                name="logo"
-                value={formData.logo}
+                name="companyLogo"
+                value={formData.companyLogo}
                 onChange={handleChange}
                 placeholder="https://example.com/logo.png"
                 className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
@@ -277,8 +349,8 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 Job Description *
               </label>
               <textarea
-                name="description"
-                value={formData.description}
+                name="jobDescription"
+                value={formData.jobDescription}
                 onChange={handleChange}
                 placeholder="Describe the role, what the candidate will be doing..."
                 className="w-full px-4 py-3 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
@@ -302,8 +374,8 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 Requirements *
               </label>
               <textarea
-                name="requirements"
-                value={formData.requirements}
+                name="requirement"
+                value={formData.requirement}
                 onChange={handleChange}
                 placeholder="List the required skills and qualifications..."
                 className="w-full px-4 py-3 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
@@ -336,16 +408,16 @@ const JobForm = ({ job, onSave, onCancel }) => {
           </div>
 
           <div className="space-y-4">
-            {formData.questions.map((question, index) => (
+            {formData.applicationQuestions.map((question, index) => (
               <div key={index} className="flex gap-3">
                 <input
                   type="text"
                   value={question}
                   onChange={(e) => handleQuestionChange(index, e.target.value)}
                   placeholder={`Question ${index + 1}`}
-                  className="flex-1 px-4 py-2.5 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="flex-1 px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                 />
-                {formData.questions.length > 1 && (
+                {formData.applicationQuestions.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeQuestion(index)}
@@ -359,7 +431,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
             <button
               type="button"
               onClick={addQuestion}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-[var(--color-primary)] rounded-lg border border-gray-200 transition-all"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-primary rounded-lg border border-gray-200 transition-all"
             >
               <Plus size={16} />
               Add Question
@@ -371,18 +443,28 @@ const JobForm = ({ job, onSave, onCancel }) => {
         <div className="flex justify-end gap-3 pt-4">
           <button
             type="button"
-            onClick={(e) => handleSubmit(e, "Draft")}
-            className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white hover:text-black/90 bg-black/90 border border-gray-200 rounded-lg hover:bg-white transition-all"
+            disabled={loading}
+            onClick={(e) => handleSubmit(e, "inactive")}
+            className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white hover:text-black/90 bg-black/90 border border-gray-200 rounded-lg hover:bg-white transition-all disabled:opacity-50"
           >
-            <Save size={18} />
-            Save as Draft
+            {loading ? (
+              <Loader2 className="animate-spin" size={18} />
+            ) : (
+              <Save size={18} />
+            )}
+            Save as Inactive
           </button>
           <button
             type="button"
-            onClick={(e) => handleSubmit(e, "Active")}
-            className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-[var(--sidebar-active-color)] rounded-lg hover:bg-black/90 transition-all shadow-lg shadow-black/5"
+            disabled={loading}
+            onClick={(e) => handleSubmit(e, "active")}
+            className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-(--sidebar-active-color) rounded-lg hover:bg-black/90 transition-all shadow-lg shadow-black/5 disabled:opacity-50"
           >
-            <Send size={18} />
+            {loading ? (
+              <Loader2 className="animate-spin" size={18} />
+            ) : (
+              <Send size={18} />
+            )}
             Publish Job
           </button>
         </div>
