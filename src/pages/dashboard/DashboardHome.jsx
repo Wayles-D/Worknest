@@ -69,10 +69,9 @@ const DashboardHome = () => {
             Welcome back! Here's an overview of your job portal.
           </p>
         </div>
-        <button className="bg-(--sidebar-active-color) text-white px-5 py-2.5 rounded-lg font-medium hover:bg-black/90 transition-all">
+        <Link to="/dashboard/create-job" className="bg-(--sidebar-active-color) text-white px-5 py-2.5 rounded-lg font-medium hover:bg-black/90 transition-all">
           <span className="font-semibold text-[16px]">+ Create Job</span>
           </Link>
-        </button>
       </div>
 
       {/* stats */}
