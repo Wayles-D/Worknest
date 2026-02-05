@@ -1,10 +1,9 @@
-import { useParams } from "react-router";
+import { useParams, Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getJobById, saveJob, unsaveJob, getSavedJobs } from "@/api/api";
 import {
   Send,
-  CheckCircle2,
   Bookmark,
   BookmarkCheck,
   Loader2,
@@ -18,34 +17,55 @@ import officeCollab from "/office_collab.png";
 
 export default function JobDetails() {
   const { id } = useParams();
-  const { accessToken, user } = useAuth();
+  const { accessToken } = useAuth();
 
   const {
-    data: jobResponse,
+    data: job,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["job", id, accessToken],
+    queryKey: ["job", id],
     queryFn: async () => {
-      const res = await getJobById(id, accessToken);
-      const data = res.data.data;
-      return Array.isArray(data) ? data[0] : data;
+      const res = await getJobById(id);
+      // Robust mapping: check for res.data.data.data, res.data.data, or res.data directly
+      const body = res.data;
+      const rawData =
+        body?.data?.data || body?.data || body?.jobs || body?.job || body;
+
+      // If it's an array, take the first one; if it's an object with a 'jobs' property, drill down
+      const actualData = Array.isArray(rawData)
+        ? rawData[0]
+        : rawData?.jobs || rawData?.job || rawData;
+
+      // Final check: if it's an array of one, take it again
+      return Array.isArray(actualData) ? actualData[0] : actualData;
     },
   });
 
   const { data: savedJobsResponse } = useQuery({
     queryKey: ["savedJobs", accessToken],
     queryFn: async () => {
-      if (!accessToken) return null;
+      if (!accessToken) return [];
       const res = await getSavedJobs(accessToken);
-      const data = res.data.data || [];
-      return Array.isArray(data) ? data : data.jobs || [];
+      if (res.status === 200) {
+        const body = res.data;
+        const rawData = body?.data?.data || body?.data || body || [];
+        const actualSaved = Array.isArray(rawData)
+          ? rawData
+          : rawData.jobs || [];
+        return Array.isArray(actualSaved) ? actualSaved : [];
+      }
+      return [];
     },
     enabled: !!accessToken,
   });
 
-  const job = jobResponse;
-  const isSaved = savedJobsResponse?.some((j) => j._id === id);
+  const savedJobIds = new Set(
+    Array.isArray(savedJobsResponse)
+      ? savedJobsResponse.map((j) => j._id || j.id)
+      : [],
+  );
+  const isSaved = savedJobIds.has(id);
 
   const [saving, setSaving] = useState(false);
 
@@ -80,8 +100,12 @@ export default function JobDetails() {
 
   if (!job)
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
         <p className="text-xl font-semibold text-gray-800">Job not found</p>
+        <p className="text-sm text-gray-500">ID: {id}</p>
+        <Link to="/jobs" className="text-[#F57450] font-bold hover:underline">
+          Back to all jobs
+        </Link>
       </div>
     );
 
@@ -174,7 +198,7 @@ export default function JobDetails() {
                   )}
                 </button>
               </div>
-              <p className="text-[#555859] leading-normal text-lg font-medium">
+              <p className="text-[#555859] leading-[1.6] text-lg font-medium">
                 {job.jobDescription}
               </p>
             </div>
@@ -185,7 +209,12 @@ export default function JobDetails() {
                 What You'll Do
               </h2>
               <ul className="space-y-4">
-                {job.responsibilities?.map((item, index) => (
+                {(Array.isArray(job.responsibilities)
+                  ? job.responsibilities
+                  : typeof job.responsibilities === "string"
+                    ? job.responsibilities.split(",").filter(Boolean)
+                    : []
+                ).map((item, index) => (
                   <li
                     key={index}
                     className="flex gap-3 text-[#555859] text-lg font-medium leading-[1.5]"
@@ -203,10 +232,15 @@ export default function JobDetails() {
                 Skills & Experience
               </h2>
               <ul className="space-y-4">
-                {job.requirement?.map((item, index) => (
+                {(Array.isArray(job.requirement)
+                  ? job.requirement
+                  : typeof job.requirement === "string"
+                    ? job.requirement.split(",").filter(Boolean)
+                    : []
+                ).map((item, index) => (
                   <li
                     key={index}
-                    className="flex gap-3 text-[#555859] text-lg font-medium leading-normal"
+                    className="flex gap-3 text-[#555859] text-lg font-medium leading-[1.5]"
                   >
                     <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#555859] shrink-0" />
                     {item}
@@ -219,7 +253,12 @@ export default function JobDetails() {
             <div className="bg-white rounded-[32px] p-10 shadow-sm text-[#0A0A0A]">
               <h2 className="text-2xl font-bold mb-6">Benefits & Perks</h2>
               <div className="flex flex-wrap gap-3">
-                {job.benefits?.map((benefit, index) => (
+                {(Array.isArray(job.benefits)
+                  ? job.benefits
+                  : typeof job.benefits === "string"
+                    ? job.benefits.split(",").filter(Boolean)
+                    : []
+                ).map((benefit, index) => (
                   <div
                     key={index}
                     className="bg-[#FFDACF] px-5 py-2.5 rounded-full text-lg font-bold"
@@ -233,8 +272,8 @@ export default function JobDetails() {
 
           {/* Sidebar Column */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm p-4 h-fit sticky top-28">
-              <div className="relative rounded-[24px] overflow-hidden mb-8 aspect-411/300">
+            <div className="bg-white rounded-[32px] overflow-hidden shadow-sm p-4 h-fit sticky top-28">
+              <div className="relative rounded-[24px] overflow-hidden mb-8 aspect-[411/300]">
                 <img
                   src={officeCollab}
                   alt="Team collaboration"
@@ -251,10 +290,13 @@ export default function JobDetails() {
                   with world-class opportunities.
                 </p>
 
-                <button className="w-full bg-[#F57450] text-white py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-[#E06440] transition-all shadow-lg shadow-[#F57450]/20">
+                <Link
+                  to={`/apply/${id}`}
+                  className="w-full bg-[#F57450] text-white py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-[#E06440] transition-all shadow-lg shadow-[#F57450]/20"
+                >
                   <Send size={20} />
                   Submit Application
-                </button>
+                </Link>
               </div>
             </div>
           </div>

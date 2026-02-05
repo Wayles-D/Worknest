@@ -25,40 +25,39 @@ export default function Jobs() {
 
   const { data: jobResponse, isLoading } = useJobs(filters);
   const responseData = jobResponse?.data;
-  const jobs = Array.isArray(responseData)
-    ? responseData
-    : responseData?.data || responseData?.jobs || [];
-  const finalJobs = Array.isArray(jobs) ? jobs : jobs?.jobs || [];
 
-  // const { data: savedJobsResponse } = useQuery({
-  //   queryKey: ["savedJobs", accessToken],
-  //   queryFn: async () => {
-  //     if (!accessToken) return null;
-  //     const res = await getSavedJobs(accessToken);
-  //     if (res.status === 200) {
-  //       const rawData = res.data.data || [];
-  //       return Array.isArray(rawData) ? rawData : rawData.jobs || [];
-  //     }
-  //     return null; // Return null if status is not 200 or data is not available
-  //   },
-  //   enabled: !!accessToken,
-  // });
-  const { data: allJobs } = useQuery({
-    queryKey: ["allJobs", accessToken],
+  // Robust mapping for all response types
+  const rawJobs = Array.isArray(responseData)
+    ? responseData
+    : responseData?.data?.data ||
+      responseData?.data ||
+      responseData?.jobs ||
+      [];
+  const finalJobs = Array.isArray(rawJobs) ? rawJobs : [];
+
+  const { data: savedJobsResponse } = useQuery({
+    queryKey: ["savedJobs", accessToken],
     queryFn: async () => {
-      if (!accessToken) return null;
-      const res = await getAllJobs(accessToken);
-      console.log(res);
-      // if (res.status === 200) {
-      //   const rawData = res.data.data || [];
-      //   return Array.isArray(rawData) ? rawData : rawData.jobs || [];
-      // }
-      return null; // Return null if status is not 200 or data is not available
+      if (!accessToken) return [];
+      const res = await getSavedJobs(accessToken);
+      if (res.status === 200) {
+        const rawData = res.data?.data || [];
+        // Handle potential nested data for saved jobs too
+        const actualSaved = Array.isArray(rawData)
+          ? rawData
+          : rawData.data || rawData.jobs || [];
+        return Array.isArray(actualSaved) ? actualSaved : [];
+      }
+      return [];
     },
     enabled: !!accessToken,
   });
 
-  //const savedJobIds = new Set(savedJobsResponse?.map((j) => j._id));
+  const savedJobIds = new Set(
+    Array.isArray(savedJobsResponse)
+      ? savedJobsResponse.map((j) => j._id || j.id)
+      : [],
+  );
 
   const toggleFilter = (key, value) => {
     setFilters((prev) => {
@@ -85,11 +84,16 @@ export default function Jobs() {
     }));
   };
 
-  // if (isLoading) return <p>Loading jobs...</p>;
+  if (isLoading)
+    return (
+      <p className="text-center py-20 font-semibold text-gray-500">
+        Loading your opportunities...
+      </p>
+    );
 
   return (
     <div className="flex flex-col gap-12">
-      <div className="w-auto bg-primary py-16">
+      <div className="w-auto py-16">
         <div className="container mx-auto px-4 flex flex-col">
           <div className="bg-[#fcedea] text-[#F57450] px-4 py-1.5 rounded-full text-xs w-fit font-bold uppercase  mb-8">
             Browse Opportunities

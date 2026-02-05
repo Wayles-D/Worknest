@@ -3,10 +3,9 @@ import { getAllJobs } from "@/api/api";
 import { useAuth } from "@/store";
 
 export function useJobs(filters) {
-  const { accessToken } = useAuth();
   return useQuery({
-    queryKey: ["jobs", filters, accessToken],
-    queryFn: () => getAllJobs(accessToken),
+    queryKey: ["jobs", filters],
+    queryFn: () => getAllJobs(),
     keepPreviousData: true,
   });
 }
