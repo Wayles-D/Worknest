@@ -55,12 +55,12 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticating(false);
       }
     },
-    enabled: !!accessToken,
+    // enabled: !!accessToken,
     retry: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
-    refetchInterval: 60000,
-    refetchIntervalInBackground: true,
+    // refetchInterval: 60000,
+    // refetchIntervalInBackground: true,
   });
   console.log(user);
 

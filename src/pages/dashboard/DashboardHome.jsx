@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import StatsCard from "@/components/dashboard/StatsCard";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import ApplicationOverview from "@/components/dashboard/ApplicationOverview";
@@ -14,7 +15,9 @@ const DashboardHome = () => {
           <p className="text-[14px] text-gray-500">Welcome back! Here's an overview of your job portal.</p>
         </div>
         <button className="bg-orange-500 text-white px-5 py-4 rounded-md">
+          <Link to='/admin/jobs'>
           <span className="font-semibold text-[16px]">+ Create Job</span>
+          </Link>
         </button>
       </div>
 
