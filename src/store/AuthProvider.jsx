@@ -8,13 +8,13 @@ import { getAuthenticatedAdmin, refreshAdminAccessToken } from "@/api/admin";
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-    const isAdminPath = window.location.pathname.startsWith("/admin");
+  const isAdminPath = window.location.pathname.startsWith("/admin");
   const [accessToken, setAccessToken] = useState(() => {
     const token = localStorage.getItem("worknestToken");
     return token;
   });
 
-   useEffect(() => {
+  useEffect(() => {
     if (accessToken) {
       localStorage.setItem("worknestToken", accessToken);
     } else {
@@ -55,12 +55,12 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticating(false);
       }
     },
-    enabled: !!accessToken,
+    enabled: false,
     retry: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
-    refetchInterval: 60000,
-    refetchIntervalInBackground: true,
+    // refetchInterval: 60000,
+    // refetchIntervalInBackground: true,
   });
   console.log(user);
 

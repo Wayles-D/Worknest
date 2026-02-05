@@ -1,17 +1,57 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Plus, Edit2, Search, Filter, ChevronDown, Eye, X } from "lucide-react";
+import {
+  Plus,
+  Edit2,
+  Search,
+  Filter,
+  ChevronDown,
+  Eye,
+  X,
+  Trash2,
+} from "lucide-react";
 import JobForm from "@/components/dashboard/JobForm";
-import { jobs as initialJobs } from "@/data/jobs";
+import { getAllJobs, deleteJob, updateJob } from "@/api/api";
 import { toast } from "sonner";
+import { useAuth } from "@/store";
+import { useJobs } from "@/hooks/useJobs"; // Assuming this hook exists and is imported
 
 const AdminJobs = () => {
+  const { accessToken } = useAuth();
   const [view, setView] = useState("list"); // 'list' or 'form'
-  const [jobs, setJobs] = useState(initialJobs);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editingJob, setEditingJob] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [activeDropdown, setActiveDropdown] = useState(null);
   const dropdownRef = useRef(null);
+
+  const fetchJobs = async () => {
+    try {
+      setLoading(true);
+      const res = await getAllJobs(accessToken);
+      if (res.status === 200) {
+        const responseData = res.data;
+        // Robust mapping: handle [body], [body.data], [body.jobs], or [body.data.jobs]
+        const jobList = Array.isArray(responseData)
+          ? responseData
+          : responseData.data || responseData.jobs || [];
+
+        setJobs(Array.isArray(jobList) ? jobList : jobList.jobs || []);
+      }
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+      toast.error("Failed to fetch jobs");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchJobs();
+    }
+  }, [accessToken]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -33,63 +73,67 @@ const AdminJobs = () => {
     setActiveDropdown(null);
   };
 
-  const handleDelete = (id) => {
-    setJobs(jobs.filter((j) => j.id !== id));
-    toast.success("Job deleted successfully");
-    setActiveDropdown(null);
-  };
-
-  const handleCloseJob = (id) => {
-    setJobs(jobs.map((j) => (j.id === id ? { ...j, status: "Closed" } : j)));
-    toast.info("Job marked as closed");
-    setActiveDropdown(null);
-  };
-
-  const handleSaveJob = (jobData) => {
-    if (editingJob) {
-      setJobs(
-        jobs.map((j) => (j.id === editingJob.id ? { ...jobData, id: j.id } : j))
-      );
-      toast.success("Job updated successfully");
-    } else {
-      const newJob = {
-        ...jobData,
-        id: `job-${Date.now()}`,
-        datePosted: new Date().toISOString().split("T")[0],
-        status: jobData.status || "Active",
-        applications: 0,
-      };
-      setJobs([newJob, ...jobs]);
-      toast.success("Job created successfully");
+  const handleDelete = async (id) => {
+    try {
+      const res = await deleteJob(id, accessToken);
+      if (res.status === 200) {
+        setJobs(jobs.filter((j) => j._id !== id));
+        toast.success("Job deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting job:", error);
+      toast.error("Failed to delete job");
     }
+    setActiveDropdown(null);
+  };
+
+  const handleCloseJob = async (id) => {
+    try {
+      const res = await updateJob(id, { status: "inactive" }, accessToken);
+      if (res.status === 200) {
+        setJobs(
+          jobs.map((j) => (j._id === id ? { ...j, status: "inactive" } : j)),
+        );
+        toast.info("Job marked as inactive");
+      }
+    } catch (error) {
+      console.error("Error updating job:", error);
+      toast.error("Failed to close job");
+    }
+    setActiveDropdown(null);
+  };
+
+  const handleSaveJob = () => {
+    fetchJobs();
     setView("list");
   };
 
-  const filteredJobs = jobs.filter((job) => {
+  const filteredJobs = (Array.isArray(jobs) ? jobs : []).filter((job) => {
     const matchesSearch =
-      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.company.toLowerCase().includes(searchQuery.toLowerCase());
+      (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (job.companyName || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus =
-      statusFilter === "All Status" || job.status === statusFilter;
+      statusFilter === "All Status" ||
+      (statusFilter === "Active"
+        ? job.status === "active"
+        : job.status === "inactive");
     return matchesSearch && matchesStatus;
   });
 
   const getStatusStyle = (status) => {
     switch (status) {
-      case "Active":
-        return "bg-green-50 text-green-600 border-green-100";
-      case "Closed":
-        return "bg-red-50 text-red-600 border-red-100";
-      case "Draft":
-        return "bg-gray-50 text-gray-600 border-gray-100";
+      case "active":
+        return "bg-green-50 text-green-600 border-green-100 uppercase";
+      case "inactive":
+        return "bg-red-50 text-red-600 border-red-100 uppercase";
       default:
-        return "bg-gray-50 text-gray-600 border-gray-100";
+        return "bg-gray-50 text-gray-600 border-gray-100 uppercase";
     }
   };
 
   if (view === "form") {
     return (
-      <div className="p-8 bg-[var(--color-primary)] min-h-screen">
+      <div className="p-8 bg-white min-h-screen">
         <JobForm
           job={editingJob}
           onSave={handleSaveJob}
@@ -99,7 +143,7 @@ const AdminJobs = () => {
     );
   }
   return (
-    <div className="p-8 bg-[var(--color-primary)] min-h-screen">
+    <div className="p-8 bg-white min-h-screen">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
@@ -186,7 +230,7 @@ const AdminJobs = () => {
               {filteredJobs.length > 0 ? (
                 filteredJobs.map((job) => (
                   <tr
-                    key={job.id}
+                    key={job._id || job.id}
                     className="hover:bg-gray-50/50 transition-colors"
                   >
                     <td className="px-6 py-4">
@@ -195,7 +239,7 @@ const AdminJobs = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
-                      {job.company}
+                      {job.companyName}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {job.jobType}
@@ -206,20 +250,24 @@ const AdminJobs = () => {
                     <td className="px-6 py-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusStyle(
-                          job.status
+                          job.status,
                         )}`}
                       >
                         {job.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(job.datePosted).toLocaleDateString("en-GB")}
+                      {job.createdAt
+                        ? new Date(job.createdAt).toLocaleDateString("en-GB")
+                        : "N/A"}
                     </td>
                     <td className="px-6 py-4 text-right relative">
                       <button
                         onClick={() =>
                           setActiveDropdown(
-                            activeDropdown === job.id ? null : job.id
+                            activeDropdown === (job._id || job.id)
+                              ? null
+                              : job._id || job.id,
                           )
                         }
                         className="text-gray-400 hover:text-gray-900 transition-colors"
@@ -227,7 +275,7 @@ const AdminJobs = () => {
                         <span className="text-sm font-medium">Actions</span>
                       </button>
 
-                      {activeDropdown === job.id && (
+                      {activeDropdown === (job._id || job.id) && (
                         <div
                           ref={dropdownRef}
                           className="absolute right-6 top-10 w-40 bg-white border border-gray-100 rounded-lg shadow-xl z-20 py-1.5 animate-in fade-in zoom-in duration-150"
@@ -250,11 +298,18 @@ const AdminJobs = () => {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleCloseJob(job.id)}
+                            onClick={() => handleCloseJob(job._id || job.id)}
                             className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors"
                           >
                             <X size={14} />
                             Close Job
+                          </button>
+                          <button
+                            onClick={() => handleDelete(job._id || job.id)}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 size={14} />
+                            Delete
                           </button>
                         </div>
                       )}

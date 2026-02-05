@@ -1,5 +1,11 @@
 import { NavLink, Link } from "react-router";
-import { LayoutDashboard, Briefcase, FileText, Settings, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Briefcase,
+  FileText,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import Logo from "../Logo";
 import Logout from "../Logout";
 
@@ -20,7 +26,7 @@ export default function Sidebar({ isOpen, onClose }) {
   return (
     <>
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-30 w-64 bg-[var(--sidebar-color)] text-white transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+        className={`fixed lg:fixed inset-y-0 left-0 z-30 w-64 bg-[var(--sidebar-color)] text-white transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 h-screen`}
       >
         {/* optional close button for mobile */}
         <button onClick={onClose} className="lg:hidden absolute top-4 right-4">
@@ -54,7 +60,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
           <div className="mt-auto px-4 py-6 border-t border-[#6B6B6B]">
             <div className="px-4 py-3 flex items-center gap-3">
-                <Settings size={20} className="" />
+              <Settings size={20} className="" />
               <Link
                 to="/admin/settings"
                 className="text-sm text-white font-medium hover:text-gray-300"
@@ -62,7 +68,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 Settings
               </Link>
             </div>
-           <Logout/>
+            <Logout />
           </div>
         </div>
       </aside>
