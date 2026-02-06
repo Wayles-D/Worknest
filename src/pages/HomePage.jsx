@@ -44,50 +44,50 @@ const HomePage = () => {
 
   return (
     <div className="sm:mt-[91px] mt-[40px]">
-      <div className="lg:px-[100px] px-4 sm:px-6 grid lg:grid-cols-2 items-center sm:justify-between gap-10">
-        <div className="w-full lg:w-[549px]  flex flex-col gap-12">
+      <div className="lg:px-[100px] px-4 sm:px-6 grid lg:grid-cols-2 items-center sm:justify-between sm:gap-10 xl:gap-20 gap-10 ">
+        <div className="w-full lg:w-[549px] xl:w-[549px] flex flex-col gap-12">
           <div className="flex flex-col items-start gap-5 sm:gap-[42px]">
             <p className="bg-[#FEEEEA] text-[14px] py-2.5 px-5 w-[227px] rounded-[15px] text-[#000000] font-medium">
               OVER 5,O00+ ACTIVE JOBS
             </p>
-            <h1 className="sm:text-[65px]  text-[38px] font-extrabold sm:leading-[70px]  leading-[50px] text-[#000000]">
+            <h1 className="sm:text-[65px] xl:text-[60px] text-[38px] font-extrabold sm:leading-[70px]  leading-[50px] text-[#000000]">
               Unlock your next
               <span className="text-[#F86021]"> career milestone</span>
             </h1>
-            <p className="sm:text-[20px] text-[16px] font-medium text-[#555859] leading-[30px]">
+            <p className="sm:text-[20px] xl:text-[19px] text-[16px] font-medium text-[#555859] leading-[30px]">
               Skip the noise. Every listing on WorkNest is hand-picked,
               verified, and posted directly by our platform administrators to
               ensure high-quality career matches.
             </p>
 
-            <div className=" flex flex-col sm:flex-row  border border-[#00000036] rounded-[20px] p-5 sm:justify-between lg:gap-[41px] gap-4 w-full">
-              <div className="flex items-center gap-[11px] ">
-                <Search className="w-[16px] h-[16px] text-[#292D32]" />
+            <div className=" flex flex-col sm:flex-row  border border-[#00000036] rounded-[20px] p-5 sm:justify-between lg:gap-[41px] gap-4 w-full lg:w-[487px]">
+              <div className="flex items-center gap-[11px] flex-1 min-w-0">
+                <Search className="w-[16px] h-[16px] text-[#292D32] flex-shrink-0" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search roles or skills..."
-                  className="text-[18px] font-medium text-[#6B7280] outline-none"
+                  className="text-[18px] font-medium text-[#6B7280] outline-none flex-1 min-w-0"
                 />
               </div>
 
-              <div className="border border-[#000000] sm:h-[35px]"></div>
-              <div className="flex items-center gap-[7px]">
-                <MapPin className="w-[14px] lg:w-[14px] sm:w-[20px] h-5 text-[#6B7280]" />
+              <div className="border border-[#000000] sm:h-[35px] "></div>
+              <div className="flex items-center gap-[7px] flex-1 min-w-0">
+                <MapPin className="w-[14px] lg:w-[14px] sm:w-[20px] h-5 text-[#6B7280] flex-shrink-0" />
 
                 <input
                   type="text"
                   value={locationTerm}
                   onChange={(e) => setLocationTerm(e.target.value)}
                   placeholder=" City or remote"
-                  className="text-[18px] font-medium text-[#6B7280] outline-none"
+                  className="text-[18px] font-medium text-[#6B7280] outline-none flex-1 min-w-0"
                 />
               </div>
             </div>
           </div>
 
-          <button className="lg:w-[505px] w-full bg-[#F86021] py-5 sm:py-[30px] px-5 text-[24px] font-medium leading-[22px] rounded-[15px] text-white ">
+          <button className="lg:w-[505px] w-full bg-[#F86021] py-5 sm:py-[30px] px-5 text-[24px] font-medium leading-[22px] rounded-[15px] text-white w-full cursor-pointer">
             Search Job
           </button>
         </div>
