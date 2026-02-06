@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { useJobs } from "@/hooks/useJobs";
+import { getSavedJobs } from "@/api/api";
+import { useAuth } from "@/store";
+import { useQuery } from "@tanstack/react-query";
 import JobCard from "@/components/JobCard";
 import { Search, MapPin } from "lucide-react";
 import useMetaArgs from "@/hooks/UseMeta";
+import { getAllJobs } from "@/api/api";
 
 export default function Jobs() {
-    useMetaArgs({
-      title: "Job - Worknest",
-      description:
-        "Jobs - start looking for your dream job.",
-      keywords: "Worknest, Job, career, dream, job, money, account",
-    });
+  const { accessToken } = useAuth();
   const [filters, setFilters] = useState({
-    jobType: "",
-    industry: "",
-    salaryRange: "",
+    jobType: [],
+    industry: [],
+    salaryRange: [],
     search: "",
     location: "",
   });
@@ -24,31 +23,58 @@ export default function Jobs() {
     location: "",
   });
 
-  const { data, isLoading } = useJobs(filters);
+  const { data: jobResponse, isLoading } = useJobs(filters);
+  const responseData = jobResponse?.data;
 
-  // because API returns { jobs, total, page, limit }
-  const jobs = data?.jobs || [];
+  // Robust mapping for all response types
+  const rawJobs = Array.isArray(responseData)
+    ? responseData
+    : responseData?.data?.data ||
+      responseData?.data ||
+      responseData?.jobs ||
+      [];
+  const finalJobs = Array.isArray(rawJobs) ? rawJobs : [];
 
-  const handleTypeChange = (value) => {
-    setFilters((prev) => ({
-      ...prev,
-      jobType: prev.jobType === value ? "" : value,
-    }));
+  const { data: savedJobsResponse } = useQuery({
+    queryKey: ["savedJobs", accessToken],
+    queryFn: async () => {
+      if (!accessToken) return [];
+      const res = await getSavedJobs(accessToken);
+      if (res.status === 200) {
+        const rawData = res.data?.data || [];
+        // Handle potential nested data for saved jobs too
+        const actualSaved = Array.isArray(rawData)
+          ? rawData
+          : rawData.data || rawData.jobs || [];
+        return Array.isArray(actualSaved) ? actualSaved : [];
+      }
+      return [];
+    },
+    enabled: !!accessToken,
+  });
+
+  const savedJobIds = new Set(
+    Array.isArray(savedJobsResponse)
+      ? savedJobsResponse.map((j) => j._id || j.id)
+      : [],
+  );
+
+  const toggleFilter = (key, value) => {
+    setFilters((prev) => {
+      const current = prev[key];
+      const isSelected = current.includes(value);
+      return {
+        ...prev,
+        [key]: isSelected
+          ? current.filter((item) => item !== value)
+          : [...current, value],
+      };
+    });
   };
 
-  const handleIndustryChange = (value) => {
-    setFilters((prev) => ({
-      ...prev,
-      industry: prev.industry === value ? "" : value,
-    }));
-  };
-
-  const handleSalaryChange = (value) => {
-    setFilters((prev) => ({
-      ...prev,
-      salaryRange: prev.salaryRange === value ? "" : value,
-    }));
-  };
+  const handleTypeChange = (value) => toggleFilter("jobType", value);
+  const handleIndustryChange = (value) => toggleFilter("industry", value);
+  const handleSalaryChange = (value) => toggleFilter("salaryRange", value);
 
   const handleSearch = () => {
     setFilters((prev) => ({
@@ -58,11 +84,16 @@ export default function Jobs() {
     }));
   };
 
-  if (isLoading) return <p>Loading jobs...</p>;
+  if (isLoading)
+    return (
+      <p className="text-center py-20 font-semibold text-gray-500">
+        Loading your opportunities...
+      </p>
+    );
 
   return (
     <div className="flex flex-col gap-12">
-      <div className="w-auto bg-primary py-16">
+      <div className="w-auto py-16">
         <div className="container mx-auto px-4 flex flex-col">
           <div className="bg-[#fcedea] text-[#F57450] px-4 py-1.5 rounded-full text-xs w-fit font-bold uppercase  mb-8">
             Browse Opportunities
@@ -112,6 +143,7 @@ export default function Jobs() {
             </div>
 
             <button
+              type="button"
               onClick={handleSearch}
               className="w-full md:w-auto px-10 py-4 bg-[#F57450] text-white font-bold rounded-xl hover:bg-[#E06440] transition-all shadow-lg shadow-[#F57450]/20 whitespace-nowrap"
             >
@@ -142,7 +174,7 @@ export default function Jobs() {
               >
                 <input
                   type="checkbox"
-                  checked={filters.jobType === type}
+                  checked={filters.jobType.includes(type)}
                   onChange={() => handleTypeChange(type)}
                   className="w-4 h-4 rounded border-gray-300 text-[#F57450] focus:ring-[#F57450]"
                 />
@@ -171,7 +203,7 @@ export default function Jobs() {
               >
                 <input
                   type="checkbox"
-                  checked={filters.industry === industry}
+                  checked={filters.industry.includes(industry)}
                   onChange={() => handleIndustryChange(industry)}
                   className="w-4 h-4 rounded border-gray-300 text-[#F57450] focus:ring-[#F57450]"
                 />
@@ -200,7 +232,7 @@ export default function Jobs() {
               >
                 <input
                   type="checkbox"
-                  checked={filters.salaryRange === salary}
+                  checked={filters.salaryRange.includes(salary)}
                   onChange={() => handleSalaryChange(salary)}
                   className="w-4 h-4 rounded border-gray-300 text-[#F57450] focus:ring-[#F57450]"
                 />
@@ -217,13 +249,15 @@ export default function Jobs() {
           <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-2">
             <p className="text-gray-600 font-medium">
               Showing{" "}
-              <span className="text-[#F57450] font-bold">{jobs.length}</span>{" "}
+              <span className="text-[#F57450] font-bold">
+                {finalJobs.length}
+              </span>{" "}
               curated opportunities
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            {jobs.length === 0 && (
+            {finalJobs.length === 0 && (
               <div className="col-span-full py-20 text-center bg-white rounded-2xl border-2 border-dashed border-gray-100">
                 <p className="text-gray-400 text-lg">
                   No jobs found matching your criteria.
@@ -231,8 +265,12 @@ export default function Jobs() {
               </div>
             )}
 
-            {jobs.map((job) => (
-              <JobCard key={job.id} job={job} />
+            {finalJobs.map((job) => (
+              <JobCard
+                key={job._id || job.id}
+                job={job}
+                isSavedInitial={savedJobIds.has(job._id)}
+              />
             ))}
           </div>
         </div>
