@@ -60,31 +60,33 @@ const HomePage = () => {
               ensure high-quality career matches.
             </p>
 
-            <div className=" flex flex-col sm:flex-row  border border-[#00000036] rounded-[20px] p-5 sm:justify-between lg:gap-[41px] gap-4 w-full lg:w-[487px]">
-              <div className="flex items-center gap-[11px] flex-1 min-w-0">
-                <Search className="w-[16px] h-[16px] text-[#292D32] flex-shrink-0" />
+            <div className=" flex flex-col sm:flex-row  border border-[#00000036] rounded-[20px] p-5 sm:justify-between lg:gap-[8px] gap-4 lg:w-[487px] w-full">
+              <div className="flex items-center gap-[11px] flex-1">
+                <Search className="w-[16px] h-[16px] text-[#292D32]" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search roles or skills..."
-                  className="text-[18px] font-medium text-[#6B7280] outline-none flex-1 min-w-0"
+                  className="text-[18px] font-medium text-[#6B7280] outline-none flex-1"
                 />
               </div>
 
-              <div className="border border-[#000000] sm:h-[35px] "></div>
-              <div className="flex items-center gap-[7px] flex-1 min-w-0">
-                <MapPin className="w-[14px] lg:w-[14px] sm:w-[20px] h-5 text-[#6B7280] flex-shrink-0" />
+              <div className="border border-[#000000] sm:h-[35px]  "></div>
+
+              <div className="flex items-center gap-[7px] flex-1 text-end">
+                <MapPin className="w-[14px] lg:w-[14px] sm:w-[20px] h-5 text-[#6B7280]" />
 
                 <input
                   type="text"
                   value={locationTerm}
                   onChange={(e) => setLocationTerm(e.target.value)}
                   placeholder=" City or remote"
-                  className="text-[18px] font-medium text-[#6B7280] outline-none flex-1 min-w-0"
+                  className="text-[18px] font-medium text-[#6B7280] outline-none flex-1"
                 />
               </div>
             </div>
+           
           </div>
 
           <button className="lg:w-[505px] w-full bg-[#F86021] py-5 sm:py-[30px] px-5 text-[24px] font-medium leading-[22px] rounded-[15px] text-white w-full cursor-pointer">
