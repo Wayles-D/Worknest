@@ -142,4 +142,10 @@ body {
   background: #f75f20;
 }
 
+.about{
+  background-image: url("/aboutUs.png");
+  background-size: cover;
+  background-position: center;
+  
+}
 
