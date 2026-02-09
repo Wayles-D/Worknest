@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link } from "react-router";
 import React from "react";
 import StatsCard from "@/components/dashboard/StatsCard";
 import RecentActivity from "@/components/dashboard/RecentActivity";
@@ -69,9 +69,12 @@ const DashboardHome = () => {
             Welcome back! Here's an overview of your job portal.
           </p>
         </div>
-        <Link to="/dashboard/create-job" className="bg-(--sidebar-active-color) text-white px-5 py-2.5 rounded-lg font-medium hover:bg-black/90 transition-all">
+        <Link
+          to="/admin/jobs"
+          className="bg-(--sidebar-active-color) text-white px-5 py-2.5 rounded-lg font-medium hover:bg-black/90 transition-all"
+        >
           <span className="font-semibold text-[16px]">+ Create Job</span>
-          </Link>
+        </Link>
       </div>
 
       {/* stats */}

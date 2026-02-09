@@ -35,10 +35,7 @@ export default function Signup({ toggle }) {
       toast.success(response?.data?.data?.message || "Registration successful");
       const token = response?.data?.data?.accessToken;
       setAccessToken(token);
-
-      // Backend usually returns a user object in the response or we can check the token
-      // If we don't have user yet, we might need to rely on the registration success logic
-      // Most registration flows redirect to verify immediately
+      // Explicitly navigate to verify to ensure the user knows what to do next
       navigate("/auth/verify", { replace: true });
     },
     onError: (error) => {

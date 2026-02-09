@@ -55,8 +55,8 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticating(false);
       }
     },
-    // enabled: !!accessToken,
-    enabled: !!accessToken,
+     enabled: !!accessToken,
+    enabled: false,
     retry: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,

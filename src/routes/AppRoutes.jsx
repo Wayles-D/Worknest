@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import SuspenseUi from "@/components/SuspenseUi.jsx";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import HomePage from "@/pages/HomePage";
-// import { PrivateRoutes, PublicRoutes } from "@/routes/ProtectedRoutes";
 import { PrivateRoutes, PublicRoutes } from "@/routes/ProtectedRoutes";
 import { useAuth } from "@/store";
 
@@ -36,6 +35,8 @@ const CandidateApplicationForm = lazy(
 );
 const MyApplications = lazy(() => import("@/pages/MyApplication.jsx"));
 const SavedJobs = lazy(() => import("@/pages/SavedJobs.jsx"));
+
+const AdminSettings = lazy(() => import("@/pages/dashboard/AdminSettings.jsx"));
 
 export default function AppRoutes() {
   const { accessToken, user, isAuthenticating } = useAuth();
@@ -204,6 +205,14 @@ export default function AppRoutes() {
           element: (
             <Suspense fallback={<SuspenseUi />}>
               <AdminApplications />
+            </Suspense>
+          ),
+        },
+        {
+          path: "settings",
+          element: (
+            <Suspense fallback={<SuspenseUi />}>
+              <AdminSettings />
             </Suspense>
           ),
         },

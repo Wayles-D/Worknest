@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FieldBody from "@/components/FieldBody";
-import { useNavigate, Link } from "react-router";
+import { useNavigate, useLocation, Link } from "react-router";
 import ErrorAlert from "@/components/ErrorAlert";
 import { validatedSignInSchema } from "@/utils/dataSchema";
 import useMetaArgs from "@/hooks/UseMeta";
@@ -38,7 +38,8 @@ export default function Login() {
     onSuccess: (response) => {
       console.log(response);
       toast.success(response?.data?.data?.message || "Login successful");
-      setAccessToken(response?.data?.data?.accessToken);
+      const token = response?.data?.data?.accessToken;
+      setAccessToken(token);
       navigate(from, { replace: true });
     },
     onError: (error) => {
