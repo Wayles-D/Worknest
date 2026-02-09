@@ -18,6 +18,7 @@ import officeCollab from "/office_collab.png";
 export default function JobDetails() {
   const { id } = useParams();
   const { accessToken } = useAuth();
+  getJobById(id, accessToken);
 
   const {
     data: job,
@@ -26,7 +27,7 @@ export default function JobDetails() {
   } = useQuery({
     queryKey: ["job", id],
     queryFn: async () => {
-      const res = await getJobById(id);
+      const res = await getJobById(id, accessToken);
       // Robust mapping: check for res.data.data.data, res.data.data, or res.data directly
       const body = res.data;
       const rawData =

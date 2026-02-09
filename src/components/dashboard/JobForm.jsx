@@ -129,7 +129,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto pb-20 bg-primary">
+    <div className="max-w-5xl mx-auto pb-20 bg-(var{--color-primary])">
       {/* Top Navigation */}
       <button
         onClick={onCancel}
@@ -172,7 +172,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="e.g. Senior Frontend Developer"
-                  className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   required
                 />
               </div>
@@ -186,7 +186,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={formData.location}
                   onChange={handleChange}
                   placeholder="e.g. New York, NY or Remote"
-                  className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   required
                 />
               </div>
@@ -200,7 +200,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={formData.category}
                   onChange={handleChange}
                   placeholder="e.g. Design, Development"
-                  className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   required
                 />
               </div>
@@ -217,7 +217,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                     name="jobType"
                     value={formData.jobType}
                     onChange={handleChange}
-                    className="w-full appearance-none px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
+                    className="w-full appearance-none px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
                   >
                     <option>Full-time</option>
                     <option>Part-time</option>
@@ -239,7 +239,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                     name="experienceLevel"
                     value={formData.experienceLevel}
                     onChange={handleChange}
-                    className="w-full appearance-none px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
+                    className="w-full appearance-none px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
                   >
                     <option value="Entry">Entry</option>
                     <option value="Mid">Mid</option>
@@ -263,7 +263,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                     value={formData.salaryRange.min}
                     onChange={handleSalaryChange}
                     placeholder="Min"
-                    className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                    className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   />
                   <input
                     type="number"
@@ -271,7 +271,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                     value={formData.salaryRange.max}
                     onChange={handleSalaryChange}
                     placeholder="Max"
-                    className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                    className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   />
                 </div>
               </div>
@@ -301,7 +301,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.companyName}
                 onChange={handleChange}
                 placeholder="e.g. TechCorp Inc."
-                className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                 required
               />
             </div>
@@ -315,7 +315,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.companyWebsite}
                 onChange={handleChange}
                 placeholder="https://example.com"
-                className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
               />
             </div>
             <div className="md:col-span-2 space-y-1.5">
@@ -328,7 +328,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.companyLogo}
                 onChange={handleChange}
                 placeholder="https://example.com/logo.png"
-                className="w-full px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                className="w-full px-4 py-2.5 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
               />
             </div>
           </div>
@@ -353,7 +353,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.jobDescription}
                 onChange={handleChange}
                 placeholder="Describe the role, what the candidate will be doing..."
-                className="w-full px-4 py-3 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
+                className="w-full px-4 py-3  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
                 required
               />
             </div>
@@ -366,7 +366,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.responsibilities}
                 onChange={handleChange}
                 placeholder="List the key responsibilities..."
-                className="w-full px-4 py-3 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
+                className="w-full px-4 py-3 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
               />
             </div>
             <div className="space-y-1.5">
@@ -378,7 +378,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.requirement}
                 onChange={handleChange}
                 placeholder="List the required skills and qualifications..."
-                className="w-full px-4 py-3 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
+                className="w-full px-4 py-3  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
               />
             </div>
             <div className="space-y-1.5">
@@ -390,7 +390,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.benefits}
                 onChange={handleChange}
                 placeholder="List the benefits and perks..."
-                className="w-full px-4 py-3 bg-[var(--color-primary)] border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
+                className="w-full px-4 py-3 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm h-32 resize-none"
               />
             </div>
           </div>
@@ -415,7 +415,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={question}
                   onChange={(e) => handleQuestionChange(index, e.target.value)}
                   placeholder={`Question ${index + 1}`}
-                  className="flex-1 px-4 py-2.5 bg-primary border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="flex-1 px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                 />
                 {formData.applicationQuestions.length > 1 && (
                   <button
@@ -431,7 +431,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
             <button
               type="button"
               onClick={addQuestion}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-primary rounded-lg border border-gray-200 transition-all"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-(var{--color-primary]) rounded-lg border border-gray-200 transition-all"
             >
               <Plus size={16} />
               Add Question
