@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import SuspenseUi from "@/components/SuspenseUi.jsx";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import HomePage from "@/pages/HomePage";
-// import { PrivateRoutes, PublicRoutes } from "@/routes/ProtectedRoutes";
 import { PrivateRoutes, PublicRoutes } from "@/routes/ProtectedRoutes";
 import { useAuth } from "@/store";
 
