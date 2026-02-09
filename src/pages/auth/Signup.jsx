@@ -32,18 +32,18 @@ export default function Signup({ toggle }) {
   const mutation = useMutation({
     mutationFn: registerUser,
     onSuccess: (response) => {
-      //what you want to do if api call is a success
       toast.success(response?.data?.data?.message || "Registration successful");
-      //save accessToken
-      setAccessToken(response?.data?.data?.accessToken);
-      if (user && !user?.isVerified) {
-        navigate("/auth/verify");
-      }
+      const token = response?.data?.data?.accessToken;
+      setAccessToken(token);
+      // Explicitly navigate to verify to ensure the user knows what to do next
+      navigate("/auth/verify", { replace: true });
     },
     onError: (error) => {
       console.error(error);
       setError(error?.response?.data?.data?.message || "Registration failed");
-      toast.error(error?.response?.data?.data?.message || "Registration failed");
+      toast.error(
+        error?.response?.data?.data?.message || "Registration failed",
+      );
     },
   });
 
