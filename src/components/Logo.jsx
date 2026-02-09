@@ -1,10 +1,13 @@
-import React from 'react'
-import { Link } from 'react-router'
+import { NavLink } from "react-router";
 
 export default function Logo() {
   return (
     <>
-       <Link to="/"><img src='/logo.jpg' alt='logo' className='w-30 mb-3'/></Link>
+      <NavLink to={"/"}>
+        <img src="/worknestLogo.png" alt="logo" className="w-fit h-10" />
+      </NavLink>
     </>
-  )
+  );
+      
 }
+

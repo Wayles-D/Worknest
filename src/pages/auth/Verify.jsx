@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router";
 import useMetaArgs from "@/hooks/UseMeta";
 import { resendVerificationCode, verifyAccount } from "@/api/api";
 import ErrorAlert from "@/components/ErrorAlert";
-import { useAuth } from "@/store/index";
+import { useAuth } from "@/store";
 
 export default function Verify() {
   useMetaArgs({
@@ -32,6 +32,7 @@ export default function Verify() {
       const remaining = Math.max(0, endTime - now);
 
       if (remaining > 0) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTimer(remaining);
         setIsResendDisabled(true);
       } else {
@@ -44,6 +45,7 @@ export default function Verify() {
     let interval;
     // Stop the timer if verification was successful
     if (timer > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsResendDisabled(true);
       interval = setInterval(() => {
         setTimer((prev) => {
@@ -91,10 +93,8 @@ export default function Verify() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    mutation.mutate({ verificationToken, accessToken });    
+    mutation.mutate({ verificationToken, accessToken });
   };
-  
-
 
   const handleResendCode = async (e) => {
     e.preventDefault();
@@ -110,10 +110,10 @@ export default function Verify() {
     sendResendToken.mutate(accessToken);
   };
   const redirect = () => {
-    if (user?.role === "applicant") {
-      navigate("/jobs");
+    if (user?.role === "admin") {
+      navigate("/admin");
     } else {
-      navigate("/dashboard");
+      navigate("/");
     }
   };
 
@@ -189,16 +189,6 @@ export default function Verify() {
                   {isResendDisabled ? `Resend in ${timer}s` : "Resend Code"}
                 </button>
               </p>
-
-              <Link
-                to="/auth/forgot-password"
-                className="text-gray-600 text-sm"
-              >
-                Don’t have an account?{" "}
-                <span className="hover:underline text-[rgba(247,95,32,1)] cursor-pointer">
-                  Change email
-                </span>
-              </Link>
             </form>
           </div>
         </div>
