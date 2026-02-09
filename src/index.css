@@ -11,7 +11,8 @@
 /* @plugin "daisyui" */
 
 @theme {
-   --color-primary: #000000;
+  --light-gray: #F4F4F4
+   --color-primary: #FFC6AE;
    --sidebar-color: #0A0A0A;
    --sidebar-active-color: #F57450
 };

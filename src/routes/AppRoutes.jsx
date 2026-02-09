@@ -36,6 +36,8 @@ const CandidateApplicationForm = lazy(
 const MyApplications = lazy(() => import("@/pages/MyApplication.jsx"));
 const SavedJobs = lazy(() => import("@/pages/SavedJobs.jsx"));
 
+const AdminSettings = lazy(() => import("@/pages/dashboard/AdminSettings.jsx"));
+
 export default function AppRoutes() {
   const { accessToken, user, isAuthenticating } = useAuth();
   const privateRouteProps = { accessToken, isAuthenticating, user };
@@ -203,6 +205,14 @@ export default function AppRoutes() {
           element: (
             <Suspense fallback={<SuspenseUi />}>
               <AdminApplications />
+            </Suspense>
+          ),
+        },
+        {
+          path: "settings",
+          element: (
+            <Suspense fallback={<SuspenseUi />}>
+              <AdminSettings />
             </Suspense>
           ),
         },

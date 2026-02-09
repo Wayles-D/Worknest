@@ -82,8 +82,8 @@ export const getAllJobs = async () => {
   return await axiosInstance.get("/jobs/all");
 };
 
-export const getJobById = async (id) => {
-  return await axiosInstance.get(`/jobs/${id}`);
+export const getJobById = async (id, accessToken) => {
+  return await axiosInstance.get(`/jobs/${id}`, headers(accessToken));
 };
 
 export const getSavedJobs = async (accessToken) => {
