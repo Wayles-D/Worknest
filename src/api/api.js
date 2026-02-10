@@ -78,8 +78,8 @@ export const deleteJob = async (id, accessToken) => {
   return await axiosInstance.delete(`/jobs/${id}/delete`, headers(accessToken));
 };
 
-export const getAllJobs = async () => {
-  return await axiosInstance.get("/jobs/all");
+export const getAllJobs = async (params) => {
+  return await axiosInstance.get("/jobs/all", { params });
 };
 
 export const getJobById = async (id, accessToken) => {

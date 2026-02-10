@@ -1,39 +1,57 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useJobs } from "@/hooks/useJobs";
 import { getSavedJobs } from "@/api/api";
 import { useAuth } from "@/store";
 import { useQuery } from "@tanstack/react-query";
 import JobCard from "@/components/JobCard";
 import { Search, MapPin } from "lucide-react";
-import useMetaArgs from "@/hooks/UseMeta";
-import { getAllJobs } from "@/api/api";
 
 export default function Jobs() {
   const { accessToken } = useAuth();
-  const [filters, setFilters] = useState({
-    jobType: [],
-    industry: [],
-    salaryRange: [],
-    search: "",
-    location: "",
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Derived filters from URL - Single source of truth
+  const filters = {
+    jobType: searchParams.getAll("jobType"),
+    industry: searchParams.getAll("industry"),
+    salaryRange: searchParams.getAll("salaryRange"),
+    search: searchParams.get("search") || "",
+    location: searchParams.get("location") || "",
+    page: parseInt(searchParams.get("page") || "1"),
+    limit: 10,
+  };
+
+  // Local state only for the input field values to allow typing before searching
+  const [searchInputs, setSearchInputs] = useState({
+    search: filters.search,
+    location: filters.location,
   });
 
-  const [searchInputs, setSearchInputs] = useState({
-    search: "",
-    location: "",
+  // Sync state with URL only when URL changes (e.g. Back button)
+  // This follows the React pattern for 'Get derived state from props' without useEffect
+  const [prevUrlFilters, setPrevUrlFilters] = useState({
+    search: filters.search,
+    location: filters.location,
   });
+  if (
+    filters.search !== prevUrlFilters.search ||
+    filters.location !== prevUrlFilters.location
+  ) {
+    setSearchInputs({ search: filters.search, location: filters.location });
+    setPrevUrlFilters({
+      search: filters.search,
+      location: filters.location,
+    });
+  }
 
   const { data: jobResponse, isLoading } = useJobs(filters);
-  const responseData = jobResponse?.data;
 
-  // Robust mapping for all response types
-  const rawJobs = Array.isArray(responseData)
-    ? responseData
-    : responseData?.data?.data ||
-      responseData?.data ||
-      responseData?.jobs ||
-      [];
-  const finalJobs = Array.isArray(rawJobs) ? rawJobs : [];
+  // Directly use the filtered and paginated data from useJobs hook
+  const finalJobs = jobResponse?.data || [];
+  const totalJobs = jobResponse?.total || 0;
+  const totalPages = Math.ceil(totalJobs / filters.limit) || 1;
+  const currentPage = filters.page;
 
   const { data: savedJobsResponse } = useQuery({
     queryKey: ["savedJobs", accessToken],
@@ -60,16 +78,19 @@ export default function Jobs() {
   );
 
   const toggleFilter = (key, value) => {
-    setFilters((prev) => {
-      const current = prev[key];
-      const isSelected = current.includes(value);
-      return {
-        ...prev,
-        [key]: isSelected
-          ? current.filter((item) => item !== value)
-          : [...current, value],
-      };
-    });
+    const newParams = new URLSearchParams(searchParams);
+    const current = newParams.getAll(key);
+    const isSelected = current.includes(value);
+
+    if (isSelected) {
+      const filtered = current.filter((item) => item !== value);
+      newParams.delete(key);
+      filtered.forEach((v) => newParams.append(key, v));
+    } else {
+      newParams.append(key, value);
+    }
+    newParams.set("page", "1"); // Reset to page 1 on filter change
+    setSearchParams(newParams);
   };
 
   const handleTypeChange = (value) => toggleFilter("jobType", value);
@@ -77,11 +98,28 @@ export default function Jobs() {
   const handleSalaryChange = (value) => toggleFilter("salaryRange", value);
 
   const handleSearch = () => {
-    setFilters((prev) => ({
-      ...prev,
-      search: searchInputs.search,
-      location: searchInputs.location,
-    }));
+    const newParams = new URLSearchParams(searchParams);
+
+    if (searchInputs.search) {
+      newParams.set("search", searchInputs.search);
+    } else {
+      newParams.delete("search");
+    }
+
+    if (searchInputs.location) {
+      newParams.set("location", searchInputs.location);
+    } else {
+      newParams.delete("location");
+    }
+
+    newParams.set("page", "1"); // Reset to page 1 on search
+    setSearchParams(newParams);
+  };
+
+  const handlePageChange = (newPage) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", newPage.toString());
+    setSearchParams(newParams);
   };
 
   if (isLoading)
@@ -162,9 +200,9 @@ export default function Jobs() {
               Job Type
             </h3>
             {[
-              "Full Time / Permanent",
+              "Full-Time",
               "Contract",
-              "Part Time",
+              "Part-Time",
               "Internship",
               "Freelance",
             ].map((type) => (
@@ -252,6 +290,7 @@ export default function Jobs() {
               <span className="text-[#F57450] font-bold">
                 {finalJobs.length}
               </span>{" "}
+              of <span className="text-[#F57450] font-bold">{totalJobs}</span>{" "}
               curated opportunities
             </p>
           </div>
@@ -273,6 +312,29 @@ export default function Jobs() {
               />
             ))}
           </div>
+
+          {/* PAGINATION UI */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-4 mt-8 pb-8">
+              <button
+                disabled={currentPage <= 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="px-6 py-2 border border-gray-200 rounded-lg font-bold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Previous
+              </button>
+              <span className="text-sm font-bold text-gray-600">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                disabled={currentPage >= totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="px-6 py-2 bg-[#F57450] text-white rounded-lg font-bold hover:bg-[#E06440] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#F57450]/20"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
