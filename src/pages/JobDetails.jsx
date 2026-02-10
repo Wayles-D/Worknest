@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/store";
 import { toast } from "sonner";
-import officeCollab from "/office_collab.png";
+import officeCollab from "/office_collab.jpg";
 
 export default function JobDetails() {
   const { id } = useParams();
