@@ -19,19 +19,29 @@ import office from "/icomoon-free_office.png";
 import location from "/mdi_location.png";
 import money from "/temaki_money-hand.png";
 import frame2 from "/Frame 2.png";
-import { Link } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { fetchJobs } from "@/api/fetchJobs";
+import { useNavigate, Link } from "react-router";
+import { useJobs } from "@/hooks/useJobs";
 import useMetaArgs from "@/hooks/UseMeta";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
 
-  const { data: jobs = [] } = useQuery({
-    queryKey: ["jobs", searchTerm, locationTerm],
-    queryFn: () => fetchJobs({ search: searchTerm, location: locationTerm }),
+  const { data: jobResponse } = useJobs({
+    search: searchTerm,
+    location: locationTerm,
+    limit: 3,
   });
+
+  const jobs = jobResponse?.data || [];
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set("search", searchTerm);
+    if (locationTerm) params.set("location", locationTerm);
+    navigate(`/jobs?${params.toString()}`);
+  };
 
   console.log(jobs);
 
@@ -86,10 +96,12 @@ const HomePage = () => {
                 />
               </div>
             </div>
-           
           </div>
 
-          <button className="lg:w-[505px] w-full bg-[#F86021] py-5 sm:py-[30px] px-5 text-[24px] font-medium leading-[22px] rounded-[15px] text-white w-full cursor-pointer">
+          <button
+            onClick={handleSearch}
+            className="lg:w-[505px] w-full bg-[#F86021] py-5 sm:py-[30px] px-5 text-[24px] font-medium leading-[22px] rounded-[15px] text-white cursor-pointer"
+          >
             Search Job
           </button>
         </div>
@@ -247,61 +259,60 @@ const HomePage = () => {
           </div>
 
           {jobs.map((job, index) => (
-            <div
+            <Link
+              to={`/jobs/${job._id || job.id}`}
               key={index}
-              className="border border-[#B0B6BE] p-5 sm:p-[20px] lg:p-[30px] flex flex-col sm:flex-row gap-5 sm:gap-6 lg:gap-[55px] items-center rounded-[15px]"
+              className="border border-[#B0B6BE] p-5 sm:p-[20px] lg:p-[30px] flex flex-col sm:flex-row gap-5 sm:gap-6 lg:gap-[55px] items-center rounded-[15px] hover:shadow-lg transition-shadow bg-white"
             >
-              <img src={job.image} alt="" className="w-[63px] sm:w-auto" />
+              <img
+                src={job.companyLogo || "/placeholder.png"}
+                alt={job.companyName}
+                className="w-12 h-12 sm:w-16 sm:h-16 object-contain"
+              />
 
               <div className="flex flex-col lg:flex-row gap-10 justify-between flex-1 items-center sm:items-stretch ">
                 <div className="flex flex-col sm:gap-[11px] gap-5">
                   <div className="flex flex-wrap sm:flex-nowrap sm:gap-[34px] gap-3 items-center">
                     <h4 className=" lg:text-[32px] sm:text-[25px] text-[28px] font-semibold leading-[100%] ">
-                      {job.position}
+                      {job.title}
                     </h4>
-                    {job.status && (
-                      <div className="bg-[#FFDACF] w-[80px] rounded-[20px] p-2.5 flex justify-center">
-                        <p className="lg:text-[24px] text-[20px] font-semibold ">
-                          {job.status}
-                        </p>
-                      </div>
-                    )}
-                    <div className="bg-[#FFDACF] w-[130px] h-[46px]  rounded-[20px] p-2.5 flex justify-center">
-                      <p className="lg:text-[24px] text-[20px]  font-semibold  leading-[100%]">
+                    <div className="bg-[#FFDACF] px-4 py-1.5 rounded-[20px] flex justify-center">
+                      <p className="lg:text-[20px] text-[16px] font-semibold whitespace-nowrap">
                         {job.jobType}
                       </p>
                     </div>
                   </div>
                   <div className="flex sm:flex-row flex-col sm:items-center items-start gap-[27px] whitespace-nowrap">
                     <div className="flex items-center gap-3 ">
-                      <img src={office} alt="" />
+                      <img src={office} alt="" className="w-6 h-6" />
                       <p className="lg:text-[24px] text-[20px] font-medium leading-[24px] text-[#636E7C]">
-                        {job.company}
+                        {job.companyName}
                       </p>
                     </div>
 
                     <div className="flex items-center gap-3 ">
-                      <img src={location} alt="" />
+                      <img src={location} alt="" className="w-6 h-6" />
                       <p className="lg:text-[24px] text-[20px] font-medium leading-[24px] text-[#636E7C]">
                         {job.location}
                       </p>
                     </div>
 
                     <div className="flex items-center gap-3 ">
-                      <img src={money} alt="" />
+                      <img src={money} alt="" className="w-6 h-6" />
                       <p className="lg:text-[24px] text-[18px] font-medium leading-[24px] text-[#636E7C]">
-                        {job.payRange}
+                        ₦{job.salaryRange?.min / 1000}k - ₦
+                        {job.salaryRange?.max / 1000}k
                       </p>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-end lg:self-end ">
                   <button className="bg-[#F85E1E] py-[15px] px-[34px] rounded-[10px] text-[22px] font-semibold whitespace-nowrap shrink-0 cursor-pointer sm:w-auto  w-full md:w-full lg:w-auto text-white ">
-                    Apply Now
+                    View Details
                   </button>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -401,9 +412,11 @@ const HomePage = () => {
             </p>
           </div>
 
-          <button className="sm:text-[24px] text-[18px] font-semibold leading-[100%] bg-[#F85E1E] py-[17px] px-[34px] rounded-[10px] mx-auto cursor-pointer flex text-white ">
-            Explore All Jobs
-          </button>
+          <Link to={"/jobs"} className="mx-auto cursor-pointer flex">
+            <button className="sm:text-[24px] text-[18px] font-semibold leading-[100%] bg-[#F85E1E] py-[17px] px-[34px] rounded-[10px] text-white cursor-pointer ">
+              Explore All Jobs
+            </button>
+          </Link>
         </div>
       </div>
     </div>
