@@ -35,6 +35,7 @@ export default function UserDropdown() {
         <span className="text-[18px] text-[#000000] font-medium">
           {user?.fullname}
         </span>
+       
         <button
           type="button"
           aria-label="Open profile menu"

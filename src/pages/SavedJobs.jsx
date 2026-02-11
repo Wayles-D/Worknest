@@ -46,8 +46,13 @@ export default function MySavedJobs() {
   }
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen container">
       <div className=" py-6 sm:py-8">
+=======
+    <div className="min-h-screen bg-[#F0EEEE] pt-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+>>>>>>> 70eb14a524f3cc76eb7db625e379a75d3df5ec49
         {/* Header Section */}
         <div className="mb-10">
           <button
