@@ -8,13 +8,14 @@ import { adminLogout } from "@/api/admin";
 import { logoutUser } from "@/api/api";
 import Modal from "./Modal";
 
-export default function Logout() {
+export default function Logout({ children, className }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const queryClient = useQueryClient();
   const { accessToken, setAccessToken, user, logout } = useAuth();
   const navigate = useNavigate();
-  const isAdmin = location.pathname.startsWith("/admin") || user?.role === "admin";
+  const isAdmin =
+    location.pathname.startsWith("/admin") || user?.role === "admin";
 
   const mutation = useMutation({
     mutationFn: isAdmin ? adminLogout : logoutUser,
@@ -24,10 +25,12 @@ export default function Logout() {
       setIsOpen(false);
       logout(); // clears user + token in context
       setAccessToken(null); // ensure access token is cleared
-      navigate(isAdmin ? "/auth/admin/login" : "/auth/login", { replace: true });
+      navigate(isAdmin ? "/auth/admin/login" : "/auth/login", {
+        replace: true,
+      });
     },
     onError: (error) => {
-     import.meta.env.DEV && console.log(error);
+      import.meta.env.DEV && console.log(error);
 
       toast.error(error?.response?.data?.message, { id: "logout" }); //the id is to prevent duplicate toasts
     },
@@ -39,13 +42,19 @@ export default function Logout() {
 
   return (
     <>
-      <button
-        className="p-4 flex gap-2 items-center text-base cursor-pointer text-red-500"
-        onClick={() => setIsOpen(true)}
-      >
-        <LogOut /> Logout
-        {/* using the useLocation for conditional rendering by tracking the path */}
-      </button>
+      {children ? (
+        <div onClick={() => setIsOpen(true)} className={className}>
+          {children}
+        </div>
+      ) : (
+        <button
+          className="p-4 flex gap-2 items-center text-base cursor-pointer text-red-500"
+          onClick={() => setIsOpen(true)}
+        >
+          <LogOut /> Logout
+          {/* using the useLocation for conditional rendering by tracking the path */}
+        </button>
+      )}
       {/* when dealing with daisyUi you must make sure to pass an id and it must be a diff id anything you are using the modal, mx-auto is to center items */}
       <Modal
         id="logoutModal"
