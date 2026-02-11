@@ -33,12 +33,12 @@ export default function UserDropdown() {
   return (
     <>
       <div className="relative flex items-center gap-3" ref={dropdownRef}>
-        <img
+        {/* <img
           src={user?.avatar || "/default-avatar.png"}
           alt="User Avatar"
           className="w-9 h-9 rounded-full"
-        />
-        <span className="text-[18px] text-[#000000] font-medium">{user?.name}</span>
+        /> */}
+        <span className="text-[18px] text-[#000000] font-medium">{user?.fullname}</span>
         <button
           type="button"
           aria-label="Open profile menu"
