@@ -30,8 +30,15 @@ export function useJobs(filters = {}) {
 
       if (!Array.isArray(rawJobs)) return { data: [], total: 0 };
 
+      // Sort by createdAt descending (latest first)
+      const sortedJobs = [...rawJobs].sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0);
+        const dateB = new Date(b.createdAt || 0);
+        return dateB - dateA;
+      });
+
       // Make job filters actually filter the results
-      let filteredJobs = rawJobs.filter((job) => {
+      let filteredJobs = sortedJobs.filter((job) => {
         // jobType filter
         if (
           jobType.length > 0 &&
