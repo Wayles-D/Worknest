@@ -3,17 +3,13 @@ import { Menu, X, LogOut } from "lucide-react";
 import { NavLink, useNavigate } from "react-router";
 import { profileLinks, navLink, navAuthLink } from "@/libs/constant";
 import { useAuth } from "@/store";
+import Logout from "./Logout";
 
 export default function Drawer() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignOut = () => {
-    logout();
-    setOpen(false);
-    navigate("/");
-  };
   return (
     <>
       {/* guest sees menu icon */}
@@ -124,13 +120,10 @@ export default function Drawer() {
                   );
                 })}
 
-                <button
-                  className=" flex items-center gap-2 w-full py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md"
-                  onClick={handleSignOut}
-                >
+                <Logout className=" flex items-center gap-2 w-full py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md cursor-pointer">
                   <LogOut className="w-6 h-6 text-[#292D32]" />
                   <span className="text-[#0E0E0E] text-[18px]">Sign Out</span>
-                </button>
+                </Logout>
               </div>
             </>
           )}
