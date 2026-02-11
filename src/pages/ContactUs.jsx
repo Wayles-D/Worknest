@@ -58,7 +58,10 @@ const ContactUs = () => {
           </div>
 
           <div className=" flex flex-col gap-[10.74px]">
-            <label htmlFor="email" className="sm:text-[20px] text-[18px] font-bold ">
+            <label
+              htmlFor="email"
+              className="sm:text-[20px] text-[18px] font-bold "
+            >
               Subject
             </label>
             <input
@@ -69,7 +72,10 @@ const ContactUs = () => {
           </div>
 
           <div className=" flex flex-col gap-[10.74px]">
-            <label htmlFor="email" className="sm:text-[20px] text-[18px] font-bold ">
+            <label
+              htmlFor="email"
+              className="sm:text-[20px] text-[18px] font-bold "
+            >
               Message
             </label>
 
@@ -89,7 +95,6 @@ const ContactUs = () => {
           </div>
         </form>
 
-
         <div className="py-[40px] sm:px-[35px] px-4 rounded-[10px] space-y-[34px] border-[#F5745066] border lg:w-[524px]">
           <h5 className="text-[24px] font-bold tracking-tight">
             Contact Information
@@ -100,7 +105,9 @@ const ContactUs = () => {
               <img src={location} alt="" className="w-[24px] h-[24px]" />
             </div>
             <div className="w-[249px] space-y-[3px]">
-              <p className="sm:text-[20px] text-[18px] font-semibold">Office Address</p>
+              <p className="sm:text-[20px] text-[18px] font-semibold">
+                Office Address
+              </p>
               <p className="sm:text-[18px] text-[16px] font-medium sm:leading-[26px] text-[#6B6B6B]">
                 123 Tech Plaza, Suite 400 San Francisco, CA 94105
               </p>
@@ -112,7 +119,9 @@ const ContactUs = () => {
               <img src={mail} alt="" className="w-[24px] h-[24px]" />
             </div>
             <div className="w-[249px] space-y-[3px]">
-              <p className="sm:text-[20px] text-[18px]  font-semibold">Support Email</p>
+              <p className="sm:text-[20px] text-[18px]  font-semibold">
+                Support Email
+              </p>
               <p className="sm:text-[18px] text-[16px] font-medium leading-[26px] text-[#6B6B6B]">
                 Support@worknest.com
               </p>
@@ -124,7 +133,9 @@ const ContactUs = () => {
               <img src={call} alt="" className="w-[24px] h-[24px]" />
             </div>
             <div className="sm:w-[249px] space-y-[3px]">
-              <p className="sm:text-[20px] text-[18px]  font-semibold">Phone Number </p>
+              <p className="sm:text-[20px] text-[18px]  font-semibold">
+                Phone Number{" "}
+              </p>
               <p className="sm:text-[18px] text-[16px] font-medium leading-[26px] text-[#6B6B6B]">
                 +234 (806)398-NEST
               </p>
@@ -149,6 +160,24 @@ const ContactUs = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Map Placeholder */}
+      <div className="w-full h-96 bg-gray-200 rounded-xl overflow-hidden mt-2">
+        <iframe
+          title="Location Map"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.889869751431!2d3.3634445739928114!3d6.535590423024778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8dba7bad97cb%3A0xae0bc176821041e5!2sTech%20Studio%20Academy!5e0!3m2!1sen!2sng!4v1770788632836!5m2!1sen!2sng"
+          width="100%"
+          height="100%"
+          allowFullScreen=""
+          style={{
+            border: 0,
+            filter:
+              "invert(90%) hue-rotate(180deg) brightness(85%) contrast(110%)",
+          }}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        ></iframe>
       </div>
     </div>
   );
