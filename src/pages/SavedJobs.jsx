@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Building2, Calendar } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getSavedJobs } from "@/api/api";
 import { useAuth } from "@/store";
-import JobCard from "@/components/JobCard";
+import SavedJobItem from "@/components/SavedJobItem";
 
 export default function MySavedJobs() {
   const navigate = useNavigate();
@@ -32,56 +32,53 @@ export default function MySavedJobs() {
   }, [accessToken]);
 
   const handleBack = () => {
-    navigate(-1);
-  };
-
-  const handleApplyNow = (jobId) => {
-    navigate(`/apply/${jobId}`);
-    console.log("Applying for job:", jobId);
+    navigate("/");
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F0EEEE] flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+        <div className="text-gray-600 font-semibold">
+          Loading your saved jobs...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F0EEEE]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="min-h-screen bg-[#F0EEEE] pt-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
-        <div className="mb-6 sm:mb-8">
+        <div className="mb-10">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-gray-700 hover:text-gray-900 mb-4 sm:mb-6 transition-colors"
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900 mb-6 transition-colors"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={24} />
           </button>
 
           <div className="mb-2">
-            <h1 className="text-2xl sm:text-3xl font-bold text-black mb-1">
+            <h1 className="text-3xl sm:text-4xl font-black text-black mb-1">
               My saved Jobs
             </h1>
-            <p className="text-sm text-gray-500">You have saved four jobs</p>
+            <p className="text-lg text-gray-500 font-medium">
+              You have saved {savedJobs.length}{" "}
+              {savedJobs.length === 1 ? "job" : "jobs"}
+            </p>
           </div>
         </div>
 
         {/* Jobs List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-col gap-4">
           {savedJobs.length === 0 ? (
-            <div className="col-span-full bg-white rounded-xl p-8 sm:p-12 text-center">
-              <p className="text-gray-500">No saved jobs found</p>
+            <div className="bg-white rounded-xl p-12 text-center border-2 border-dashed border-gray-200">
+              <p className="text-gray-400 text-lg font-medium">
+                No saved jobs yet. Start exploring!
+              </p>
             </div>
           ) : (
             savedJobs.map((job) => (
-              <JobCard
-                key={job._id || job.id}
-                job={job}
-                isSavedInitial={true}
-                onToggleSave={fetchSavedJobs}
-              />
+              <SavedJobItem key={job._id || job.id} job={job} />
             ))
           )}
         </div>

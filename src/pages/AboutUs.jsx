@@ -1,4 +1,5 @@
 import commit from "/commitment.png";
+import { Link } from "react-router";
 import check from "/check.png";
 import suit from "/suitcase.png";
 import users from "/user-check.png";
@@ -23,9 +24,11 @@ const AboutUs = () => {
         </div>
 
         <div className="flex justify-center gap-[18px] pb-[77px]">
-          <button className="text-[22px] font-semibold bg-[#F85E1E] py-[15px] px-[34px] text-white rounded-[10px]">
-            Browse Jobs
-          </button>
+          <Link to={"/jobs"}>
+            <button className="text-[22px] font-semibold bg-[#F85E1E] py-[15px] px-[34px] text-white rounded-[10px] cursor-pointer">
+              Browse Jobs
+            </button>
+          </Link>
           <button className="text-[22px] font-semibold border border-[#F85E1E] py-[15px] px-[34px] text-[#F85E1E] rounded-[10px]">
             Contact us{" "}
           </button>
@@ -249,9 +252,11 @@ const AboutUs = () => {
         <p className="text-[25px] leading-[120%] font-normal ">
           Join thousands of companies and professionals growing with us.
         </p>
-        <button className="text-[22px] font-semibold bg-[#F85E1E] py-[15px] px-[34px] text-white rounded-[10px]">
-          Browse Jobs
-        </button>
+        <Link to={"/jobs"}>
+          <button className="text-[22px] font-semibold bg-[#F85E1E] py-[15px] px-[34px] text-white rounded-[10px] cursor-pointer">
+            Browse Jobs
+          </button>
+        </Link>
       </div>
     </div>
   );
