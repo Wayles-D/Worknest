@@ -414,9 +414,11 @@ const HomePage = () => {
             </p>
           </div>
 
-          <button className="sm:text-[24px] text-[18px] font-semibold leading-[100%] bg-[#F85E1E] py-[17px] px-[34px] rounded-[10px] mx-auto cursor-pointer flex text-white ">
-            Explore All Jobs
-          </button>
+          <Link to={"/jobs"} className="mx-auto cursor-pointer flex">
+            <button className="sm:text-[24px] text-[18px] font-semibold leading-[100%] bg-[#F85E1E] py-[17px] px-[34px] rounded-[10px] text-white cursor-pointer ">
+              Explore All Jobs
+            </button>
+          </Link>
         </div>
       </div>
     </div>
