@@ -17,30 +17,32 @@ const AboutUs = () => {
           <h1 className="text-[40px] md:text-[65px] font-extrabold md:leading-17 leading-[120%]">
             Bridging the Gap Between Talent and Opportunity{" "}
           </h1>
-          <p className="text-[18px] md:text-[24px] font-normal leading-[100%] ">
+          <p className="text-[16px] md:text-[24px] font-normal leading-[100%] ">
             Work Nest is a human-centric platform designed to make your job
             search seamless, meaningful, and ultimately successful.
           </p>
         </div>
 
-        <div className="flex justify-center gap-[18px] pb-[77px]">
+        <div className="flex justify-center gap-5 pb-19">
           <Link to={"/jobs"}>
-            <button className="text-[22px] font-semibold bg-[#F85E1E] py-[15px] px-[34px] text-white rounded-[10px] cursor-pointer">
+            <button className="text-[22px] font-semibold bg-[#F85E1E] p-4 md:py-4 md:px-9 text-white rounded-[10px] cursor-pointer">
               Browse Jobs
             </button>
           </Link>
-          <button className="text-[22px] font-semibold border border-[#F85E1E] py-[15px] px-[34px] text-[#F85E1E] rounded-[10px]">
-            Contact us{" "}
-          </button>
+          <Link>
+           <button className="text-[22px] font-semibold border border-[#F85E1E] p-4 md:py-4 md:px-9 text-[#F85E1E] rounded-[10px]">
+             Contact us{" "}
+           </button>
+          </Link>
         </div>
       </div>
 
       <div className=" space-y-13 mb-27">
         <div className="space-y-2.5">
-          <h4 className="text-[36px] font-semibold leading-[100%] ">
+          <h4 className="text-[34px] md:text-[36px] font-semibold leading-[100%] ">
             Numbers at a Glance
           </h4>
-          <p className="text-[22px] leading-[100%] font-normal ">
+          <p className="text-[20px] md:text-[22px] leading-[100%] font-normal ">
             The scale of our impact across the global job market.
           </p>
         </div>
@@ -94,10 +96,10 @@ const AboutUs = () => {
 
       <div className=" space-y-13 mb-13">
         <div className="space-y-2.5">
-          <h4 className="text-[36px] font-semibold leading-[100%] ">
+          <h4 className="text-[34px] md:text-[36px] font-semibold leading-[100%] ">
             Tailored Solutions
           </h4>
-          <p className="text-[22px] leading-[100%] font-normal ">
+          <p className="text-[20px] md:text-[22px] leading-[100%] font-normal ">
             Whether you are looking to take the next step in your career or
             building a high-performing team{" "}
           </p>
