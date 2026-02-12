@@ -6,8 +6,8 @@ import BottomFooter from '@/components/BottomFooter';
 
 export default function Footer() {
   return (
-    <footer className='mt-20'>
-      <div className="bg-[#FFF6F2] w-full">
+    <footer className='mt-10'>
+      <div className="bg-[#FFFFFF] w-full">
         <div className="container">
           <TopFooter />
         </div>

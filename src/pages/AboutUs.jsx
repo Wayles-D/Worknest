@@ -11,13 +11,13 @@ import profit from "/non-profit.png";
 
 const AboutUs = () => {
   return (
-    <div className=" pt-[100px]">
-      <div className="about rounded-[10px] mb-[97px] mx-5 sm:mx-8 lg:mx-[100px]">
-        <div className="flex flex-col gap-4 sm:w-[923px]   text-center mx-auto text-white pt-[79px] pb-[55px]">
-          <h1 className="text-[65px] font-extrabold leading-[70px] ">
+    <div className="container">
+      <div className="about rounded-[10px] mb-24">
+        <div className="flex flex-col gap-4  text-center mx-auto text-white pt-20 pb-14">
+          <h1 className="text-[40px] md:text-[65px] font-extrabold md:leading-17 leading-[120%]">
             Bridging the Gap Between Talent and Opportunity{" "}
           </h1>
-          <p className="text-[24px] font-normal leading-[100%] ">
+          <p className="text-[18px] md:text-[24px] font-normal leading-[100%] ">
             Work Nest is a human-centric platform designed to make your job
             search seamless, meaningful, and ultimately successful.
           </p>
@@ -35,7 +35,7 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="px-5 sm:px-8 lg:px-[100px] space-y-[50px] mb-[106px]">
+      <div className=" space-y-13 mb-27">
         <div className="space-y-2.5">
           <h4 className="text-[36px] font-semibold leading-[100%] ">
             Numbers at a Glance
@@ -45,10 +45,10 @@ const AboutUs = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-[51px]">
-          <div className="border border-[#F85E1E] rounded-[10px]  pl-[23px] py-10 space-y-[29px]">
-            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-[80px] h-[80px]">
-              <img src={suit} alt="" className="w-[47px] h-[47px]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-13">
+          <div className="border border-[#F85E1E] rounded-[10px]  pl-6 py-10 space-y-7">
+            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
+              <img src={suit} alt="" className="w-12 h-12" />
             </div>
             <div className="">
               <p className="text-[24px]  ">Jobs Posted</p>
@@ -56,9 +56,9 @@ const AboutUs = () => {
             </div>
           </div>
 
-          <div className="border border-[#F85E1E] rounded-[10px]  pl-[23px] py-10 space-y-[29px]">
-            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-[80px] h-[80px]">
-              <img src={users} alt="" className="w-[47px] h-[47px]" />
+          <div className="border border-[#F85E1E] rounded-[10px]  pl-6 py-10 space-y-7">
+            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
+              <img src={users} alt="" className="w-12 h-12" />
             </div>
             <div className="">
               <p className="text-[24px]  ">Users Hired</p>
@@ -66,9 +66,9 @@ const AboutUs = () => {
             </div>
           </div>
 
-          <div className="border border-[#F85E1E] rounded-[10px]  pl-[23px] py-10 space-y-[29px] ">
-            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-[80px] h-[80px]">
-              <img src={office} alt="" className="w-[47px] h-[47px] " />
+          <div className="border border-[#F85E1E] rounded-[10px]  pl-6 py-10 space-y-7 ">
+            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
+              <img src={office} alt="" className="w-12 h-12 " />
             </div>
             <div className="">
               <p className="text-[24px]  ">Partner Companies </p>
@@ -78,12 +78,12 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="bg-[#F0F2F4] border px-[100px] border-[#CCCCCC] mb-[78px] ">
-        <div className="h-[327px] text-center flex flex-col justify-center gap-10 px-[35px]">
+      <div className="bg-[#F0F2F4] border h-82 border-[#CCCCCC] mb-20 ">
+        <div className="text-center flex flex-col justify-center gap-5 px-9 py-10 md:py-20">
           <h4 className="text-[36px] font-semibold leading-[120%] ">
             Our Mission
           </h4>
-          <p className="text-[24px] leading-[120%] font-normal text-center">
+          <p className="text-[20px] md:text-[24px] leading-[120%] font-normal text-center">
             At Work Nest our work is to redefine the recruitment landscape by
             creating a seamless, transparent, and efficient ecosystem where
             every professional finds their purpose and every employer finds
@@ -92,7 +92,7 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="px-5 sm:px-8 lg:px-[100px] space-y-[50px] mb-[50px]">
+      <div className=" space-y-13 mb-13">
         <div className="space-y-2.5">
           <h4 className="text-[36px] font-semibold leading-[100%] ">
             Tailored Solutions
@@ -103,11 +103,11 @@ const AboutUs = () => {
           </p>
         </div>
 
-        <div className="flex justify-between">
-          <div className="bg-[#F0F2F4] border border-[#CCCCCC] rounded-[10px]  pl-[23px] py-10 space-y-[29px] rounded-[10px]">
-            <div className=" py-10 px-[17px] w-[525px] space-y-[29px] ">
-              <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-[80px] h-[80px]">
-                <img src={user} alt="" className="w-[47px] h-[47px]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="bg-[#F0F2F4] border border-[#CCCCCC] pl-6 py-10 space-y-7 rounded-[10px]">
+            <div className=" py-10 px-4 space-y-7 ">
+              <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
+                <img src={user} alt="" className="w-12 h-12" />
               </div>
               <div className="space-y-2.5">
                 <p className="text-[24px] font-bold leading-[100%]  ">
@@ -123,10 +123,10 @@ const AboutUs = () => {
             </div>
           </div>
 
-          <div className="#F0F2F4 rounded-[10px]  pl-[23px] py-10 space-y-[29px] rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
-            <div className=" py-10 px-[17px] w-[525px] space-y-[29px] ">
-              <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-[80px] h-[80px]">
-                <img src={suit} alt="" className="w-[47px] h-[47px]" />
+          <div className="pl-6 py-10 space-y-7 rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
+            <div className=" py-10 px-4 space-y-7">
+              <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
+                <img src={suit} alt="" className="w-12 h-12" />
               </div>
               <div className="space-y-2.5">
                 <p className="text-[24px] font-bold leading-[100%]  ">
@@ -143,8 +143,8 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="bg-[#F0F2F4] border px-[100px] border-[#CCCCCC]  ">
-        <div className="h-[327px] text-center flex flex-col justify-center gap-10 px-[35px]">
+      <div className="bg-[#F0F2F4] border  border-[#CCCCCC]  ">
+        <div className="h-82 text-center flex flex-col justify-center gap-10 px-9">
           <h4 className="text-[36px] font-semibold leading-[120%] ">
             Our Values
           </h4>
@@ -155,12 +155,12 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="px-5 sm:px-8 lg:px-[100px] my-[50px]">
-        <div className="grid grid-cols-3 gap-[51px] h-[280px]">
-          <div className="#F0F2F4 rounded-[10px]   space-y-[29px] rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
-            <div className="w-[379px]  gap-[29px] flex flex-col items-center justify-center pt-10 mx-auto">
+      <div className=" my-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div className="space-y-7 rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
+            <div className="gap-5 md:gap-7 flex flex-col items-center justify-center md:pt-10 p-4 ">
               <img src={idea} alt="" />
-              <div className="space-y-[3px] text-center">
+              <div className="space-y-1 text-center">
                 <p className="text-[24px] font-bold leading-[120%]  ">
                   Innovation
                 </p>
@@ -172,14 +172,14 @@ const AboutUs = () => {
             </div>
           </div>
 
-          <div className="#F0F2F4 rounded-[10px]   space-y-[29px] rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
-            <div className="w-[379px]  gap-[29px] flex flex-col items-center justify-center pt-10 mx-auto">
+          <div className="space-y-7 rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
+            <div className="gap-5 md:gap-7 flex flex-col items-center justify-center pt-10 p-4">
               <img src={profit} alt="" />
-              <div className="space-y-[3px] text-center">
+              <div className="space-y-1 text-center">
                 <p className="text-[24px] font-bold leading-[120%]  ">
                   Integrity
                 </p>
-                <p className="text-[20px] px-[39px] leading-[120%] text-[#7A7A7A]">
+                <p className="text-[20px] px-10 leading-[120%] text-[#7A7A7A]">
                   Transparency and honesty are at the heart of every interaction
                   on our platform
                 </p>
@@ -187,14 +187,14 @@ const AboutUs = () => {
             </div>
           </div>
 
-          <div className="#F0F2F4 rounded-[10px]   space-y-[29px] rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
-            <div className="w-[379px]  gap-[29px] flex flex-col items-center justify-center pt-10 mx-auto">
+          <div className="space-y-7 rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
+            <div className="gap-7 flex flex-col items-center justify-center pt-10 p-4">
               <img src={plane} alt="" />
-              <div className="space-y-[3px] text-center">
+              <div className="space-y-1 text-center">
                 <p className="text-[24px] font-bold leading-[120%]  ">
                   Scalability
                 </p>
-                <p className="text-[20px] px-[20px] text-center leading-[120%] text-[#7A7A7A]">
+                <p className="text-[20px] px-5 text-center leading-[120%] text-[#7A7A7A]">
                   Our tools are built to grow alongside your ambition. whether
                   you are start up or an enterprise
                 </p>
@@ -204,10 +204,10 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="px-5 sm:px-8 lg:px-[100px] flex gap-[60px] items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-15 items-start">
         <img src={commit} alt="" />
-        <div className="w-[513px] space-y-[30px]">
-          <div className="space-y-[14px]">
+        <div className="space-y-9">
+          <div className="space-y-5">
             <h4 className="text-[36px] font-bold leading-[120%]">
               Our Commitment
             </h4>
@@ -221,7 +221,7 @@ const AboutUs = () => {
 
           <div className="flex gap-5 items-start">
             <img src={check} alt="" />
-            <div className="flex flex-col gap-[14px]">
+            <div className="flex flex-col gap-4">
               <h5 className="text-[24px] leading-[100%] font-normal ">
                 Human- Centric Design
               </h5>
@@ -233,7 +233,7 @@ const AboutUs = () => {
 
           <div className="flex gap-5 items-start">
             <img src={check} alt="" />
-            <div className="flex flex-col gap-[14px]">
+            <div className="flex flex-col gap-4">
               <h5 className="text-[24px] leading-[100%] font-normal ">
                 Global Reach
               </h5>
@@ -245,7 +245,7 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="bg-[#000000] text-white mt-[50px] py-[30px] flex flex-col gap-[15px] items-center justify-center">
+      <div className="bg-[#000000] text-white mt-13 px-4 py-7 flex flex-col gap-4 items-center justify-center">
         <h4 className="text-[36px] font-semibold leading-[120%] ">
           Ready to find your next nest?
         </h4>

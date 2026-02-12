@@ -15,7 +15,7 @@ export default function SavedJobItem({ job }) {
     <div className="bg-white rounded-xl border border-gray-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-6 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-6 w-full sm:w-auto">
         {/* Company Logo */}
-        <div className="w-16 h-16 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100 p-2">
+        <div className="w-16 h-16 rounded-lg bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 p-2">
           <img
             src={job.companyLogo || "/placeholder.png"}
             alt={job.companyName}

@@ -53,8 +53,8 @@ const HomePage = () => {
   });
 
   return (
-    <div className="sm:mt-[91px] mt-[40px]">
-      <div className="lg:px-[100px] px-4 sm:px-6 grid lg:grid-cols-2 items-center sm:justify-between sm:gap-10 xl:gap-20 gap-10 ">
+    <div className="container sm:mt-[91px] mt-[40px]">
+      <div className=" grid lg:grid-cols-2 items-center sm:justify-between sm:gap-10 xl:gap-20 gap-10 ">
         <div className="w-full lg:w-[549px] xl:w-[549px] flex flex-col gap-12">
           <div className="flex flex-col items-start gap-5 sm:gap-[42px]">
             <p className="bg-[#FEEEEA] text-[14px] py-2.5 px-5 w-[227px] rounded-[15px] text-[#000000] font-medium">
@@ -70,7 +70,7 @@ const HomePage = () => {
               ensure high-quality career matches.
             </p>
 
-            <div className=" flex flex-col sm:flex-row  border border-[#00000036] rounded-[20px] p-5 sm:justify-between lg:gap-[8px] gap-4 lg:w-[487px] w-full">
+            <div className="flex flex-col sm:flex-row  border border-[#00000036] rounded-[20px] p-5 sm:justify-between lg:gap-[8px] gap-4 lg:w-[487px] w-full">
               <div className="flex items-center gap-[11px] flex-1">
                 <Search className="w-[16px] h-[16px] text-[#292D32]" />
                 <input
@@ -116,10 +116,8 @@ const HomePage = () => {
       {/*  */}
 
       <div
-        className="flex flex-col gap-[80px] mt-[89px]
-"
-      >
-        <div className="lg:px-[100px] px-4 sm:px-6  flex flex-col gap-[63px] py-[60px] px-[72px]">
+        className="flex flex-col gap-[80px] mt-[89px]">
+        <div className="bg-white flex flex-col gap-[63px] py-12 px-[64px]">
           <div className="items-center mx-auto flex flex-col gap-[14px] sm:w-[438px] w-full">
             <h4 className="sm:text-[40px] text-[26px] font-semibold whitespace-nowrap">
               How it works for job seekers
@@ -179,7 +177,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-[50px] lg:px-[100px] px-4 sm:px-6 ">
+        <div className="flex flex-col gap-[50px]">
           <div className="flex justify-between items-center">
             <h4 className="sm:text-[36px] text-[20px] font-semibold ">
               Explore Categories
@@ -249,7 +247,7 @@ const HomePage = () => {
       {/*  */}
 
       <hr className=" sm:hidden block border mt-15 border-[#d7d7d7]" />
-      <div className="sm:mt-[132px]  mt-[60px] space-y-[55px] lg:px-[100px] px-4 sm:px-6  ">
+      <div className="sm:mt-[132px]  mt-[60px] space-y-[55px]">
         <div className="space-y-[45px]">
           <div className="flex flex-col gap-[21px]  text-center ">
             <h4 className="sm:text-[40px] text-[30px] font-bold">
@@ -326,7 +324,7 @@ const HomePage = () => {
       </div>
       {/*  */}
 
-      <div className="lg:px-[100px] px-4 sm:px-6  flex lg:flex-row flex-col sm:items-start items-center sm:gap-[153px] gap-[40px] sm:mt-[146px] mt-[100px]">
+      <div className="flex lg:flex-row flex-col sm:items-start items-center sm:gap-[153px] gap-[40px] sm:mt-[146px] mt-[100px]">
         <div className="lg:w-[557px] w-full gap-[39px] flex flex-col">
           <h4 className="sm:text-[40px] lg:text-start sm:text-center text-[25px] font-bold leading-[100%] ">
             Empowering tools for the modern job hunter
@@ -401,7 +399,7 @@ const HomePage = () => {
 
       {/*  */}
 
-      <div className="mt-[124px] lg:mx-[100px] mx-4 sm:mx-6  bg-[#000000]  py-[67px] rounded-[30px]">
+      <div className="mt-[124px] bg-[#000000]  py-[67px] rounded-[30px]">
         <div className="lg:w-[854px]  mx-auto  flex flex-col gap-[48px]">
           <div className=" text-center space-y-5">
             <h4 className=" lg:text-[48px] sm:text-[35px] text-[35px] font-extrabold text-white leding-[100%] sm:whitespace-nowrap">

@@ -4,7 +4,7 @@ export default function Logo() {
   return (
     <>
       <NavLink to={"/"}>
-        <img src="/worknestlogoo.png" alt="logo" className="w-fit h-10" />
+        <img src="/worknestlogoo.png" alt="logo" className="lg:w-fit h-10 md:w-40" />
       </NavLink>
     </>
   );

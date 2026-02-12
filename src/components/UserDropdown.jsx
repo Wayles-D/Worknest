@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink } from "react-router";
 import { profileLinks } from "@/libs/constant";
 import { useAuth } from "@/store";
 import { ChevronDown, LogOut } from "lucide-react";
@@ -9,7 +9,6 @@ export default function UserDropdown() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const navigate = useNavigate();
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -28,14 +27,15 @@ export default function UserDropdown() {
   return (
     <>
       <div className="relative flex items-center gap-3" ref={dropdownRef}>
-        <img
+        {/* <img
           src={user?.avatar || "/default-avatar.png"}
           alt="User Avatar"
           className="w-9 h-9 rounded-full"
-        />
+        /> */}
         <span className="text-[18px] text-[#000000] font-medium">
-          {user?.name}
+          {user?.fullname}
         </span>
+       
         <button
           type="button"
           aria-label="Open profile menu"
@@ -47,13 +47,13 @@ export default function UserDropdown() {
             className={`transition-transform ${open ? "rotate-180" : ""}  text-black w-6 h-6`}
           />
         </button>
-        {/* Dropdown*/}
+        {/* Dropdown */}
         {open && (
           <div className="absolute right-0 top-full mt-3 w-56 bg-white px-3 py-4 rounded-[10px] shadow-lg">
             {/* User info */}
             <div className="py-3 border-b-[0.5px] border-[#A0A0A0]">
               <p className="font-semibold text-[#0E0E0E] text-[18px]">
-                {user?.name}
+                {user?.fullname}
               </p>
               <p className="font-light text-[14px] text-[#F85E1E]">
                 {user?.role}

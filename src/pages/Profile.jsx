@@ -49,8 +49,8 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF6F0] px-4 py-6 md:px-10">
-      <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-sm p-6 md:p-10">
+    <div className="min-h-screen container ">
+      <div className=" bg-white rounded-lg shadow-sm p-6 md:p-10">
         {/* Title */}
         <h1 className="text-xl md:text-2xl font-semibold mb-8">My Profile</h1>
 

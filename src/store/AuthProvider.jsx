@@ -7,6 +7,7 @@ import { getAuthenticatedAdmin, refreshAdminAccessToken } from "@/api/admin";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [hasLoggedOut, setHasLoggedOut] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const isAdminPath = window.location.pathname.startsWith("/admin");
   const [accessToken, setAccessToken] = useState(() => {
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => setUser(userData);
 
   const logout = () => {
+    setHasLoggedOut(true);
     setUser(null);
     setAccessToken(null);
   };
@@ -81,7 +83,7 @@ export const AuthProvider = ({ children }) => {
       setAccessToken(newToken);
       return newToken;
     },
-    enabled: !accessToken,
+    enabled: !accessToken && !hasLoggedOut,
     retry: false,
     onError: logout,
     refetchOnWindowFocus: false,

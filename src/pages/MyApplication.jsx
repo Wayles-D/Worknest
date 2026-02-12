@@ -83,8 +83,8 @@ export default function MyApplications() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F0EEEE]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="min-h-screen container">
+      <div className="py-6 sm:py-8">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8">
           <button

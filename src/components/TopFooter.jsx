@@ -9,10 +9,10 @@ export default function TopFooter() {
     <div className="pt-8">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
         <div>
-          <div className="mb-5">
+          <div className="mb-5 w-45">
             <Logo />
           </div>
-          <p className="text-[14px] md:text-[18px] text-[#000000]">
+          <p className="text-[14px] md:text-[18px] text-[#000000] lg:w-50">
             A strictly curated job platform where every listing is hand-picked
             and managed by the recruiter. We value quality and transparency
             above all.
