@@ -111,7 +111,7 @@ export default function JobDetails() {
     );
 
   return (
-    <div className="bg-white min-h-screen pb-20 pt-10">
+    <div className=" pb-20 pt-10">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Job Header */}
         <div className="bg-white rounded-[32px] p-8 md:p-10 shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row items-center gap-8">

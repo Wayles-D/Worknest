@@ -156,7 +156,7 @@ export default function ApplicationForm() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0EEEE] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="container py-8">
       {/* Toast Notification */}
       {toast.show && (
         <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top duration-300">
@@ -183,7 +183,7 @@ export default function ApplicationForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-8">
         
         {/* Back Arrow */}
         <button 
