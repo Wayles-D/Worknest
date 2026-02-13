@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   X,
   ArrowLeft,
@@ -16,9 +16,10 @@ import { toast } from "sonner";
 const JobForm = ({ job, onSave, onCancel }) => {
   const { accessToken } = useAuth();
   const [loading, setLoading] = useState(false);
+  const submitStatusRef = useRef("active");
   const [formData, setFormData] = useState({
     title: "",
-    jobType: "Full-time",
+    jobType: "Full-Time",
     location: "",
     experienceLevel: "Mid",
     salaryRange: { min: "", max: "" },
@@ -86,24 +87,38 @@ const JobForm = ({ job, onSave, onCancel }) => {
     }));
   };
 
-  const handleSubmit = async (e, status = "active") => {
+  const handleSubmit = async (e, status) => {
     if (e) e.preventDefault();
+    const resolvedStatus = status || submitStatusRef.current || "active";
     setLoading(true);
     try {
       const formattedData = {
         ...formData,
-        status: status.toLowerCase(),
-        responsibilities: formData.responsibilities
+        status: resolvedStatus.toLowerCase(),
+        salaryRange: {
+          min:
+            formData.salaryRange.min === "" || formData.salaryRange.min === null
+              ? null
+              : Number(formData.salaryRange.min),
+          max:
+            formData.salaryRange.max === "" || formData.salaryRange.max === null
+              ? null
+              : Number(formData.salaryRange.max),
+        },
+        responsibilities: (formData.responsibilities || "")
+          .toString()
           .split("\n")
-          .filter((line) => line.trim() !== ""),
-        requirement: formData.requirement
+          .filter((line) => line && line.trim() !== ""),
+        requirement: (formData.requirement || "")
+          .toString()
           .split("\n")
-          .filter((line) => line.trim() !== ""),
-        benefits: formData.benefits
+          .filter((line) => line && line.trim() !== ""),
+        benefits: (formData.benefits || "")
+          .toString()
           .split("\n")
-          .filter((line) => line.trim() !== ""),
-        applicationQuestions: formData.applicationQuestions.filter(
-          (q) => q.trim() !== "",
+          .filter((line) => line && line.trim() !== ""),
+        applicationQuestions: (formData.applicationQuestions || []).filter(
+          (q) => q && q.trim() !== "",
         ),
       };
 
@@ -129,7 +144,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto pb-20 bg-(var{--color-primary])">
+    <div className="max-w-5xl mx-auto pb-20 ">
       {/* Top Navigation */}
       <button
         onClick={onCancel}
@@ -149,7 +164,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
         </p>
       </div>
 
-      <form className="space-y-8">
+      <form className="space-y-8" onSubmit={handleSubmit}>
         {/* Section 1: Job Details */}
         <div className="bg-white rounded-xl p-8 border border-gray-100 shadow-sm">
           <div className="mb-6">
@@ -172,7 +187,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="e.g. Senior Frontend Developer"
-                  className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="w-full px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   required
                 />
               </div>
@@ -186,7 +201,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={formData.location}
                   onChange={handleChange}
                   placeholder="e.g. New York, NY or Remote"
-                  className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="w-full px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   required
                 />
               </div>
@@ -200,7 +215,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                   value={formData.category}
                   onChange={handleChange}
                   placeholder="e.g. Design, Development"
-                  className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                  className="w-full px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   required
                 />
               </div>
@@ -217,12 +232,13 @@ const JobForm = ({ job, onSave, onCancel }) => {
                     name="jobType"
                     value={formData.jobType}
                     onChange={handleChange}
-                    className="w-full appearance-none px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
+                    className="w-full appearance-none px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
                   >
-                    <option>Full-time</option>
-                    <option>Part-time</option>
+                    <option>Full-Time</option>
+                    <option>Part-Time</option>
                     <option>Contract</option>
                     <option>Internship</option>
+                    <option>Freelance</option>
                   </select>
                   <ChevronDown
                     size={14}
@@ -239,7 +255,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                     name="experienceLevel"
                     value={formData.experienceLevel}
                     onChange={handleChange}
-                    className="w-full appearance-none px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
+                    className="w-full appearance-none px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm cursor-pointer"
                   >
                     <option value="Entry">Entry</option>
                     <option value="Mid">Mid</option>
@@ -263,7 +279,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                     value={formData.salaryRange.min}
                     onChange={handleSalaryChange}
                     placeholder="Min"
-                    className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                    className="w-full px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   />
                   <input
                     type="number"
@@ -271,7 +287,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                     value={formData.salaryRange.max}
                     onChange={handleSalaryChange}
                     placeholder="Max"
-                    className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                    className="w-full px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                   />
                 </div>
               </div>
@@ -301,7 +317,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.companyName}
                 onChange={handleChange}
                 placeholder="e.g. TechCorp Inc."
-                className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                className="w-full px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
                 required
               />
             </div>
@@ -315,7 +331,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
                 value={formData.companyWebsite}
                 onChange={handleChange}
                 placeholder="https://example.com"
-                className="w-full px-4 py-2.5 bg-(var{--color-primary]) border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
+                className="w-full px-4 py-2.5  border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
               />
             </div>
             <div className="md:col-span-2 space-y-1.5">
@@ -431,7 +447,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
             <button
               type="button"
               onClick={addQuestion}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-(var{--color-primary]) rounded-lg border border-gray-200 transition-all"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-(--color-primary) rounded-lg border border-gray-200 transition-all"
             >
               <Plus size={16} />
               Add Question
@@ -444,7 +460,7 @@ const JobForm = ({ job, onSave, onCancel }) => {
           <button
             type="button"
             disabled={loading}
-            onClick={(e) => handleSubmit(e, "inactive")}
+            onClick={(e) => handleSubmit(e, "draft")}
             className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white hover:text-black/90 bg-black/90 border border-gray-200 rounded-lg hover:bg-white transition-all disabled:opacity-50"
           >
             {loading ? (
@@ -452,12 +468,14 @@ const JobForm = ({ job, onSave, onCancel }) => {
             ) : (
               <Save size={18} />
             )}
-            Save as Inactive
+            Save as Draft
           </button>
           <button
-            type="button"
+            type="submit"
             disabled={loading}
-            onClick={(e) => handleSubmit(e, "active")}
+            onClick={() => {
+              submitStatusRef.current = "active";
+            }}
             className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-(--sidebar-active-color) rounded-lg hover:bg-black/90 transition-all shadow-lg shadow-black/5 disabled:opacity-50"
           >
             {loading ? (

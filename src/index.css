@@ -11,11 +11,11 @@
 /* @plugin "daisyui" */
 
 @theme {
-  --light-gray: #F4F4F4
-   --color-primary: #FFC6AE;
-   --sidebar-color: #0A0A0A;
-   --sidebar-active-color: #F57450
-};
+  --light-gray: #f4f4f4;
+  --color-primary: #ffc6ae;
+  --sidebar-color: #0a0a0a;
+  --sidebar-active-color: #f57450;
+}
 
 * {
   scroll-behavior: smooth;

@@ -13,7 +13,6 @@ import JobForm from "@/components/dashboard/JobForm";
 import { getAllJobs, deleteJob, updateJob } from "@/api/api";
 import { toast } from "sonner";
 import { useAuth } from "@/store";
-import { useJobs } from "@/hooks/useJobs"; // Assuming this hook exists and is imported
 
 const AdminJobs = () => {
   const { accessToken } = useAuth();
@@ -29,15 +28,18 @@ const AdminJobs = () => {
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      const res = await getAllJobs(accessToken);
-      if (res.status === 200) {
+      const res = await getAllJobs({}, accessToken);
+      if (res.status === 200 || res.status === 201) {
         const responseData = res.data;
-        // Robust mapping: handle [body], [body.data], [body.jobs], or [body.data.jobs]
+        // Robust mapping: handle [body], [body.data], [body.jobs], or [body.data.data]
         const jobList = Array.isArray(responseData)
           ? responseData
-          : responseData.data || responseData.jobs || [];
+          : responseData?.data?.data ||
+            responseData?.data ||
+            responseData?.jobs ||
+            [];
 
-        setJobs(Array.isArray(jobList) ? jobList : jobList.jobs || []);
+        setJobs(Array.isArray(jobList) ? jobList : []);
       }
     } catch (error) {
       console.error("Error fetching jobs:", error);
@@ -89,12 +91,12 @@ const AdminJobs = () => {
 
   const handleCloseJob = async (id) => {
     try {
-      const res = await updateJob(id, { status: "inactive" }, accessToken);
+      const res = await updateJob(id, { status: "closed" }, accessToken);
       if (res.status === 200) {
         setJobs(
-          jobs.map((j) => (j._id === id ? { ...j, status: "inactive" } : j)),
+          jobs.map((j) => (j._id === id ? { ...j, status: "closed" } : j)),
         );
-        toast.info("Job marked as inactive");
+        toast.info("Job closed successfully");
       }
     } catch (error) {
       console.error("Error updating job:", error);
@@ -114,9 +116,9 @@ const AdminJobs = () => {
       (job.companyName || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus =
       statusFilter === "All Status" ||
-      (statusFilter === "Active"
-        ? job.status === "active"
-        : job.status === "inactive");
+      (statusFilter === "Active" && job.status === "active") ||
+      (statusFilter === "Closed" && job.status === "closed") ||
+      (statusFilter === "Draft" && job.status === "draft");
     return matchesSearch && matchesStatus;
   });
 
@@ -124,8 +126,10 @@ const AdminJobs = () => {
     switch (status) {
       case "active":
         return "bg-green-50 text-green-600 border-green-100 uppercase";
-      case "inactive":
+      case "closed":
         return "bg-red-50 text-red-600 border-red-100 uppercase";
+      case "draft":
+        return "bg-amber-50 text-amber-600 border-amber-100 uppercase";
       default:
         return "bg-gray-50 text-gray-600 border-gray-100 uppercase";
     }
@@ -245,7 +249,9 @@ const AdminJobs = () => {
                       {job.jobType}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600 text-center">
-                      {job.applications || 0}
+                      {Array.isArray(job.applications)
+                        ? job.applications.length
+                        : job.applications || 0}
                     </td>
                     <td className="px-6 py-4">
                       <span
