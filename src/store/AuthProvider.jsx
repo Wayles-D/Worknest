@@ -9,7 +9,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [hasLoggedOut, setHasLoggedOut] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const isAdminPath = window.location.pathname.startsWith("/admin");
+  const pathname = window.location.pathname;
+  const isAdminPath =
+    pathname.startsWith("/admin") || pathname.startsWith("/auth/admin");
   const [accessToken, setAccessToken] = useState(() => {
     const token = localStorage.getItem("worknestToken");
     return token;

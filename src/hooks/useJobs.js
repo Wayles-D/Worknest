@@ -3,6 +3,7 @@ import { getAllJobs } from "@/api/api";
 import { useAuth } from "@/store";
 
 export function useJobs(filters = {}) {
+  const { accessToken } = useAuth();
   const {
     jobType = [],
     industry = [],
@@ -17,7 +18,7 @@ export function useJobs(filters = {}) {
     queryKey: ["jobs", filters],
     queryFn: async () => {
       // Still forward filters to API as requested
-      const response = await getAllJobs(filters);
+      const response = await getAllJobs(filters, accessToken);
 
       // Extract raw jobs list
       const responseData = response?.data;
