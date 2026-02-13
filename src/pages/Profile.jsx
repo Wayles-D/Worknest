@@ -1,52 +1,64 @@
-import { useState, useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Camera, User, Mail, Phone, CheckCircle, Edit2 } from "lucide-react";
-import AvatarPlaceholder from "@/assets/images/avatar-placeholder.png";
-
-const submitProfile = async (data) => {
-  await new Promise((res) => setTimeout(res, 1000));
-  console.log("Profile saved:", data);
-  return data;
-};
+import useMetaArgs from "@/hooks/UseMeta";
+import { useAuth } from "@/store";
+import { useNavigate } from "react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { validateUserSchema } from "@/utils/dataSchema";
+import { formatDate } from "@/utils/constant";
+import { updateUserProfile } from "@/api/user";
+import { toast } from "sonner";
+import ErrorAlert from "@/components/ErrorAlert";
+import UploadImage from "@/features/Profile/UploadImage";
 
 const Profile = () => {
-  const fileInputRef = useRef(null);
+  const { user, accessToken } = useAuth();
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
 
-  const [avatarPreview, setAvatarPreview] = useState(null);
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    dob: "",
-    country: "",
-    bio: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm({ resolver: zodResolver(validateUserSchema) });
 
+  useEffect(() => {
+    if (user) {
+      setValue("fullname", user?.fullname);
+      setValue("email", user?.email);
+      setValue("phone", user?.phone);
+      setValue("dateOfBirth", formatDate(user?.dateOfBirth || "", "input"));
+      setValue("country", user?.country);
+            setValue("bio", user?.bio || "");
+
+    }
+  }, [user, setValue]);
   const mutation = useMutation({
-    mutationFn: submitProfile,
+    mutationFn: updateUserProfile,
+    onSuccess: async (response) => {
+      if (response.status === 200) {
+        toast.success(response?.data?.message);
+        queryClient.invalidateQueries({ queryKey: ["auth_user"] });
+      }
+    },
+    onError: (error) => {
+      import.meta.env.DEV && console.log(error);
+      setError(error?.response?.data?.message || "Error updating profile");
+    },
   });
 
-  const avatarSrc = avatarPreview || AvatarPlaceholder;
-
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const previewUrl = URL.createObjectURL(file);
-    setAvatarPreview(previewUrl);
+  const onSubmit = async (userData) => {
+    mutation.mutate({ userData, accessToken });
   };
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    mutation.mutate({
-      ...form,
-      avatar: avatarPreview,
-    });
-  };
+  useMetaArgs({
+    title: "My Profile",
+    description: "View and edit your profile information",
+    keywords: "profile, user settings, account information",
+  });
 
   return (
     <div className="min-h-screen container ">
@@ -55,34 +67,11 @@ const Profile = () => {
         <h1 className="text-xl md:text-2xl font-semibold mb-8">My Profile</h1>
 
         {/* Avatar */}
-        <div className="flex justify-center mb-10">
-          <div className="relative w-24 h-24 md:w-28 md:h-28">
-            <img
-              src={avatarSrc}
-              alt="Profile"
-              className="w-full h-full rounded-full object-cover border"
-            />
-
-            <button
-              type="button"
-              onClick={() => fileInputRef.current.click()}
-              className="absolute bottom-1 right-1 bg-white p-2 rounded-full shadow border"
-            >
-              <Camera size={14} />
-            </button>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className="hidden"
-            />
-          </div>
-        </div>
+          <UploadImage />
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {error && <ErrorAlert error={error} />}
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="block text-sm font-medium">Full Name</label>
@@ -96,9 +85,8 @@ const Profile = () => {
             </div>
             <div className="relative">
               <input
-                name="fullName"
-                value={form.fullName}
-                onChange={handleChange}
+                name="fullname"
+                {...register("fullname")}
                 placeholder="Saidi"
                 className="w-full border rounded-md px-4 py-3 text-sm pr-10"
               />
@@ -107,6 +95,11 @@ const Profile = () => {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
               />
             </div>
+            {errors?.fullname?.message && (
+              <span className="text-sm text-red-500">
+                {errors.fullname?.message}
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -126,8 +119,7 @@ const Profile = () => {
               <div className="relative">
                 <input
                   name="email"
-                  value={form.email}
-                  onChange={handleChange}
+                  {...register("email")}
                   placeholder="Saidimoney@work.com"
                   className="w-full border rounded-md px-4 py-3 text-sm pr-10"
                 />
@@ -136,6 +128,11 @@ const Profile = () => {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 />
               </div>
+              {errors?.email?.message && (
+                <span className="text-sm text-red-500">
+                  {errors.email?.message}
+                </span>
+              )}
             </div>
 
             <div>
@@ -151,8 +148,7 @@ const Profile = () => {
               <div className="relative">
                 <input
                   name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
+                  {...register("phone")}
                   placeholder="+234 815 555 5559"
                   className="w-full border rounded-md px-4 py-3 text-sm pr-10"
                 />
@@ -162,6 +158,11 @@ const Profile = () => {
                 />
               </div>
             </div>
+            {errors?.phone?.message && (
+              <span className="text-sm text-red-500">
+                {errors.phone?.message}
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -182,8 +183,7 @@ const Profile = () => {
                 <input
                   name="dob"
                   type="text"
-                  value={form.dob}
-                  onChange={handleChange}
+                  {...register("dateOfBirth")}
                   placeholder="20 Jan 1990"
                   className="w-full border rounded-md px-4 py-3 text-sm pr-10"
                 />
@@ -192,6 +192,11 @@ const Profile = () => {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 />
               </div>
+              {errors?.dateOfBirth?.message && (
+                <span className="text-sm text-red-500">
+                  {errors.dateOfBirth?.message}
+                </span>
+              )}
             </div>
 
             <div>
@@ -205,26 +210,26 @@ const Profile = () => {
                   <span>Edit</span>
                 </button>
               </div>
-              <select
+              <input
+                type="text"
                 name="country"
-                value={form.country}
-                onChange={handleChange}
+                placeholder="Country"
+                {...register("country")}
                 className="w-full border rounded-md px-4 py-3 text-sm"
-              >
-                <option value="">Select country</option>
-                <option>Nigeria</option>
-                <option>Ghana</option>
-                <option>Kenya</option>
-              </select>
+              />
             </div>
+            {errors?.country?.message && (
+              <span className="text-sm text-red-500">
+                {errors.country?.message}
+              </span>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Bio</label>
             <textarea
               name="bio"
-              value={form.bio}
-              onChange={handleChange}
+              {...register("bio")}
               rows={4}
               placeholder="Write something about you"
               className="w-full border rounded-md px-4 py-3 text-sm resize-none"
@@ -235,14 +240,15 @@ const Profile = () => {
           <div className="flex justify-end gap-10 pt-6">
             <button
               type="submit"
-              disabled={mutation.isLoading}
-              className="px-6 py-2 my-1 font-semibold rounded-md bg-orange-500 text-black hover:bg-orange-600 disabled:opacity-50"
+              disabled={mutation.isPending || isSubmitting}
+              className="px-6 py-2 my-1 cursor-pointer font-semibold rounded-md bg-orange-500 text-black hover:bg-orange-600 disabled:opacity-50"
             >
-              {mutation.isLoading ? "Saving..." : "Update"}
+              {mutation.isPending || isSubmitting ? "Saving..." : "Update"}
             </button>
             <button
               type="button"
-              className="px-6 py-2 my-1 font-semibold rounded-md border border-orange-500 text-orange-500 hover:bg-orange-50"
+              onClick={() => navigate("/")}
+              className="px-6 py-2 my-1 cursor-pointer font-semibold rounded-md border border-orange-500 text-orange-500 hover:bg-orange-50"
             >
               Cancel
             </button>

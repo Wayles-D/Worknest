@@ -28,6 +28,10 @@ export const uploadAvatar = async ({ formData, accessToken }) => {
   return await axiosInstance.patch(
     "/auth/upload-avatar",
     formData,
-    headers(accessToken)
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
   );
 };

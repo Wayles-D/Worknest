@@ -6,7 +6,7 @@ import { ChevronDown, LogOut } from "lucide-react";
 import Logout from "./Logout";
 
 export default function UserDropdown() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -27,11 +27,11 @@ export default function UserDropdown() {
   return (
     <>
       <div className="relative flex items-center gap-3" ref={dropdownRef}>
-        {/* <img
-          src={user?.avatar || "/default-avatar.png"}
+        <img
+          src={user?.avatar || user?.fullname?.charAt(0)}
           alt="User Avatar"
-          className="w-9 h-9 rounded-full"
-        /> */}
+          className="w-14 h-14 rounded-full object-cover"
+        />
         <span className="text-[18px] text-[#000000] font-medium">
           {user?.fullname}
         </span>
