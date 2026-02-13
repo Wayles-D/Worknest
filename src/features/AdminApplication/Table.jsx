@@ -1,7 +1,6 @@
-// Table.jsx
 import { useCallback } from "react";
 import { Eye } from "lucide-react";
-import { applicationColumns, getStatusStyles } from "@/libs/constant";
+import { applicationColumns, getStatusStyles } from "@/utils/constant";
 import TableBody from "@/components/TableBody";
 import { Link } from "react-router";
 

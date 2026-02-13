@@ -173,5 +173,8 @@ export const validateUserSchema = z.object({
   phone: z.string().min(10, {
     message: "Phone number must be at least 10 characters long",
   }),
+  country: z.string().min(2, {message: "Include your Country"}),
   dateOfBirth: z.string().date(),
+    bio: z.string().max(1000).optional(),
+
 });
