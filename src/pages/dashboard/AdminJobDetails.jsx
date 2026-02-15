@@ -8,14 +8,13 @@ import { toast } from "sonner";
 import {
   ArrowLeft,
   Edit2,
-  X,
+  CircleX,
   Users,
   Loader2,
   MapPin,
   Briefcase,
-  DollarSign,
-  Clock,
-  Building2,
+  CircleDollarSign,
+  Handbag,
 } from "lucide-react";
 
 export default function AdminJobDetails() {
@@ -134,7 +133,7 @@ export default function AdminJobDetails() {
             </button>
             <button
               onClick={handleViewApplications}
-              className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all"
             >
               <Users size={16} />
               Applications ({appsLoading ? "..." : applicationsCount})
@@ -142,9 +141,9 @@ export default function AdminJobDetails() {
             <button
               onClick={handleCloseJob}
               disabled={isClosing || job.status === "closed"}
-              className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-5 py-2.5 bg-white text-red-500 border border-red-500 hover:bg-red-100 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <X size={16} />
+              <CircleX size={16} />
               {isClosing ? "Closing..." : "Close Job"}
             </button>
           </div>
@@ -223,13 +222,10 @@ export default function AdminJobDetails() {
             </h2>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-[#F57450]" />
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-black" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 font-bold uppercase">
-                    Location
-                  </p>
                   <p className="text-gray-900 font-medium">
                     {job.location || "Not specified"}
                   </p>
@@ -237,27 +233,31 @@ export default function AdminJobDetails() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                  <Briefcase className="w-5 h-5 text-blue-500" />
+                <div className="w-10 h-10 rounded-l flex items-center justify-center">
+                  <Briefcase className="w-5 h-5 text-black" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 font-bold uppercase">
-                    Job Type
-                  </p>
                   <p className="text-gray-900 font-medium">
                     {job.jobType || "Not specified"}
                   </p>
                 </div>
               </div>
-
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-green-500" />
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+                  <Handbag className="w-5 h-5 text-black" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 font-bold uppercase">
-                    Salary Range
+                  <p className="text-gray-900 font-medium">
+                    {job.experienceLevel || "Not specified"}
                   </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+                  <CircleDollarSign className="w-5 h-5 " />
+                </div>
+                <div>
                   <p className="text-gray-900 font-medium">
                     {typeof job.salaryRange === "object" && job.salaryRange
                       ? `₦${job.salaryRange.min?.toLocaleString() || 0} - ₦${job.salaryRange.max?.toLocaleString() || 0}`
@@ -266,21 +266,7 @@ export default function AdminJobDetails() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-purple-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 font-bold uppercase">
-                    Experience Level
-                  </p>
-                  <p className="text-gray-900 font-medium">
-                    {job.experienceLevel || "Not specified"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center">
                   <Building2 className="w-5 h-5 text-gray-500" />
                 </div>
@@ -300,12 +286,12 @@ export default function AdminJobDetails() {
                     {job.status}
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
           {/* Applications Summary */}
-          <div className="bg-linear-to-br from-orange-50 to-orange-100 rounded-2xl p-6 shadow-sm border border-orange-200">
+          <div className="rounded-2xl p-6 shadow-sm border border-orange-200">
             <h3 className="text-lg font-bold text-gray-900 mb-2">
               Applications
             </h3>
