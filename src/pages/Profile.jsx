@@ -33,8 +33,7 @@ const Profile = () => {
       setValue("phone", user?.phone);
       setValue("dateOfBirth", formatDate(user?.dateOfBirth || "", "input"));
       setValue("country", user?.country);
-            setValue("bio", user?.bio || "");
-
+      setValue("bio", user?.bio || "");
     }
   }, [user, setValue]);
   const mutation = useMutation({
@@ -54,6 +53,7 @@ const Profile = () => {
   const onSubmit = async (userData) => {
     mutation.mutate({ userData, accessToken });
   };
+
   useMetaArgs({
     title: "My Profile",
     description: "View and edit your profile information",
@@ -67,7 +67,7 @@ const Profile = () => {
         <h1 className="text-xl md:text-2xl font-semibold mb-8">My Profile</h1>
 
         {/* Avatar */}
-          <UploadImage />
+        <UploadImage />
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

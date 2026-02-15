@@ -1,441 +1,299 @@
-import React, { useState } from 'react';
-import { Upload, Link as LinkIcon, X } from 'lucide-react';
+import React, { useState } from "react";
+import { Upload, Link as LinkIcon, X, Loader2 } from "lucide-react";
+import { useParams, useNavigate } from "react-router";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getJobById } from "@/api/api";
+import { applyToJob } from "@/api/applications";
+import { useAuth } from "@/store";
+import { toast } from "sonner";
 
 export default function ApplicationForm() {
-  const [formData, setFormData] = useState({
-    email: '',
-    phone: '',
-    location: '',
-    cvFile: null,
-    portfolioUrl: '',
-    linkedinUrl: '',
-    whyInterested: '',
-    technicalAchievement: ''
+  const { id: jobId } = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
+  const [formState, setFormState] = useState({});
+  const [cvFile, setCvFile] = useState(null);
+  const [portfolioUrl, setPortfolioUrl] = useState("");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+
+  const { data: job, isLoading: isLoadingJob } = useQuery({
+    queryKey: ["job", jobId],
+    queryFn: async () => {
+      const res = await getJobById(jobId, accessToken);
+      const data = res.data?.data || res.data;
+      return Array.isArray(data) ? data[0] : data;
+    },
+    enabled: !!jobId,
   });
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toast, setToast] = useState({ show: false, message: '', type: '' });
+  const questions = job?.applicationQuestions || [];
 
-  // Show toast notification
-  const showToast = (message, type = 'error') => {
-    setToast({ show: true, message, type });
-    setTimeout(() => {
-      setToast({ show: false, message: '', type: '' });
-    }, 3000);
+  const applyMutation = useMutation({
+    mutationFn: (formData) => applyToJob({ jobId, formData, accessToken }),
+    onSuccess: () => {
+      toast.success("Application submitted successfully! 🚀");
+      // Invalidate my applications cache so the new one shows up
+      queryClient.invalidateQueries({ queryKey: ["my-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
+      navigate("/my-applications");
+    },
+    onError: (error) => {
+      const message =
+        error.response?.data?.message || "Failed to submit application";
+      toast.error(message);
+    },
+  });
+
+  const handleInputChange = (question, value) => {
+    setFormState((prev) => ({ ...prev, [question]: value }));
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileUpload = (e, type) => {
+  const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (type === 'cv') {
-        setFormData(prev => ({ 
-          ...prev, 
-          cvFile: file
-        }));
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size exceeds 5MB limit");
+        return;
       }
+      setCvFile(file);
     }
   };
 
-  const removeFile = (type) => {
-    if (type === 'cv') {
-      setFormData(prev => ({ ...prev, cvFile: null }));
+  const removeFile = () => {
+    setCvFile(null);
+  };
+
+  const handleAddUrl = (type) => {
+    const url = prompt(
+      `Enter your ${type === "portfolio" ? "Portfolio" : "LinkedIn"} URL:`,
+    );
+    if (url) {
+      if (type === "portfolio") setPortfolioUrl(url);
+      else setLinkedinUrl(url);
     }
   };
 
   const removeUrl = (type) => {
-    if (type === 'portfolio') {
-      setFormData(prev => ({ ...prev, portfolioUrl: '' }));
-    } else if (type === 'linkedin') {
-      setFormData(prev => ({ ...prev, linkedinUrl: '' }));
-    }
-  };
-
-  const handleAddUrl = (type) => {
-    const url = prompt(`Enter your ${type === 'portfolio' ? 'Portfolio' : 'LinkedIn'} URL:`);
-    if (url) {
-      if (type === 'portfolio') {
-        setFormData(prev => ({ ...prev, portfolioUrl: url }));
-      } else if (type === 'linkedin') {
-        setFormData(prev => ({ ...prev, linkedinUrl: url }));
-      }
-    }
-  };
-
-  const handleBack = () => {
-    window.history.back();
-  };
-
-  // Validate form before submission
-  const validateForm = () => {
-    if (!formData.email.trim()) {
-      showToast('Please enter your email address');
-      return false;
-    }
-    if (!formData.phone.trim()) {
-      showToast('Please enter your phone number');
-      return false;
-    }
-    if (!formData.location.trim()) {
-      showToast('Please enter your location');
-      return false;
-    }
-    if (!formData.cvFile) {
-      showToast('Please upload your CV');
-      return false;
-    }
-    if (!formData.portfolioUrl.trim()) {
-      showToast('Please add your portfolio URL');
-      return false;
-    }
-    if (!formData.linkedinUrl.trim()) {
-      showToast('Please add your LinkedIn URL');
-      return false;
-    }
-    if (!formData.whyInterested.trim()) {
-      showToast('Please answer why you are interested in this role');
-      return false;
-    }
-    if (!formData.technicalAchievement.trim()) {
-      showToast('Please describe your biggest technical achievement');
-      return false;
-    }
-    return true;
+    if (type === "portfolio") setPortfolioUrl("");
+    else setLinkedinUrl("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate form
-    if (!validateForm()) {
+
+    if (!cvFile) {
+      toast.error("Please upload your resume");
       return;
     }
 
-    setIsSubmitting(true);
-    
-    // Prepare form data for backend
-    const formDataToSend = new FormData();
-    formDataToSend.append('email', formData.email);
-    formDataToSend.append('phone', formData.phone);
-    formDataToSend.append('location', formData.location);
-    formDataToSend.append('cv', formData.cvFile);
-    formDataToSend.append('portfolioUrl', formData.portfolioUrl);
-    formDataToSend.append('linkedinUrl', formData.linkedinUrl);
-    formDataToSend.append('whyInterested', formData.whyInterested);
-    formDataToSend.append('technicalAchievement', formData.technicalAchievement);
+    const answersArray = questions.map((q) => ({
+      question: q,
+      answer: formState[q] || "",
+    }));
 
-    try {
-      console.log('Form submitted:', formData);
-      // Replace with your actual backend call
-      // const response = await fetch('/api/applications', { 
-      //   method: 'POST', 
-      //   body: formDataToSend 
-      // });
-      // if (!response.ok) throw new Error('Submission failed');
-      
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      showToast('Application submitted successfully!', 'success');
-      setIsSubmitted(true);
-      setIsSubmitting(false);
-    } catch (error) {
-      console.error('Submission error:', error);
-      setIsSubmitting(false);
-      showToast('Failed to submit application. Please try again.');
-    }
+    const formData = new FormData();
+    formData.append("resume", cvFile);
+    if (portfolioUrl) formData.append("portfolioUrl", portfolioUrl);
+    if (linkedinUrl) formData.append("linkedinUrl", linkedinUrl);
+    formData.append("answers", JSON.stringify(answersArray));
+
+    applyMutation.mutate(formData);
   };
 
-  const handleViewApplications = () => {
-    window.location.href = '/dashboard/my-applications';
-  };
+  if (isLoadingJob) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="animate-spin text-[#F57450]" size={48} />
+      </div>
+    );
+  }
 
   return (
-    <div className="container py-8">
-      {/* Toast Notification */}
-      {toast.show && (
-        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top duration-300">
-          <div className={`px-6 py-4 rounded-lg shadow-lg ${
-            toast.type === 'success' 
-              ? 'bg-green-500 text-white' 
-              : 'bg-red-500 text-white'
-          }`}>
-            <div className="flex items-center gap-3">
-              {toast.type === 'success' ? (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-              ) : (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M12 8V12M12 16H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              )}
-              <p className="font-medium">{toast.message}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
+    <div className="container py-8 max-w-4xl mx-auto px-4">
       <form onSubmit={handleSubmit} className="space-y-8">
-        
-        {/* Back Arrow */}
-        <button 
+        <button
           type="button"
-          onClick={handleBack}
-          className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors mb-4"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-gray-500 hover:text-black transition-all mb-4 font-bold text-sm"
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          <ArrowLeft size={18} />
+          <span>Back</span>
         </button>
 
-        {/* Candidate Information Section */}
-        <div className='bg-[#F0EEEE]'>
-          <h2 className="text-[22px] font-bold leading-[120%] text-black mb-8">
-            Candidate Information
-          </h2>          
-        </div>
-        
-        <section className="bg-white rounded-xl shadow-sm p-8 sm:p-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {/* Email Field */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-medium text-gray-700">
-                  Email Address <span className="text-red-500">*</span>
-                </label>
-              </div>
-              <div className="relative">
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg text-sm text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-            </div>
-            
-            {/* Phone Field */}
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-medium text-gray-700">
-                  Phone Number <span className="text-red-500">*</span>
-                </label>
-              </div>
-              <div className="relative">
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-lg text-sm text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-                  placeholder="Enter your phone"
-                  required
-                />
-              </div>
-            </div>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-gray-50/50 border-b border-gray-100 p-6 md:p-8">
+            <h2 className="text-2xl font-extrabold text-gray-900 leading-tight">
+              Apply for {job?.title}
+            </h2>
+            <p className="text-[#F57450] font-bold mt-1">{job?.companyName}</p>
           </div>
 
-          {/* Location Field */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-700">
-              Location <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all"
-              placeholder="Enter your Address"
-              required
-            />
-          </div>
-        </section>
-
-        {/* Professional Information Section */}
-        <div className='bg-[#F0EEEE]'>
-          <h2 className="text-[22px] font-bold leading-[120%] text-black mb-8">
-            Professional Information
-          </h2>          
-        </div>
-        
-        <section className="bg-white rounded-xl shadow-sm p-8 sm:p-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Upload CV */}
-            <div className="flex flex-col gap-3">
-              <label className="flex items-center gap-3 px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-gray-300 transition-all">
-                <input
-                  type="file"
-                  accept=".pdf,.doc,.docx"
-                  onChange={(e) => handleFileUpload(e, 'cv')}
-                  className="hidden"
-                />
-                <Upload className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <span className="text-sm font-medium text-gray-700">
-                  Upload CV <span className="text-red-500">*</span>
-                </span>
-              </label>
-              {formData.cvFile && (
-                <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <span className="flex-1 text-xs font-medium text-blue-900 truncate">
-                    {formData.cvFile.name}
-                  </span>
-                  <button 
-                    type="button" 
-                    onClick={() => removeFile('cv')}
-                    className="flex-shrink-0 p-1 text-gray-500 hover:bg-gray-200 rounded transition-colors"
-                  >
-                    <X size={14} />
-                  </button>
+          <div className="p-6 md:p-10 space-y-10">
+            {/* Professional Information */}
+            <section className="space-y-6">
+              <h3 className="text-xl font-bold text-gray-900 tracking-tight">
+                Professional Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Resume Upload */}
+                <div className="flex flex-col gap-3">
+                  <label className="flex flex-col items-center justify-center gap-3 px-5 py-8 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-100/50 hover:border-orange-200 transition-all text-center group">
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                    <Upload className="w-6 h-6 text-gray-400 group-hover:text-[#F57450] transition-colors" />
+                    <span className="text-sm font-bold text-gray-600">
+                      Upload Resume *
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-medium">
+                      PDF, DOC, DOCX (Max 5MB)
+                    </span>
+                  </label>
+                  {cvFile && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-orange-50/50 border border-orange-100 rounded-xl">
+                      <span className="flex-1 text-xs font-bold text-orange-900 truncate">
+                        {cvFile.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={removeFile}
+                        className="p-1.5 text-orange-400 hover:bg-orange-100 rounded-lg transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* Portfolio */}
-            <div className="flex flex-col gap-3">
+                {/* Portfolio */}
+                <div className="flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleAddUrl("portfolio")}
+                    className="flex flex-col items-center justify-center gap-3 px-5 py-8 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl hover:bg-gray-100/50 hover:border-orange-200 transition-all text-center group"
+                  >
+                    <LinkIcon className="w-6 h-6 text-gray-400 group-hover:text-[#F57450] transition-colors" />
+                    <span className="text-sm font-bold text-gray-600">
+                      Portfolio URL
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-medium">
+                      Link your work
+                    </span>
+                  </button>
+                  {portfolioUrl && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-orange-50/50 border border-orange-100 rounded-xl">
+                      <span className="flex-1 text-xs font-bold text-orange-900 truncate">
+                        {portfolioUrl}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeUrl("portfolio")}
+                        className="p-1.5 text-orange-400 hover:bg-orange-100 rounded-lg transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* LinkedIn */}
+                <div className="flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleAddUrl("linkedin")}
+                    className="flex flex-col items-center justify-center gap-3 px-5 py-8 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl hover:bg-gray-100/50 hover:border-orange-200 transition-all text-center group"
+                  >
+                    <LinkIcon className="w-6 h-6 text-gray-400 group-hover:text-[#F57450] transition-colors" />
+                    <span className="text-sm font-bold text-gray-600">
+                      LinkedIn Profile
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-medium">
+                      Professional social
+                    </span>
+                  </button>
+                  {linkedinUrl && (
+                    <div className="flex items-center gap-2 px-4 py-3 bg-orange-50/50 border border-orange-100 rounded-xl">
+                      <span className="flex-1 text-xs font-bold text-orange-900 truncate">
+                        {linkedinUrl}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeUrl("linkedin")}
+                        className="p-1.5 text-orange-400 hover:bg-orange-100 rounded-lg transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* Application Questions */}
+            {questions.length > 0 && (
+              <section className="space-y-6 pt-4">
+                <h3 className="text-xl font-bold text-gray-900 tracking-tight">
+                  Application Questions
+                </h3>
+                <div className="space-y-6">
+                  {questions.map((question, index) => (
+                    <div key={index} className="flex flex-col gap-3">
+                      <label className="text-sm font-bold text-gray-600">
+                        {question} <span className="text-[#F57450]">*</span>
+                      </label>
+                      <textarea
+                        value={formState[question] || ""}
+                        onChange={(e) =>
+                          handleInputChange(question, e.target.value)
+                        }
+                        className="w-full px-5 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl text-sm focus:border-orange-200 focus:ring-4 focus:ring-orange-50 outline-none transition-all min-h-[120px] font-medium placeholder-gray-300"
+                        placeholder="Type your answer here..."
+                        required
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <div className="pt-8">
               <button
-                type="button"
-                onClick={() => handleAddUrl('portfolio')}
-                className="flex items-center gap-3 px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-gray-300 transition-all text-left"
+                type="submit"
+                disabled={applyMutation.isPending}
+                className="w-full py-5 bg-[#F57450] text-white font-extrabold rounded-2xl shadow-xl shadow-orange-100 hover:bg-[#E05B35] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-3 text-lg"
               >
-                <LinkIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <span className="text-sm font-medium text-gray-700">
-                  Portfolio <span className="text-red-500">*</span>
-                </span>
+                {applyMutation.isPending ? (
+                  <>
+                    <Loader2 className="animate-spin" size={24} />
+                    <span>Submitting Application...</span>
+                  </>
+                ) : (
+                  "Submit Application"
+                )}
               </button>
-              {formData.portfolioUrl && (
-                <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <span className="flex-1 text-xs font-medium text-blue-900 truncate">
-                    {formData.portfolioUrl}
-                  </span>
-                  <button 
-                    type="button" 
-                    onClick={() => removeUrl('portfolio')}
-                    className="flex-shrink-0 p-1 text-gray-500 hover:bg-gray-200 rounded transition-colors"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* LinkedIn */}
-            <div className="flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={() => handleAddUrl('linkedin')}
-                className="flex items-center gap-3 px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-gray-300 transition-all text-left"
-              >
-                <LinkIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                <span className="text-sm font-medium text-gray-700">
-                  LinkedIn <span className="text-red-500">*</span>
-                </span>
-              </button>
-              {formData.linkedinUrl && (
-                <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <span className="flex-1 text-xs font-medium text-blue-900 truncate">
-                    {formData.linkedinUrl}
-                  </span>
-                  <button 
-                    type="button" 
-                    onClick={() => removeUrl('linkedin')}
-                    className="flex-shrink-0 p-1 text-gray-500 hover:bg-gray-200 rounded transition-colors"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              )}
             </div>
           </div>
-        </section>
-
-        {/* Application Question Section */}
-        <div className='bg-[#F0EEEE]'>
-          <h2 className="text-[22px] font-bold leading-[120%] text-black mb-8">
-            Application Question
-          </h2>          
-        </div>
-        
-        <section className="bg-white rounded-xl shadow-sm p-8 sm:p-10">
-          <div className="space-y-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                Why are you interested in this role <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                name="whyInterested"
-                value={formData.whyInterested}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all resize-y min-h-[120px]"
-                placeholder="Enter your answer here..."
-                rows="4"
-                required
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700">
-                What is your biggest technical achievement <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                name="technicalAchievement"
-                value={formData.technicalAchievement}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm text-gray-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all resize-y min-h-[120px]"
-                placeholder="Enter your answer here..."
-                rows="4"
-                required
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Submit Button Section */}
-        <div className="flex flex-col items-center gap-4">
-          {!isSubmitted ? (
-            <button 
-              type="submit" 
-              disabled={isSubmitting}
-              className="w-full max-w-md px-8 py-4 bg-gradient-to-r from-[#ff5722] to-[#f4511e] text-white text-base font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-[#f4511e] hover:to-[#e64a19] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit Application'}
-            </button>
-          ) : (
-            <div className="w-full max-w-md space-y-4 animate-in fade-in duration-500">
-              <div className="bg-white rounded-lg p-6 text-center shadow-sm">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                    <path d="M9 16L14 21L23 11" stroke="#10B981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Application Submitted!</h3>
-                <p className="text-sm text-gray-600 mb-6">
-                  Your application has been successfully submitted. You'll hear from us soon.
-                </p>
-              </div>
-              
-              <button 
-                type="button"
-                onClick={handleViewApplications}
-                className="w-full px-8 py-4 bg-gradient-to-r from-[#ff5722] to-[#f4511e] text-white text-base font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-[#f4511e] hover:to-[#e64a19] active:scale-[0.98] transition-all duration-200 cursor-pointer"
-              >
-                View My Applications
-              </button>
-            </div>
-          )}
         </div>
       </form>
     </div>
   );
 }
+
+const ArrowLeft = ({ size }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19 12H5M12 19l-7-7 7-7" />
+  </svg>
+);

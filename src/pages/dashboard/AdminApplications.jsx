@@ -5,33 +5,31 @@ import ApplicationDetail from "@/features/AdminApplication/ApplicationDetail";
 import Filter from "@/features/AdminApplication/Filter";
 import JobFilter from "@/features/AdminApplication/JobFilter";
 import Table from "@/features/AdminApplication/Table";
-import { useApplications } from "@/hooks/useApplications";
-import { Grid3x3, List } from "lucide-react";
-import React, { useState, useMemo } from "react";
+import { useAdminApplications } from "@/hooks/useApplications";
+import { Grid3x3, List, Loader2 } from "lucide-react";
+import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
 const AdminApplications = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const { data: applications = [], isLoading } = useApplications();
-  const [viewMode, setViewMode] = useState("grid"); // "grid" or "list"
-
-  const searchQuery = searchParams.get("query")?.toLowerCase() || "";
   const statusFilter = searchParams.get("status") || "";
+  const searchQuery = searchParams.get("query") || "";
   const jobFilter = searchParams.get("job") || "";
+  const page = parseInt(searchParams.get("page") || "1");
 
-  const filteredApplications = useMemo(() => {
-    return applications.filter((app) => {
-      const matchesSearch = searchQuery
-        ? app.applicantName.toLowerCase().includes(searchQuery)
-        : true;
-      const matchesStatus = statusFilter ? app.status === statusFilter : true;
-      const matchesJob = jobFilter ? app.jobTitle === jobFilter : true;
+  const { data: response, isLoading } = useAdminApplications({
+    status: statusFilter,
+    keyword: searchQuery,
+    page,
+    limit: 12,
+  });
 
-      return matchesSearch && matchesStatus && matchesJob;
-    });
-  }, [applications, searchQuery, statusFilter, jobFilter]);
+  const applications = response?.data || [];
+  const total = response?.total || 0;
+
+  const [viewMode, setViewMode] = useState("grid"); // "grid" or "list"
 
   const applicationId = searchParams.get("id");
   if (applicationId) {
@@ -42,17 +40,8 @@ const AdminApplications = () => {
     );
   }
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-gray-500">Loading applications...</p>
-      </div>
-    );
-  }
-
-  const handleApplicationClick = (application) => {
-    navigate(`?id=${application.id}`);
+  const handleApplicationClick = (id) => {
+    navigate(`?id=${id}`);
   };
 
   return (
@@ -101,21 +90,26 @@ const AdminApplications = () => {
 
       {/* Applications Grid or Table */}
       <div className="mt-6">
-        {filteredApplications.length > 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-24 space-y-4">
+            <Loader2 className="animate-spin text-[#F57450]" size={40} />
+            <p className="text-gray-500 font-medium">Loading applications...</p>
+          </div>
+        ) : applications.length > 0 ? (
           viewMode === "grid" ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {filteredApplications.map((application) => (
+              {applications.map((application) => (
                 <ApplicationCard
                   key={application.id}
                   application={application}
-                  onClick={() => handleApplicationClick(application)}
+                  onClick={() => handleApplicationClick(application.id)}
                 />
               ))}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <div className="min-w-[700px] bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                <Table applications={filteredApplications} />
+                <Table applications={applications} />
               </div>
             </div>
           )
@@ -127,10 +121,12 @@ const AdminApplications = () => {
           </div>
         )}
       </div>
-      {/* Results Count */}
-      <div className="text-sm text-gray-600 mt-6">
-        Showing {filteredApplications.length} of {applications.length}{" "}
-        applications
+
+      {/* Results Count and Pagination could be here */}
+      <div className="text-sm text-gray-600 mt-6 flex justify-between items-center">
+        <span>
+          Showing {applications.length} of {total} applications
+        </span>
       </div>
     </PageWrapper>
   );
