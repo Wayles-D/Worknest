@@ -1,87 +1,107 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  fetchApplications,
-  fetchApplicationById,
+  getMyApplications,
+  getAllApplications,
+  getApplicationById,
   updateApplicationStatus,
   updateApplicationNote,
-} from "@/api/application";
+  getApplicationStats,
+} from "@/api/applications";
+import { useAuth } from "@/store";
 import { toast } from "sonner";
 
-export function useApplications() {
+export function useMyApplications(params = {}) {
+  const { accessToken } = useAuth();
   return useQuery({
-    queryKey: ["applications"],
-    queryFn: fetchApplications,
+    queryKey: ["my-applications", params],
+    queryFn: () => getMyApplications({ ...params, accessToken }),
+    enabled: !!accessToken,
   });
 }
 
-export function useApplication(applicationId) {
+export function useAdminApplications(params = {}) {
+  const { accessToken } = useAuth();
   return useQuery({
-    queryKey: ["applications", applicationId],
-    queryFn: () => fetchApplicationById(applicationId),
-    enabled: !!applicationId,
+    queryKey: ["admin-applications", params],
+    queryFn: () => getAllApplications({ ...params, accessToken }),
+    enabled: !!accessToken,
+  });
+}
+
+export function useApplicationDetails(id) {
+  const { accessToken } = useAuth();
+  return useQuery({
+    queryKey: ["application-details", id],
+    queryFn: () => getApplicationById({ id, accessToken }),
+    enabled: !!id && !!accessToken,
   });
 }
 
 export function useUpdateApplicationStatus() {
   const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
 
   return useMutation({
-    mutationFn: ({ applicationId, newStatus }) =>
-      updateApplicationStatus(applicationId, newStatus),
-    onSuccess: (data, variables) => {
-      // Update the specific application in cache
-      queryClient.setQueryData(["applications", String(variables.applicationId)], data);
-      
-      // Update the application in the list cache
-      queryClient.setQueryData(["applications"], (oldData) => {
-        if (!oldData) return oldData;
-        return oldData.map((app) =>
-          app.id === variables.applicationId ? data : app
-        );
+    mutationFn: ({ applicationId, status, note }) =>
+      updateApplicationStatus({
+        id: applicationId,
+        status,
+        note,
+        accessToken,
+      }),
+    onSuccess: (res, variables) => {
+      // Invalidate all related queries to ensure consistency
+      queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
+      queryClient.invalidateQueries({
+        queryKey: ["application-details", variables.applicationId],
       });
-      
+      queryClient.invalidateQueries({ queryKey: ["my-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["application-stats"] });
+
       toast.success("Status updated successfully");
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to update status");
+      toast.error(error.response?.data?.message || "Failed to update status");
     },
   });
 }
 
-
 export function useUpdateApplicationNote() {
   const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
 
   return useMutation({
     mutationFn: ({ applicationId, note }) =>
-      updateApplicationNote(applicationId, note),
-
-    onSuccess: (data, variables) => {
-      const id = Number(variables.applicationId);
-
-      // Update single application cache
-      queryClient.setQueryData(["applications", id], data);
-
-      // Update applications list cache (if it exists)
-      queryClient.setQueryData(["applications"], (oldData) => {
-        if (!Array.isArray(oldData)) return oldData;
-
-        return oldData.map((app) =>
-          app.id === id ? data : app
-        );
+      updateApplicationNote({
+        id: applicationId,
+        note,
+        accessToken,
+      }),
+    onSuccess: (res, variables) => {
+      // Invalidate specific detail and lists
+      queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
+      queryClient.invalidateQueries({
+        queryKey: ["application-details", variables.applicationId],
       });
+      queryClient.invalidateQueries({ queryKey: ["my-applications"] });
 
       toast.success("Note saved successfully ✅");
     },
-
     onError: (error) => {
       const message =
         error?.response?.data?.message ||
         error?.message ||
         "Failed to save note ❌";
-
       toast.error(message);
     },
   });
 }
 
+export function useApplicationStats(jobId) {
+  const { accessToken } = useAuth();
+  return useQuery({
+    queryKey: ["application-stats", jobId],
+    queryFn: () => getApplicationStats({ jobId, accessToken }),
+    enabled: !!accessToken,
+  });
+}

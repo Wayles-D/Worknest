@@ -6,7 +6,7 @@ import { saveJob, unsaveJob } from "@/api/api";
 import { toast } from "sonner";
 
 export default function JobCard({ job, isSavedInitial = false, onToggleSave }) {
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
   const [isSaved, setIsSaved] = useState(isSavedInitial);
   const [loading, setLoading] = useState(false);
 
@@ -44,23 +44,6 @@ export default function JobCard({ job, isSavedInitial = false, onToggleSave }) {
         <span className="inline-block bg-orange-100 text-xs px-3 py-1 rounded-full">
           {job.jobType}
         </span>
-        <button
-          onClick={handleSaveToggle}
-          disabled={loading}
-          className={`p-1.5 rounded-full transition-colors ${
-            isSaved
-              ? "bg-orange-50 text-[#F57450]"
-              : "bg-gray-50 text-gray-400 hover:text-gray-600"
-          }`}
-        >
-          {loading ? (
-            <Loader2 className="animate-spin" size={18} />
-          ) : isSaved ? (
-            <BookmarkCheck size={18} />
-          ) : (
-            <Bookmark size={18} />
-          )}
-        </button>
       </div>
 
       <h4 className="font-semibold text-lg mb-1">{job.title}</h4>

@@ -18,6 +18,7 @@ const Signup = lazy(() => import("@/pages/auth/Signup.jsx"));
 const ForgotPassword = lazy(() => import("@/pages/auth/ForgotPassword.jsx"));
 const ResetPassword = lazy(() => import("@/pages/auth/ResetPassword.jsx"));
 const Verify = lazy(() => import("@/pages/auth/Verify.jsx"));
+const ChangePassword = lazy(() => import("@/pages/auth/ChangePassword.jsx"));
 const Jobs = lazy(() => import("@/pages/Jobs.jsx"));
 const JobDetails = lazy(() => import("@/pages/JobDetails.jsx"));
 const AboutUs = lazy(() => import("@/pages/AboutUs.jsx"));
@@ -61,6 +62,16 @@ export default function AppRoutes() {
         { path: "reset-password", element: <ResetPassword /> },
         { path: "verify", element: <Verify /> },
         { path: "admin/login", element: <AdminLogin /> },
+        {
+          path: "change-password",
+          element: (
+            <PrivateRoutes {...privateRouteProps}>
+              <Suspense fallback={<SuspenseUi />}>
+                <ChangePassword />
+              </Suspense>
+            </PrivateRoutes>
+          ),
+        },
       ],
     },
     {

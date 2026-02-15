@@ -184,16 +184,17 @@ export const getStatusColor = (statusValue) => {
 
 export const getStatusStyles = (status) => {
   const styles = {
-    Submitted: "bg-orange-50 text-orange-700 border-orange-200",
-    Interviewing: "bg-blue-50 text-blue-700 border-blue-200",
-    "In review": "bg-blue-50 text-blue-700 border-blue-200",
-    Shortlisted: "bg-green-50 text-green-700 border-green-200",
-    Interview: "bg-blue-50 text-blue-700 border-blue-200",
-    Rejected: "bg-red-50 text-red-700 border-red-200",
-    Offer: "bg-green-50 text-green-700 border-green-200",
-    Viewed: "bg-purple-50 text-purple-700 border-purple-200",
+    Submitted: "bg-[#DBEAFE] text-[#2563EB] border-transparent",
+    Pending: "bg-[#DBEAFE] text-[#2563EB] border-transparent",
+    Interviewing: "bg-[#F3E8FF] text-[#9333EA] border-transparent",
+    "In review": "bg-[#F3E8FF] text-[#9333EA] border-transparent",
+    Shortlisted: "bg-[#DCFCE7] text-[#16A34A] border-transparent",
+    Interview: "bg-[#F3E8FF] text-[#9333EA] border-transparent",
+    Rejected: "bg-[#FEE2E2] text-[#DC2626] border-transparent",
+    Offer: "bg-[#DCFCE7] text-[#16A34A] border-transparent",
+    Viewed: "bg-[#FEF3C7] text-[#D97706] border-transparent",
   };
-  return styles[status] || "bg-gray-50 text-gray-700 border-gray-200";
+  return styles[status] || "bg-gray-100 text-gray-700 border-transparent";
 };
 
 export const applicationColumns = [

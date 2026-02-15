@@ -1,0 +1,197 @@
+import axiosInstance from "@/utils/axiosInstance";
+import { headers } from "@/utils/constant";
+import { getAllJobs } from "./api";
+
+/**
+ * Normalizes an application object to a consistent shape for the UI.
+ * Handles cases where 'job' is a populated object, a string ID, or a snapshot.
+ */
+export const normalizeApplication = (app) => {
+  if (!app) return null;
+
+  const jobInfo = app.jobId || app.job || {};
+  const isJobPopulated =
+    typeof jobInfo === "object" &&
+    jobInfo !== null &&
+    (jobInfo.title || jobInfo._id);
+
+  return {
+    id: app._id || app.id,
+    status: app.status || "submitted",
+    createdAt: app.createdAt,
+    resumeUrl: app.resume || app.resumeUrl,
+    portfolioUrl: app.portfolioUrl,
+    linkedinUrl: app.linkedinUrl,
+    answers: Array.isArray(app.answers)
+      ? app.answers
+      : JSON.parse(app.answers || "[]"),
+    applicant: {
+      name: app.applicantName || app.userId?.fullName || "N/A",
+      email: app.userId?.email || app.email || "N/A",
+      phone: app.phone || "N/A",
+      location: app.location || "N/A",
+    },
+    job: {
+      id: isJobPopulated ? jobInfo._id || jobInfo.id : jobInfo,
+      title: isJobPopulated ? jobInfo.title : app.jobTitle || "Job Position",
+      companyName: isJobPopulated
+        ? jobInfo.companyName || jobInfo.company
+        : app.companyName || app.company || "Company",
+      companyLogo: isJobPopulated
+        ? jobInfo.companyLogo || jobInfo.logo
+        : app.companyLogo || app.logo,
+      location: isJobPopulated
+        ? jobInfo.location
+        : app.jobLocation || app.location,
+    },
+  };
+};
+
+/**
+ * Enriches a list of applications with job details if job IDs are not populated.
+ */
+export const enrichApplicationsWithJobs = async (applications, accessToken) => {
+  const needsEnrichment = applications.some(
+    (app) => typeof (app.jobId || app.job) === "string",
+  );
+
+  if (!needsEnrichment) return applications.map(normalizeApplication);
+
+  try {
+    const jobsRes = await getAllJobs({ limit: 100 }, accessToken);
+    const jobs = jobsRes.data?.data || jobsRes.data || [];
+    const jobsMap = new Map(jobs.map((job) => [job._id || job.id, job]));
+
+    return applications.map((app) => {
+      const jobId = app.jobId || app.job;
+      if (typeof jobId === "string" && jobsMap.has(jobId)) {
+        return normalizeApplication({ ...app, jobId: jobsMap.get(jobId) });
+      }
+      return normalizeApplication(app);
+    });
+  } catch (error) {
+    console.error("Failed to enrich applications:", error);
+    return applications.map(normalizeApplication);
+  }
+};
+
+export const applyToJob = async ({ jobId, formData, accessToken }) => {
+  // formData should be constructed by the caller
+  return await axiosInstance.post(`/applications/${jobId}/apply`, formData, {
+    ...headers(accessToken),
+    headers: {
+      ...headers(accessToken).headers,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const getMyApplications = async ({
+  page = 1,
+  limit = 10,
+  accessToken,
+}) => {
+  const res = await axiosInstance.get("/applications/me", {
+    params: { page, limit },
+    ...headers(accessToken),
+  });
+
+  const rawData =
+    res.data?.data?.data ||
+    res.data?.data ||
+    res.data?.applications ||
+    res.data ||
+    [];
+  const applications = Array.isArray(rawData)
+    ? rawData
+    : rawData.applications || [];
+
+  // Return enriched/normalized data and total count
+  const normalizedData = await enrichApplicationsWithJobs(
+    applications,
+    accessToken,
+  );
+
+  return {
+    data: normalizedData,
+    total:
+      rawData.totalApplications || res.data?.total || normalizedData.length,
+    totalPages: rawData.totalPages || res.data?.totalPages || 1,
+  };
+};
+
+export const getAllApplications = async ({
+  page = 1,
+  limit = 10,
+  status,
+  jobId,
+  keyword,
+  startDate,
+  endDate,
+  accessToken,
+}) => {
+  const res = await axiosInstance.get("/applications", {
+    params: { page, limit, status, jobId, keyword, startDate, endDate },
+    ...headers(accessToken),
+  });
+
+  const rawData =
+    res.data?.data?.data ||
+    res.data?.data ||
+    res.data?.applications ||
+    res.data ||
+    [];
+  const applications = Array.isArray(rawData)
+    ? rawData
+    : rawData.applications || [];
+
+  const normalizedData = await enrichApplicationsWithJobs(
+    applications,
+    accessToken,
+  );
+
+  return {
+    data: normalizedData,
+    total:
+      rawData.totalApplications || res.data?.total || normalizedData.length,
+    totalPages: rawData.totalPages || res.data?.totalPages || 1,
+  };
+};
+
+export const getApplicationById = async ({ id, accessToken }) => {
+  const res = await axiosInstance.get(
+    `/applications/${id}`,
+    headers(accessToken),
+  );
+  const data = res.data?.data || res.data?.application || res.data;
+  return normalizeApplication(Array.isArray(data) ? data[0] : data);
+};
+
+export const updateApplicationStatus = async ({
+  id,
+  status,
+  note,
+  accessToken,
+}) => {
+  return await axiosInstance.patch(
+    `/applications/${id}/status`,
+    { status, note },
+    headers(accessToken),
+  );
+};
+
+export const updateApplicationNote = async ({ id, note, accessToken }) => {
+  return await axiosInstance.patch(
+    `/applications/${id}/note`,
+    { note },
+    headers(accessToken),
+  );
+};
+
+export const getApplicationStats = async ({ jobId, accessToken }) => {
+  const params = jobId ? { jobId } : {};
+  return await axiosInstance.get("/applications/stats/overview", {
+    params,
+    ...headers(accessToken),
+  });
+};

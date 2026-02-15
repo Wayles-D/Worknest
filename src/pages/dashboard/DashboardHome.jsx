@@ -5,11 +5,12 @@ import RecentActivity from "@/components/dashboard/RecentActivity";
 import ApplicationOverview from "@/components/dashboard/ApplicationOverview";
 import { Briefcase, FileText, Clock } from "lucide-react";
 import { useJobs } from "@/hooks/useJobs";
-import { useApplications } from "@/hooks/useApplications";
+import { useAdminApplications } from "@/hooks/useApplications";
 
 const DashboardHome = () => {
   const { data: jobResponse, isLoading: jobsLoading } = useJobs();
-  const { data: applications, isLoading: appsLoading } = useApplications();
+  const { data: appsResponse, isLoading: appsLoading } = useAdminApplications();
+  const applications = appsResponse?.data || [];
 
   // Robust mapping for jobs
   const responseData = jobResponse?.data;
@@ -23,10 +24,11 @@ const DashboardHome = () => {
   const totalApplications = Array.isArray(applications)
     ? applications.length
     : 0;
-  const pendingReview = Array.isArray(applications)
-    ? applications.filter((app) => app.status?.toLowerCase() === "pending")
-        .length
-    : 0;
+  const pendingReview = applications.filter(
+    (app) =>
+      app.status?.toLowerCase() === "submitted" ||
+      app.status?.toLowerCase() === "pending",
+  ).length;
 
   const dashboardStats = [
     {

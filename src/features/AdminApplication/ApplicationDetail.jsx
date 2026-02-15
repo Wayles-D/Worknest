@@ -10,51 +10,40 @@ import {
   ChevronDown,
   Save,
   DownloadIcon,
+  Loader2,
 } from "lucide-react";
 import {
-  useApplication,
+  useApplicationDetails,
   useUpdateApplicationStatus,
   useUpdateApplicationNote,
 } from "@/hooks/useApplications";
-import { statusOptions, getStatusColor } from "@/utils/constant";
+import { statusOptions, getStatusStyles } from "@/utils/constant";
 
 export default function ApplicationDetail({ applicationId }) {
   const navigate = useNavigate();
-  const { data: application, isLoading } = useApplication(applicationId);
+  const { data: application, isLoading } = useApplicationDetails(applicationId);
   const updateStatusMutation = useUpdateApplicationStatus();
   const updateNoteMutation = useUpdateApplicationNote();
 
-  // Derive status from application data - this will update automatically when query data changes
-  const status = application?.status || "";
-
-  // Use local state for note to allow editing before saving
-  // Initialize from application data - the key on textarea will reset it when applicationId changes
-  const [internalNote, setInternalNote] = useState(
-    application?.internalNote || "",
-  );
+  const [internalNote, setInternalNote] = useState("");
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Sync internal note when application data changes (only if empty to preserve user edits)
   useEffect(() => {
-    if (application?.internalNote !== undefined && internalNote === "") {
-      setInternalNote(application.internalNote || "");
+    if (application) {
+      setInternalNote(application.note || "");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [application?.internalNote]);
+  }, [application]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowStatusDropdown(false);
       }
     };
-
     if (showStatusDropdown) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -67,239 +56,280 @@ export default function ApplicationDetail({ applicationId }) {
   const handleStatusSelect = (newStatus) => {
     setShowStatusDropdown(false);
     updateStatusMutation.mutate({
-      applicationId: Number(applicationId),
-      newStatus,
+      applicationId: application.id,
+      status: newStatus,
+      note: internalNote, // Backend allows optional note here
     });
   };
 
   const handleDownloadCV = () => {
-    // Create a dummy PDF blob for download
-    const pdfContent = `CV for ${application.applicantName}\n\nJob Title: ${application.jobTitle}\nCompany: ${application.company}\nEmail: ${application.email}\nPhone: ${application.phone}\nLocation: ${application.location}`;
-    const blob = new Blob([pdfContent], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${application.applicantName.replace(/\s+/g, "_")}_CV.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    if (!application?.resumeUrl) return;
+    window.open(application.resumeUrl, "_blank");
   };
 
   const handlePortfolioClick = () => {
+    if (!application?.portfolioUrl) return;
     window.open(application.portfolioUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleLinkedInClick = () => {
+    if (!application?.linkedinUrl) return;
     window.open(application.linkedinUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleSaveChanges = () => {
     updateNoteMutation.mutate({
-      applicationId: Number(applicationId),
+      applicationId: application.id,
       note: internalNote,
     });
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-gray-500">Loading application details...</p>
+      <div className="flex flex-col items-center justify-center py-32 space-y-4">
+        <Loader2 className="animate-spin text-[#F57450]" size={40} />
+        <p className="text-gray-400 font-medium">Loading details...</p>
       </div>
     );
   }
 
   if (!application) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-gray-500">Application not found</p>
+      <div className="flex items-center justify-center py-32">
+        <p className="text-gray-500 font-medium">Application not found</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      {/* Back Button and Header */}
-      <div className="mb-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-10">
+      {/* Header & Back Button */}
+      <div className="mb-8">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 cursor-pointer"
+          className="flex items-center gap-2 text-gray-500 hover:text-black mb-6 transition-all group font-bold text-sm"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4 text-gray-400 group-hover:text-black" />
           <span>Back</span>
         </button>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {application.applicantName}
+        <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-1">
+          {application.applicant?.name}
         </h1>
-        <p className="text-gray-600 text-2xl font-medium">
-          Application for {application.jobTitle} Required
+        <p className="text-gray-400 font-bold text-lg">
+          Application for {application.job?.title}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Contact Information */}
-          <div className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
-            <h2 className="text-3xl font-medium text-gray-900 mb-4">
-              Personal Details
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Main Content Areas */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* Candidate Details */}
+          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-8 tracking-tight">
+              Candidate Information
             </h2>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-gray-500" />
-                <span className="text-gray-700">
-                  Email: {application.email}
-                </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-50/50 flex items-center justify-center shrink-0">
+                  <Mail className="w-5 h-5 text-[#F57450]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-wider mb-0.5">
+                    Email
+                  </p>
+                  <p className="text-gray-900 font-bold truncate">
+                    {application.applicant?.email}
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-gray-500" />
-                <span className="text-gray-700">
-                  Phone: {application.phone}
-                </span>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-50/50 flex items-center justify-center shrink-0">
+                  <Phone className="w-5 h-5 text-[#F57450]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-wider mb-0.5">
+                    Phone
+                  </p>
+                  <p className="text-gray-900 font-bold truncate">
+                    {application.applicant?.phone}
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-gray-500" />
-                <span className="text-gray-700">
-                  Location: {application.location}
-                </span>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-50/50 flex items-center justify-center shrink-0">
+                  <MapPin className="w-5 h-5 text-[#F57450]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-wider mb-0.5">
+                    Location
+                  </p>
+                  <p className="text-gray-900 font-bold">
+                    {application.applicant?.location}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Professional Information */}
-          <div className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
-            <h2 className="text-3xl font-medium text-gray-900 mb-4">
+          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-8 tracking-tight">
               Professional Information
             </h2>
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={handleDownloadCV}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700 cursor-pointer"
-              >
-                <DownloadIcon className="w-4 h-4" />
-                <span>Download CV</span>
-              </button>
-              <button
-                onClick={handlePortfolioClick}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700 cursor-pointer"
-              >
-                <User className="w-4 h-4" />
-                <span>Portfolio</span>
-              </button>
-              <button
-                onClick={handleLinkedInClick}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700 cursor-pointer"
-              >
-                <LinkIcon className="w-4 h-4" />
-                <span>LinkedIn</span>
-              </button>
+            <div className="flex flex-wrap gap-4">
+              {application.resumeUrl && (
+                <button
+                  onClick={handleDownloadCV}
+                  className="flex items-center gap-2 px-8 py-3.5 bg-gray-100/50 hover:bg-gray-100 text-gray-900 rounded-xl transition-all font-bold text-xs"
+                >
+                  <DownloadIcon className="w-4 h-4 text-blue-600" />
+                  <span>Download CV</span>
+                </button>
+              )}
+              {application.portfolioUrl && (
+                <button
+                  onClick={handlePortfolioClick}
+                  className="flex items-center gap-2 px-8 py-3.5 bg-gray-100/50 hover:bg-gray-100 text-gray-900 rounded-xl transition-all font-bold text-xs"
+                >
+                  <User className="w-4 h-4 text-blue-400" />
+                  <span>Portfolio</span>
+                </button>
+              )}
+              {application.linkedinUrl && (
+                <button
+                  onClick={handleLinkedInClick}
+                  className="flex items-center gap-2 px-8 py-3.5 bg-gray-100/50 hover:bg-gray-100 text-gray-900 rounded-xl transition-all font-bold text-xs"
+                >
+                  <LinkIcon className="w-4 h-4 text-blue-500" />
+                  <span>LinkedIn</span>
+                </button>
+              )}
             </div>
           </div>
 
           {/* Application Answers */}
-          <div className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
-            <h2 className="text-3xl font-medium text-gray-900 mb-6">
+          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-8 tracking-tight">
               Application Answers
             </h2>
-            <div className="space-y-6">
-              {application.applicationAnswers.map((qa, index) => (
-                <div key={index}>
-                  <h3 className="font-medium text-gray-900 mb-2">
-                    {qa.question}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">{qa.answer}</p>
-                </div>
-              ))}
+            <div className="space-y-10">
+              {application.answers.length > 0 ? (
+                application.answers.map((qa, index) => (
+                  <div key={index} className="space-y-3">
+                    <h3 className="font-bold text-gray-900 text-base">
+                      {qa.question}
+                    </h3>
+                    <p className="text-gray-400 font-medium leading-relaxed">
+                      {qa.answer}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-400 italic">No answers provided.</p>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Right Column - Sidebar */}
-        <div className="space-y-6">
+        {/* Sidebar Components */}
+        <div className="lg:col-span-4 space-y-8">
           {/* Status Section */}
-          <div className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
-            <h2 className="text-2xl font-medium text-gray-900 mb-4">Status</h2>
-            <div className="mb-4 flex justify-between">
-              <p className="text-sm text-gray-600 mb-2">Current Status</p>
-              <span
-                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                  status,
-                )}`}
-              >
-                {status}
-              </span>
-            </div>
-            <div className="border-t border-gray-400 my-4" />
-            <div className="relative">
-              <p className="text-sm text-gray-600 mb-2">Update Status</p>
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                  className="w-full flex items-center justify-between px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50"
+          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-8 tracking-tight">
+              Status
+            </h2>
+
+            <div className="space-y-8">
+              <div className="flex justify-between items-center py-2 border-b border-gray-50">
+                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+                  Current Status
+                </span>
+                <span
+                  className={`px-5 py-2 rounded-full text-[11px] font-bold shadow-sm ${getStatusStyles(application.status)}`}
                 >
-                  <span>{status}</span>
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-                {showStatusDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
-                    {statusOptions.map((option) => (
-                      <button
-                        key={option}
-                        onClick={() => handleStatusSelect(option)}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                  {application.status}
+                </span>
+              </div>
+
+              <div className="relative">
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-4">
+                  Update Status
+                </p>
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                    className="w-full flex items-center justify-between px-5 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl hover:border-orange-200 transition-all font-bold text-sm text-gray-700"
+                  >
+                    <span>{application.status}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-gray-400 transition-transform ${showStatusDropdown ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  {showStatusDropdown && (
+                    <div className="absolute z-50 w-full mt-3 bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/50 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                      {statusOptions.map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => handleStatusSelect(option)}
+                          className="w-full text-left px-5 py-3.5 hover:bg-orange-50 hover:text-[#F57450] font-bold transition-colors text-sm text-gray-600"
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Job Details */}
-          <div className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
-            <h2 className="text-2xl font-medium text-gray-900 mb-4">
-              Job Details
+          {/* Job Details Section */}
+          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-6 tracking-tight">
+              Job Summary
             </h2>
-            <div className="space-y-2 text-sm">
-              <p className="text-gray-900 font-medium">
-                {application.jobTitle}
+            <div className="space-y-1">
+              <h3 className="font-bold text-gray-900 text-lg leading-tight">
+                {application.job?.title}
+              </h3>
+              <p className="text-[#F57450] font-bold text-sm">
+                {application.job?.companyName}
               </p>
-              <p className="text-gray-600">{application.company}</p>
-              <div className="border-t border-gray-400 my-4" />
 
-              <p className="text-gray-600">
-                Applied on {application.appliedDate}
-              </p>
+              <div className="pt-6 mt-6 border-t border-gray-50">
+                <p className="text-gray-400 font-bold text-sm">
+                  Applied on{" "}
+                  {new Date(application.createdAt).toLocaleDateString("en-GB")}
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Internal Note */}
-          <div className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          {/* Internal Note Section */}
+          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-6 tracking-tight">
               Internal Note
             </h2>
-            <textarea
-              key={applicationId}
-              value={internalNote}
-              onChange={(e) => setInternalNote(e.target.value)}
-              placeholder="Add notes about this Candidate..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              rows="4"
-            />
-            <p className="text-xs text-gray-500 mt-2">
-              Applied on {application.appliedDate}
-            </p>
-            <button
-              onClick={handleSaveChanges}
-              type="button"
-              disabled={updateNoteMutation.isPending}
-              className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors cursor-pointer"
-            >
-              <Save className="w-4 h-4" />
-              {updateNoteMutation.isPending ? "Saving..." : "Save Changes"}
-            </button>
+            <div className="space-y-4">
+              <textarea
+                value={internalNote}
+                onChange={(e) => setInternalNote(e.target.value)}
+                placeholder="Add private notes about this candidate..."
+                className="w-full px-5 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-[#F57450]/10 focus:border-[#F57450]/50 font-medium text-gray-600 placeholder-gray-300"
+                rows="5"
+              />
+
+              <button
+                onClick={handleSaveChanges}
+                disabled={updateNoteMutation.isPending}
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-[#F57450] hover:bg-[#E05B35] text-white rounded-2xl transition-all font-bold shadow-lg shadow-[#F57450]/20 active:scale-[0.98]"
+              >
+                <Save className="w-4 h-4" />
+                <span>
+                  {updateNoteMutation.isPending ? "Saving..." : "Save Note"}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
