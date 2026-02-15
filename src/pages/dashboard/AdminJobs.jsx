@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router";
 import {
   Plus,
   Edit2,
@@ -13,9 +14,12 @@ import JobForm from "@/components/dashboard/JobForm";
 import { getAllJobs, deleteJob, updateJob } from "@/api/api";
 import { toast } from "sonner";
 import { useAuth } from "@/store";
+import { useJobApplicationCounts } from "@/hooks/useApplications";
 
 const AdminJobs = () => {
   const { accessToken } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [view, setView] = useState("list"); // 'list' or 'form'
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +32,11 @@ const AdminJobs = () => {
   const fetchJobs = async () => {
     try {
       setLoading(true);
-      const res = await getAllJobs({}, accessToken);
+      const params = {};
+      if (statusFilter !== "All Status") {
+        params.status = statusFilter.toLowerCase();
+      }
+      const res = await getAllJobs(params, accessToken);
       if (res.status === 200 || res.status === 201) {
         const responseData = res.data;
         // Robust mapping: handle [body], [body.data], [body.jobs], or [body.data.data]
@@ -53,7 +61,17 @@ const AdminJobs = () => {
     if (accessToken) {
       fetchJobs();
     }
-  }, [accessToken]);
+  }, [accessToken, statusFilter]);
+
+  // Handle edit from location state
+  useEffect(() => {
+    if (location.state?.editJob) {
+      setEditingJob(location.state.editJob);
+      setView("form");
+      // Clear the state
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -121,6 +139,10 @@ const AdminJobs = () => {
       (statusFilter === "Draft" && job.status === "draft");
     return matchesSearch && matchesStatus;
   });
+
+  // Fetch application counts for visible jobs
+  const jobIds = filteredJobs.map((job) => job._id || job.id);
+  const { data: applicationCounts = {} } = useJobApplicationCounts(jobIds);
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -249,9 +271,7 @@ const AdminJobs = () => {
                       {job.jobType}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600 text-center">
-                      {Array.isArray(job.applications)
-                        ? job.applications.length
-                        : job.applications || 0}
+                      {applicationCounts[job._id || job.id] ?? "..."}
                     </td>
                     <td className="px-6 py-4">
                       <span
@@ -288,7 +308,7 @@ const AdminJobs = () => {
                         >
                           <button
                             onClick={() => {
-                              toast.info("Opening job view...");
+                              navigate(`/admin/jobs/${job._id || job.id}`);
                               setActiveDropdown(null);
                             }}
                             className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50 transition-colors"

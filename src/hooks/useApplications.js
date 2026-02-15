@@ -126,3 +126,46 @@ export function useApplicationStats(jobId) {
     enabled: !!accessToken,
   });
 }
+
+/**
+ * Hook to fetch application counts for multiple jobs
+ * Returns a map of jobId -> count
+ */
+export function useJobApplicationCounts(jobIds) {
+  const { accessToken } = useAuth();
+
+  return useQuery({
+    queryKey: ["job-application-counts", jobIds],
+    queryFn: async () => {
+      if (!jobIds || jobIds.length === 0) return {};
+
+      // Fetch counts for all jobs in parallel
+      const countPromises = jobIds.map(async (jobId) => {
+        try {
+          const res = await getAllApplications({
+            jobId,
+            page: 1,
+            limit: 1,
+            accessToken,
+          });
+          return { jobId, count: res.total || 0 };
+        } catch (error) {
+          console.error(`Failed to fetch count for job ${jobId}:`, error);
+          return { jobId, count: 0 };
+        }
+      });
+
+      const results = await Promise.all(countPromises);
+
+      // Convert to map
+      const countsMap = {};
+      results.forEach(({ jobId, count }) => {
+        countsMap[jobId] = count;
+      });
+
+      return countsMap;
+    },
+    enabled: !!accessToken && jobIds && jobIds.length > 0,
+    staleTime: 30000, // Cache for 30 seconds
+  });
+}

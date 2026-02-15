@@ -1,6 +1,6 @@
 import axiosInstance from "@/utils/axiosInstance";
 import { headers } from "@/utils/constant";
-import { getAllJobs } from "./api";
+import { getAllJobs } from "@/api/api";
 
 /**
  * Normalizes an application object to a consistent shape for the UI.
