@@ -61,7 +61,14 @@ export function useUpdateApplicationStatus() {
       toast.success("Status updated successfully");
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || "Failed to update status");
+      const errorMessage =
+        error.response?.data?.message || "Failed to update status";
+      console.error("Status update failed:", {
+        status: error.response?.status,
+        message: errorMessage,
+        error,
+      });
+      toast.error(errorMessage);
     },
   });
 }
@@ -88,11 +95,16 @@ export function useUpdateApplicationNote() {
       toast.success("Note saved successfully ✅");
     },
     onError: (error) => {
-      const message =
+      const errorMessage =
         error?.response?.data?.message ||
         error?.message ||
-        "Failed to save note ❌";
-      toast.error(message);
+        "Failed to save note";
+      console.error("Note update failed:", {
+        status: error?.response?.status,
+        message: errorMessage,
+        error,
+      });
+      toast.error(errorMessage);
     },
   });
 }

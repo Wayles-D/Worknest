@@ -17,7 +17,7 @@ import {
   useUpdateApplicationStatus,
   useUpdateApplicationNote,
 } from "@/hooks/useApplications";
-import { statusOptions, getStatusStyles } from "@/utils/constant";
+import { statusConfig, getStatusStyles } from "@/utils/constant";
 
 export default function ApplicationDetail({ applicationId }) {
   const navigate = useNavigate();
@@ -53,12 +53,20 @@ export default function ApplicationDetail({ applicationId }) {
     navigate("/admin/applications");
   };
 
-  const handleStatusSelect = (newStatus) => {
+  // Helper to get status label from value
+  const getStatusLabel = (statusValue) => {
+    const statusItem = statusConfig.find(
+      (s) => s.value.toLowerCase() === statusValue?.toLowerCase(),
+    );
+    return statusItem?.label || statusValue;
+  };
+
+  const handleStatusSelect = (newStatusValue) => {
     setShowStatusDropdown(false);
     updateStatusMutation.mutate({
       applicationId: application.id,
-      status: newStatus,
-      note: internalNote, // Backend allows optional note here
+      status: newStatusValue, // Send the value (e.g., "in_review") to API
+      note: internalNote,
     });
   };
 
@@ -260,20 +268,20 @@ export default function ApplicationDetail({ applicationId }) {
                     onClick={() => setShowStatusDropdown(!showStatusDropdown)}
                     className="w-full flex items-center justify-between px-5 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl hover:border-orange-200 transition-all font-bold text-sm text-gray-700"
                   >
-                    <span>{application.status}</span>
+                    <span>{getStatusLabel(application.status)}</span>
                     <ChevronDown
                       className={`w-4 h-4 text-gray-400 transition-transform ${showStatusDropdown ? "rotate-180" : ""}`}
                     />
                   </button>
                   {showStatusDropdown && (
                     <div className="absolute z-50 w-full mt-3 bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/50 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                      {statusOptions.map((option) => (
+                      {statusConfig.map((statusItem) => (
                         <button
-                          key={option}
-                          onClick={() => handleStatusSelect(option)}
+                          key={statusItem.value}
+                          onClick={() => handleStatusSelect(statusItem.value)}
                           className="w-full text-left px-5 py-3.5 hover:bg-orange-50 hover:text-[#F57450] font-bold transition-colors text-sm text-gray-600"
                         >
-                          {option}
+                          {statusItem.label}
                         </button>
                       ))}
                     </div>

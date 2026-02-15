@@ -162,13 +162,14 @@ export const dummyApplications = [
   },
 ];
 
-export const statusOptions = [
-  "Submitted",
-  "Viewed",
-  "In Review",
-  "Interview",
-  "Offer",
-  "Rejected",
+export const statusConfig = [
+  { label: "Submitted", value: "submitted" },
+  { label: "In Review", value: "in_review" },
+  { label: "Shortlisted", value: "shortlisted" },
+  { label: "Interview", value: "interview" },
+  { label: "Offer", value: "offer" },
+  { label: "Rejected", value: "rejected" },
+  { label: "Hired", value: "hired" },
 ];
 
 export const getStatusColor = (statusValue) => {
@@ -183,18 +184,22 @@ export const getStatusColor = (statusValue) => {
 };
 
 export const getStatusStyles = (status) => {
+  // Normalize status to lowercase for comparison
+  const normalizedStatus = status?.toLowerCase();
+
   const styles = {
-    Submitted: "bg-[#DBEAFE] text-[#2563EB] border-transparent",
-    Pending: "bg-[#DBEAFE] text-[#2563EB] border-transparent",
-    Interviewing: "bg-[#F3E8FF] text-[#9333EA] border-transparent",
-    "In review": "bg-[#F3E8FF] text-[#9333EA] border-transparent",
-    Shortlisted: "bg-[#DCFCE7] text-[#16A34A] border-transparent",
-    Interview: "bg-[#F3E8FF] text-[#9333EA] border-transparent",
-    Rejected: "bg-[#FEE2E2] text-[#DC2626] border-transparent",
-    Offer: "bg-[#DCFCE7] text-[#16A34A] border-transparent",
-    Viewed: "bg-[#FEF3C7] text-[#D97706] border-transparent",
+    submitted: "bg-[#DBEAFE] text-[#2563EB] border-transparent",
+    pending: "bg-[#DBEAFE] text-[#2563EB] border-transparent",
+    in_review: "bg-[#F3E8FF] text-[#9333EA] border-transparent",
+    shortlisted: "bg-[#DCFCE7] text-[#16A34A] border-transparent",
+    interview: "bg-[#F3E8FF] text-[#9333EA] border-transparent",
+    rejected: "bg-[#FEE2E2] text-[#DC2626] border-transparent",
+    offer: "bg-[#DCFCE7] text-[#16A34A] border-transparent",
+    hired: "bg-[#DCFCE7] text-[#16A34A] border-transparent",
   };
-  return styles[status] || "bg-gray-100 text-gray-700 border-transparent";
+  return (
+    styles[normalizedStatus] || "bg-gray-100 text-gray-700 border-transparent"
+  );
 };
 
 export const applicationColumns = [
