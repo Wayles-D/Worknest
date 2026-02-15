@@ -31,9 +31,9 @@ export default function ApplicationDetail({ applicationId }) {
 
   useEffect(() => {
     if (application) {
-      setInternalNote(application.note || "");
+      setInternalNote(application.internalNote || "");
     }
-  }, [application]);
+  }, [application?.id, application?.internalNote]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

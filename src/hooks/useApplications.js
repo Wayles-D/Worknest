@@ -85,7 +85,16 @@ export function useUpdateApplicationNote() {
         accessToken,
       }),
     onSuccess: (res, variables) => {
-      // Invalidate specific detail and lists
+      // Optimistically update cache for instant UI feedback
+      queryClient.setQueryData(
+        ["application-details", variables.applicationId],
+        (oldData) => {
+          if (!oldData) return oldData;
+          return { ...oldData, internalNote: variables.note };
+        },
+      );
+
+      // Invalidate queries to refetch fresh data
       queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
       queryClient.invalidateQueries({
         queryKey: ["application-details", variables.applicationId],
