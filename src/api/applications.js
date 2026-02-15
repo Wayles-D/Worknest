@@ -25,6 +25,7 @@ export const normalizeApplication = (app) => {
     answers: Array.isArray(app.answers)
       ? app.answers
       : JSON.parse(app.answers || "[]"),
+    internalNote: app.internalNote || app.note || "",
     applicant: {
       name: app.applicantName || app.userId?.fullName || "N/A",
       email: app.applicant?.email || app.userId?.email || "Not provided",
