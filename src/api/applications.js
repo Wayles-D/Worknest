@@ -27,9 +27,9 @@ export const normalizeApplication = (app) => {
       : JSON.parse(app.answers || "[]"),
     applicant: {
       name: app.applicantName || app.userId?.fullName || "N/A",
-      email: app.userId?.email || app.email || "N/A",
-      phone: app.phone || "N/A",
-      location: app.location || "N/A",
+      email: app.applicant?.email || app.userId?.email || "Not provided",
+      phone: app.applicant?.phone || "Not provided",
+      location: app.applicant?.location || "Not provided",
     },
     job: {
       id: isJobPopulated ? jobInfo._id || jobInfo.id : jobInfo,
