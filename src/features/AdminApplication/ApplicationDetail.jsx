@@ -120,12 +120,30 @@ export default function ApplicationDetail({ applicationId }) {
           <ArrowLeft className="w-4 h-4 text-gray-400 group-hover:text-black" />
           <span>Back</span>
         </button>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-1">
-          {application.applicant?.name}
-        </h1>
-        <p className="text-gray-400 font-bold text-lg">
-          Application for {application.job?.title}
-        </p>
+
+        <div className="flex items-start gap-5">
+          {/* Company Logo in Header */}
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 bg-white border border-gray-100 font-bold text-xl relative overflow-hidden shadow-sm">
+            <img
+              src={application.job?.companyLogo || "/placeholder.svg"}
+              alt={application.job?.companyName || "Company Logo"}
+              className="w-full h-full object-contain p-2"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/placeholder.svg";
+              }}
+            />
+          </div>
+
+          <div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-1">
+              {application.applicant?.name}
+            </h1>
+            <p className="text-gray-400 font-bold text-lg">
+              Application for {application.job?.title}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

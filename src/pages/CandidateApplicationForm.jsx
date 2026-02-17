@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Upload, Link as LinkIcon, X, Loader2 } from "lucide-react";
+import {
+  Upload,
+  Link as LinkIcon,
+  X,
+  Loader2,
+  User,
+  Phone,
+  MapPin,
+} from "lucide-react";
 import { useParams, useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getJobById } from "@/api/api";
@@ -11,11 +19,22 @@ export default function ApplicationForm() {
   const { id: jobId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
+
+  // Initialize form state
   const [formState, setFormState] = useState({});
   const [cvFile, setCvFile] = useState(null);
   const [portfolioUrl, setPortfolioUrl] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
+
+  // Personal Info State
+  const [personalInfo, setPersonalInfo] = useState({
+    firstname: user?.firstName || "",
+    lastname: user?.lastName || "",
+    email: user?.email || "",
+    phone: "",
+    currentLocation: "",
+  });
 
   const { data: job, isLoading: isLoadingJob } = useQuery({
     queryKey: ["job", jobId],
@@ -47,6 +66,11 @@ export default function ApplicationForm() {
 
   const handleInputChange = (question, value) => {
     setFormState((prev) => ({ ...prev, [question]: value }));
+  };
+
+  const handlePersonalInfoChange = (e) => {
+    const { name, value } = e.target;
+    setPersonalInfo((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileUpload = (e) => {
@@ -87,6 +111,15 @@ export default function ApplicationForm() {
       return;
     }
 
+    if (
+      !personalInfo.firstname ||
+      !personalInfo.lastname ||
+      !personalInfo.email
+    ) {
+      toast.error("Please fill in all required personal information");
+      return;
+    }
+
     const answersArray = questions.map((q) => ({
       question: q,
       answer: formState[q] || "",
@@ -97,6 +130,14 @@ export default function ApplicationForm() {
     if (portfolioUrl) formData.append("portfolioUrl", portfolioUrl);
     if (linkedinUrl) formData.append("linkedinUrl", linkedinUrl);
     formData.append("answers", JSON.stringify(answersArray));
+
+    // Append personalInfo as JSON string
+    formData.append("personalInfo", JSON.stringify(personalInfo));
+
+    // Debug logging
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
 
     applyMutation.mutate(formData);
   };
@@ -130,6 +171,85 @@ export default function ApplicationForm() {
           </div>
 
           <div className="p-6 md:p-10 space-y-10">
+            {/* Personal Information */}
+            <section className="space-y-6">
+              <h3 className="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                <User className="w-5 h-5 text-[#F57450]" />
+                Personal Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700">
+                    First Name <span className="text-[#F57450]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="firstname"
+                    value={personalInfo.firstname}
+                    onChange={handlePersonalInfoChange}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#F57450] focus:ring-2 focus:ring-orange-100 outline-none transition-all"
+                    placeholder="John"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700">
+                    Last Name <span className="text-[#F57450]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="lastname"
+                    value={personalInfo.lastname}
+                    onChange={handlePersonalInfoChange}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#F57450] focus:ring-2 focus:ring-orange-100 outline-none transition-all"
+                    placeholder="Doe"
+                    required
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-bold text-gray-700">
+                    Email <span className="text-[#F57450]">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={personalInfo.email}
+                    onChange={handlePersonalInfoChange}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#F57450] focus:ring-2 focus:ring-orange-100 outline-none transition-all"
+                    placeholder="john.doe@example.com"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-gray-400" /> Phone
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={personalInfo.phone}
+                    onChange={handlePersonalInfoChange}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#F57450] focus:ring-2 focus:ring-orange-100 outline-none transition-all"
+                    placeholder="+1 (555) 000-0000"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-gray-400" /> Current
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    name="currentLocation"
+                    value={personalInfo.currentLocation}
+                    onChange={handlePersonalInfoChange}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-[#F57450] focus:ring-2 focus:ring-orange-100 outline-none transition-all"
+                    placeholder="New York, NY"
+                  />
+                </div>
+              </div>
+            </section>
+
             {/* Professional Information */}
             <section className="space-y-6">
               <h3 className="text-xl font-bold text-gray-900 tracking-tight">
