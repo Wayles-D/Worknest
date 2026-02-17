@@ -15,6 +15,24 @@ export const normalizeApplication = (app) => {
     jobInfo !== null &&
     (jobInfo.title || jobInfo._id);
 
+  // Parse personalInfo if it exists (it might be a JSON string or object)
+  let personalInfo = app.personalInfo || {};
+  if (typeof personalInfo === "string") {
+    try {
+      personalInfo = JSON.parse(personalInfo);
+    } catch (e) {
+      console.error("Failed to parse personalInfo", e);
+      personalInfo = {};
+    }
+  }
+
+  const firstName = personalInfo.firstname || "";
+  const lastName = personalInfo.lastname || "";
+  const fullName =
+    firstName || lastName
+      ? `${firstName} ${lastName}`.trim()
+      : app.applicantName || app.userId?.fullName || "N/A";
+
   return {
     id: app._id || app.id,
     status: app.status || "submitted",
@@ -27,10 +45,17 @@ export const normalizeApplication = (app) => {
       : JSON.parse(app.answers || "[]"),
     internalNote: app.internalNote || app.note || "",
     applicant: {
-      name: app.applicantName || app.userId?.fullName || "N/A",
-      email: app.applicant?.email || app.userId?.email || "Not provided",
-      phone: app.applicant?.phone || "Not provided",
-      location: app.applicant?.location || "Not provided",
+      name: fullName,
+      email:
+        personalInfo.email ||
+        app.applicant?.email ||
+        app.userId?.email ||
+        "Not provided",
+      phone: personalInfo.phone || app.applicant?.phone || "Not provided",
+      location:
+        personalInfo.currentLocation ||
+        app.applicant?.location ||
+        "Not provided",
     },
     job: {
       id: isJobPopulated ? jobInfo._id || jobInfo.id : jobInfo,
@@ -80,10 +105,6 @@ export const applyToJob = async ({ jobId, formData, accessToken }) => {
   // formData should be constructed by the caller
   return await axiosInstance.post(`/applications/${jobId}/apply`, formData, {
     ...headers(accessToken),
-    headers: {
-      ...headers(accessToken).headers,
-      "Content-Type": "multipart/form-data",
-    },
   });
 };
 

@@ -129,22 +129,17 @@ export default function MyApplications() {
               >
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div className="flex items-center gap-5 flex-1 min-w-0">
-                    {/* Company Logo/Initial */}
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-blue-600 text-white font-bold text-xl relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
-                      {app.job?.companyLogo ? (
-                        <img
-                          src={app.job.companyLogo}
-                          alt={app.job.companyName}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span>
-                          {(app.job?.companyName || "C")
-                            .charAt(0)
-                            .toUpperCase()}
-                        </span>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+                    {/* Company Logo */}
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-white border border-gray-100 font-bold text-xl relative overflow-hidden group-hover:scale-105 transition-transform duration-300 shadow-sm">
+                      <img
+                        src={app.job?.companyLogo || "/placeholder.svg"}
+                        alt={app.job?.companyName || "Company Logo"}
+                        className="w-full h-full object-contain p-2"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/placeholder.svg";
+                        }}
+                      />
                     </div>
 
                     {/* Job Details */}
