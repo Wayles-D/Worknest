@@ -1,7 +1,6 @@
 import { updateUserPassword } from "@/api/user";
 import { updateAdminPassword } from "@/api/admin";
 import ErrorAlert from "@/components/ErrorAlert";
-import FieldBody from "@/components/FieldBody";
 import useMetaArgs from "@/hooks/UseMeta";
 import { useAuth } from "@/store";
 import { updatePasswordSchema } from "@/utils/dataSchema";
@@ -11,6 +10,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { Pencil, Eye, EyeOff } from "lucide-react";
 
 export default function ChangePassword() {
   useMetaArgs({
@@ -23,10 +23,16 @@ export default function ChangePassword() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
 
+  // Local state for password visibility
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  // Duplicate state removed
+
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
@@ -44,110 +50,164 @@ export default function ChangePassword() {
     onSuccess: (response) => {
       toast.success(response?.data?.message || "Password updated successfully");
       reset();
-      // Optionally navigate away or keep them there
-      // navigate("/profile");
+      navigate("/"); // Navigate to home or dashboard after success
     },
     onError: (error) => {
-      import.meta.env.DEV && console.log(error);
-      setError(error?.response?.data?.message);
-      toast.error(error?.response?.data?.message || "Password update failed");
+      console.error("Change Password Error:", error);
+      const msg =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Password update failed";
+      setError(msg);
+      toast.error(msg);
     },
   });
 
   const onSubmit = (data) => {
-    // API expects { userData, accessToken }
-    // userData should contain currentPassword, newPassword
     const userData = {
-      currentPassword: data.password, // Schema uses 'password' for current
-      newPassword: data.newPassword, // Schema uses 'newPassword' for new
+      oldPassword: data.password, // 'password' from form is the old password
+      newPassword: data.newPassword,
     };
     mutation.mutate({ userData, accessToken });
   };
 
   return (
-    <div className="min-h-screen container bg-[#F4F4F4] p-6">
-      <section className="w-full flex justify-center mt-10">
-        <div className="w-full max-w-3xl rounded-xl bg-white p-6 sm:p-8 lg:p-10 shadow-sm">
-          <h1 className="text-xl md:text-2xl font-semibold mb-8 text-[#0E0E0E]">
-            Change Password
-          </h1>
+    <div className="min-h-screen bg-[#F4F4F4] py-10 px-4 flex justify-center">
+      <div className="w-full max-w-3xl">
+        {/* Logo */}
+        <div className="flex justify-center mb-10">
+          <div className="bg-white px-6 py-3 rounded-xl shadow-sm">
+            <img src="/worknestlogoo.png" alt="WorkNest" className="h-8" />
+          </div>
+        </div>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-6 w-full"
-          >
-            {error && <ErrorAlert error={error} />}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          {error && <ErrorAlert error={error} />}
 
-            <div className="flex flex-col gap-2">
-              <label className="text-[#0E0E0E] font-medium text-[16px]">
+          {/* Current Password Section */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-[#1A1A1A] text-xl font-medium">
                 Current Password
-              </label>
-              <input
-                type="password"
-                placeholder="Enter Your old password"
-                {...register("password")}
-                className="w-full h-[50px] bg-[#F4F4F4] rounded-[5px] px-4 outline-none border border-transparent focus:border-[#F75D1F]"
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-[#0E0E0E] font-medium text-[16px]">
-                New Password
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your new password"
-                {...register("newPassword")}
-                className="w-full h-[50px] bg-[#F4F4F4] rounded-[5px] px-4 outline-none border border-transparent focus:border-[#F75D1F]"
-              />
-              {errors.newPassword && (
-                <p className="text-red-500 text-sm">
-                  {errors.newPassword.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-[#0E0E0E] font-medium text-[16px]">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your new password"
-                {...register("confirmPassword")}
-                className="w-full h-[50px] bg-[#F4F4F4] rounded-[5px] px-4 outline-none border border-transparent focus:border-[#F75D1F]"
-              />
-              {errors.confirmPassword && (
-                <p className="text-red-500 text-sm">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                type="submit"
-                className="bg-[#F75D1F] text-white rounded-lg h-11 px-8 hover:bg-[rgba(247,95,32,0.8)] flex items-center justify-center transition-all duration-300 cursor-pointer font-medium"
-                disabled={isSubmitting || mutation.isPending}
-              >
-                {isSubmitting || mutation.isPending ? "Updating..." : "Update"}
-              </button>
+              </h2>
               <button
                 type="button"
-                onClick={() => reset()}
-                className="border border-[#F75D1F] text-[#F75D1F] rounded-lg h-11 px-8 hover:bg-[#FFF6F2] flex items-center justify-center transition-all duration-300 cursor-pointer font-medium"
+                className="flex items-center text-[#525252] gap-1 text-sm hover:text-black"
               >
-                Cancel
+                <Pencil size={14} /> Edit
               </button>
             </div>
-          </form>
-        </div>
-      </section>
+            <div className="relative">
+              <input
+                type={showCurrent ? "text" : "password"}
+                placeholder="Enter Your old password"
+                {...register("password")}
+                className="w-full h-[60px] bg-[#EEEEEE] rounded-lg px-6 pr-12 outline-none text-[#525252] text-lg placeholder:text-[#9ca3af] border border-transparent focus:border-[#F75D1F] focus:bg-white transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrent(!showCurrent)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showCurrent ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {/* New Password Section */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-[#1A1A1A] text-xl font-medium">
+                New Password
+              </h2>
+              <button
+                type="button"
+                className="flex items-center text-[#525252] gap-1 text-sm hover:text-black"
+              >
+                <Pencil size={14} /> Edit
+              </button>
+            </div>
+            <div className="relative">
+              <input
+                type={showNew ? "text" : "password"}
+                placeholder="Enter your new password"
+                {...register("newPassword")}
+                className="w-full h-[60px] bg-[#EEEEEE] rounded-lg px-6 pr-12 outline-none text-[#525252] text-lg placeholder:text-[#9ca3af] border border-transparent focus:border-[#F75D1F] focus:bg-white transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNew(!showNew)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showNew ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+            {errors.newPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.newPassword.message}
+              </p>
+            )}
+          </div>
+
+          {/* Confirm Password Section */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-[#1A1A1A] text-xl font-medium">
+                Confirm Password
+              </h2>
+              <button
+                type="button"
+                className="flex items-center text-[#525252] gap-1 text-sm hover:text-black"
+              >
+                <Pencil size={14} /> Edit
+              </button>
+            </div>
+            <div className="relative">
+              <input
+                type={showConfirm ? "text" : "password"}
+                placeholder="Enter your new password"
+                {...register("confirmPassword")}
+                className="w-full h-[60px] bg-[#EEEEEE] rounded-lg px-6 pr-12 outline-none text-[#525252] text-lg placeholder:text-[#9ca3af] border border-transparent focus:border-[#F75D1F] focus:bg-white transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm(!showConfirm)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end gap-4 mt-8">
+            <button
+              type="submit"
+              disabled={isSubmitting || mutation.isPending}
+              className="bg-[#F75D1F] text-white px-10 py-3 rounded-lg font-medium hover:bg-[#e0561b] transition-colors disabled:opacity-70"
+            >
+              {isSubmitting || mutation.isPending ? "Updating..." : "Update"}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="bg-white border border-[#FF4D4D] text-[#FF4D4D] px-10 py-3 rounded-lg font-medium hover:bg-red-50 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -22,11 +22,11 @@ export default function Sidebar({ isOpen, onClose }) {
       path: "/admin/applications",
       icon: <FileText size={20} />,
     },
-    {
-      name: "Change Password",
-      path: "/auth/change-password",
-      icon: <Settings size={20} />, // Using Settings icon or similar
-    },
+    // {
+    //   name: "Change Password",
+    //   path: "/auth/change-password",
+    //   icon: <Settings size={20} />,
+    // },
   ];
   return (
     <>
