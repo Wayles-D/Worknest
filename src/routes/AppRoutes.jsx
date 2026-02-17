@@ -68,16 +68,6 @@ export default function AppRoutes() {
         { path: "reset-password", element: <ResetPassword /> },
         { path: "verify", element: <Verify /> },
         { path: "admin/login", element: <AdminLogin /> },
-        {
-          path: "change-password",
-          element: (
-            <PrivateRoutes {...privateRouteProps}>
-              <Suspense fallback={<SuspenseUi />}>
-                <ChangePassword />
-              </Suspense>
-            </PrivateRoutes>
-          ),
-        },
       ],
     },
     {
@@ -120,6 +110,16 @@ export default function AppRoutes() {
             <PrivateRoutes {...privateRouteProps}>
               <Suspense fallback={<SuspenseUi />}>
                 <JobDetails />
+              </Suspense>
+            </PrivateRoutes>
+          ),
+        },
+        {
+          path: "auth/change-password",
+          element: (
+            <PrivateRoutes {...privateRouteProps}>
+              <Suspense fallback={<SuspenseUi />}>
+                <ChangePassword />
               </Suspense>
             </PrivateRoutes>
           ),

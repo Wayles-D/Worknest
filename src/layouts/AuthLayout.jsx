@@ -6,8 +6,11 @@ export default function AuthLayout() {
   const location = useLocation();
 
   const hideSlideshow =
+    location.pathname.includes("change-password") ||
     location.pathname.includes("auth/forgot-password") ||
-    location.pathname.includes("auth/reset-password") || location.pathname.includes("auth/verify") || location.pathname.includes("auth/admin/login");
+    location.pathname.includes("auth/reset-password") ||
+    location.pathname.includes("auth/verify") ||
+    location.pathname.includes("auth/admin/login");
 
   return (
     <div className="flex min-h-screen">
@@ -27,7 +30,7 @@ export default function AuthLayout() {
 
       {/* Right / Slideshow */}
       {!hideSlideshow && (
-        <div className="hidden md:block md:w-1/2 h-screen fixed right-0 top-0">
+        <div className="hidden md:block md:w-1/2 h-screen fixed right-0 top-0 z-50">
           <AuthSlideshow />
         </div>
       )}
