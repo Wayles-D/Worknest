@@ -10,10 +10,63 @@ import plane from "/airplane.png";
 import profit from "/non-profit.png";
 
 const AboutUs = () => {
+  const stats = [
+    { icon: suit, title: "Jobs Posted", value: "500K+" },
+    { icon: users, title: "Users Hired", value: "1.2M" },
+    { icon: office, title: "Partner Companies ", value: "15K+" },
+  ];
+
+  const solutions = [
+    {
+      icon: user,
+      title: "For Job Seekers",
+      description:
+        "Access a curated list of opportunities personalized career recommendations and a simplified application process to help you land your dream role . Our platform provides insights into company culture and growth paths.",
+    },
+    {
+      icon: suit,
+      title: "For Employers",
+      description:
+        "Gain access to a global pool of qualified candidates advance screening tools, and a streamlined hiring workflow to scale your business. We help you build teams that matter.",
+    },
+  ];
+
+  const values = [
+    {
+      icon: idea,
+      title: "Innovation",
+      description:
+        "We continuously push the boundaries of what’s possible in recruitment to serve you better+",
+    },
+    {
+      icon: profit,
+      title: "Integrity",
+      description:
+        "Transparency and honesty are at the heart of every interaction on our platform",
+    },
+    {
+      icon: plane,
+      title: "Scalability",
+      description:
+        "Our tools are built to grow alongside your ambition. whether you are start up or an enterprise",
+    },
+  ];
+
+  const commitments = [
+    {
+      title: "Human- Centric Design",
+      description: "User experience is at the core of everything we build",
+    },
+    {
+      title: "Global Reach",
+      description: "Connecting talent across borders and tameness seam lessy",
+    },
+  ];
+
   return (
     <div className="container">
       <div className="about rounded-[10px] mb-24">
-        <div className="flex flex-col gap-4  text-center mx-auto text-white pt-20 pb-14">
+        <div className="flex flex-col gap-4 text-center mx-auto text-white pt-20 pb-14">
           <h1 className="text-[40px] md:text-[65px] font-extrabold md:leading-17 leading-[120%]">
             Bridging the Gap Between Talent and Opportunity{" "}
           </h1>
@@ -30,9 +83,9 @@ const AboutUs = () => {
             </button>
           </Link>
           <Link to={"/contact"}>
-           <button className="text-[22px] font-semibold border border-[#F85E1E] p-4 md:py-4 md:px-9 text-[#F85E1E] rounded-[10px]">
-             Contact us
-           </button>
+            <button className="text-[22px] font-semibold border border-[#F85E1E] p-4 md:py-4 md:px-9 text-[#F85E1E] rounded-[10px]">
+              Contact us
+            </button>
           </Link>
         </div>
       </div>
@@ -48,35 +101,22 @@ const AboutUs = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-13">
-          <div className="border border-[#F85E1E] rounded-[10px]  pl-6 py-10 space-y-7">
-            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
-              <img src={suit} alt="" className="w-12 h-12" />
+          {stats.map((stat, index) => (
+            <div
+              key={index}
+              className="shadow-2xl bg-whiterounded-[10px] pl-6 py-10 space-y-7"
+            >
+              <div className="rounded-[10px] bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
+                <img src={stat.icon} alt={stat.title} className="w-12 h-12" />
+              </div>
+              <div className="">
+                <p className="text-[20px] md:text-[24px]  ">{stat.title}</p>
+                <p className="text-[40px] md:text-[48px] font-extrabold text-[#F85E1E]">
+                  {stat.value}
+                </p>
+              </div>
             </div>
-            <div className="">
-              <p className="text-[20px] md:text-[24px]  ">Jobs Posted</p>
-              <p className="text-[40px] md:text-[48px] font-extrabold text-[#F85E1E]">500K+</p>
-            </div>
-          </div>
-
-          <div className="border border-[#F85E1E] rounded-[10px]  pl-6 py-10 space-y-7">
-            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
-              <img src={users} alt="" className="w-12 h-12" />
-            </div>
-            <div className="">
-              <p className="text-[20px] md:text-[24px]  ">Users Hired</p>
-              <p className="text-[40px] md:text-[48px] font-extrabold text-[#F85E1E]">1.2M</p>
-            </div>
-          </div>
-
-          <div className="border border-[#F85E1E] rounded-[10px]  pl-6 py-10 space-y-7 ">
-            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
-              <img src={office} alt="" className="w-12 h-12 " />
-            </div>
-            <div className="">
-              <p className="text-[20px] md:text-[24px]  ">Partner Companies </p>
-              <p className="text-[40px] md:text-[48px] font-extrabold text-[#F85E1E]">15K+</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -106,46 +146,34 @@ const AboutUs = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="bg-[#F0F2F4] border border-[#CCCCCC] pl-6 py-10 space-y-7 rounded-[10px]">
-            <div className=" py-10 px-4 space-y-7 ">
-              <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
-                <img src={user} alt="" className="w-12 h-12" />
-              </div>
-              <div className="space-y-2.5">
-                <p className="text-[24px] font-bold leading-[100%]  ">
-                  For Job Seekers
-                </p>
-                <p className="text-[20px] leading-[120%] text-[#7A7A7A]">
-                  Access a curated list of opportunities personalized career
-                  recommendations and a simplified application process to help
-                  you land your dream role . Our platform provides insights into
-                  company culture and growth paths.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="pl-6 py-10 space-y-7 rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
-            <div className=" py-10 px-4 space-y-7">
-              <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
-                <img src={suit} alt="" className="w-12 h-12" />
-              </div>
-              <div className="space-y-2.5">
-                <p className="text-[24px] font-bold leading-[100%]  ">
-                  For Employers
-                </p>
-                <p className="text-[20px] leading-[120%] text-[#7A7A7A]">
-                  Gain access to a global pool of qualified candidates advance
-                  screening tools, and a streamlined hiring workflow to scale
-                  your business. We help you build teams that matter.
-                </p>
+          {solutions.map((solution, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-2xl pl-6 py-10 space-y-7 rounded-[10px]"
+            >
+              <div className=" py-10 px-4 space-y-7 ">
+                <div className="rounded-[10px] bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
+                  <img
+                    src={solution.icon}
+                    alt={solution.title}
+                    className="w-12 h-12"
+                  />
+                </div>
+                <div className="space-y-2.5">
+                  <p className="text-[24px] font-bold leading-[100%]  ">
+                    {solution.title}
+                  </p>
+                  <p className="text-[20px] leading-[120%] text-[#7A7A7A]">
+                    {solution.description}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      <div className="bg-[#F0F2F4] border  border-[#CCCCCC]  ">
+      <div className="bg-[#F0F2F4] border border-[#CCCCCC]  ">
         <div className="text-center flex flex-col justify-center gap-3 md:gap-10 px-9 py-5 md:py-7">
           <h4 className="text-[32px] md:text-[36px] font-semibold leading-[120%] ">
             Our Values
@@ -159,55 +187,29 @@ const AboutUs = () => {
 
       <div className=" my-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          <div className="space-y-7 rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
-            <div className="gap-5 md:gap-7 flex flex-col items-center justify-center md:pt-10 p-4 ">
-              <img src={idea} alt="" />
-              <div className="space-y-1 text-center">
-                <p className="text-[24px] font-bold leading-[120%]  ">
-                  Innovation
-                </p>
-                <p className="text-[20px] px-10 leading-[120%] text-[#7A7A7A]">
-                  We continuously push the boundaries of what’s possible in
-                  recruitment to serve you better+
-                </p>
+          {values.map((value, index) => (
+            <div
+              key={index}
+              className="space-y-7 rounded-[10px] bg-white shadow-2xl"
+            >
+              <div className="gap-5 md:gap-7 flex flex-col items-center justify-center pt-10 p-4">
+                <img src={value.icon} alt={value.title} />
+                <div className="space-y-1 text-center">
+                  <p className="text-[24px] font-bold leading-[120%]  ">
+                    {value.title}
+                  </p>
+                  <p className="text-[20px] px-5 md:px-10 leading-[120%] text-[#7A7A7A]">
+                    {value.description}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="space-y-7 rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
-            <div className="gap-5 md:gap-7 flex flex-col items-center justify-center pt-10 p-4">
-              <img src={profit} alt="" />
-              <div className="space-y-1 text-center">
-                <p className="text-[24px] font-bold leading-[120%]  ">
-                  Integrity
-                </p>
-                <p className="text-[20px] px-10 leading-[120%] text-[#7A7A7A]">
-                  Transparency and honesty are at the heart of every interaction
-                  on our platform
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-7 rounded-[10px] bg-[#F0F2F4] border border-[#CCCCCC]">
-            <div className="gap-7 flex flex-col items-center justify-center pt-10 p-4">
-              <img src={plane} alt="" />
-              <div className="space-y-1 text-center">
-                <p className="text-[24px] font-bold leading-[120%]  ">
-                  Scalability
-                </p>
-                <p className="text-[20px] px-5 text-center leading-[120%] text-[#7A7A7A]">
-                  Our tools are built to grow alongside your ambition. whether
-                  you are start up or an enterprise
-                </p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-15 items-start">
-        <img src={commit} alt="" />
+        <img src={commit} alt="Commitment" />
         <div className="space-y-9">
           <div className="space-y-5">
             <h4 className="text-[36px] font-bold leading-[120%]">
@@ -221,29 +223,19 @@ const AboutUs = () => {
             </p>
           </div>
 
-          <div className="flex gap-5 items-start">
-            <img src={check} alt="" />
-            <div className="flex flex-col gap-4">
-              <h5 className="text-[22px] md:text-[24px] leading-[100%] font-normal ">
-                Human- Centric Design
-              </h5>
-              <p className="text-[18px] md:text-[20px] leading-[100%] font-normal ">
-                User experience is at the core of everything we build
-              </p>
+          {commitments.map((item, index) => (
+            <div key={index} className="flex gap-5 items-start">
+              <img src={check} alt="Check" />
+              <div className="flex flex-col gap-4">
+                <h5 className="text-[22px] md:text-[24px] leading-[100%] font-normal ">
+                  {item.title}
+                </h5>
+                <p className="text-[18px] md:text-[20px] leading-[100%] font-normal ">
+                  {item.description}
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="flex gap-5 items-start">
-            <img src={check} alt="" />
-            <div className="flex flex-col gap-4">
-              <h5 className="text-[22px] md:text-[24px] leading-[100%] font-normal ">
-                Global Reach
-              </h5>
-              <p className="text-[18px] md:text-[20px] leading-[100%] font-normal ">
-                Connecting talent across borders and tameness seam lessy
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
