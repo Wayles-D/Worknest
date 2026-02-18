@@ -120,7 +120,7 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="bg-[#F0F2F4] border h-82 border-[#CCCCCC] mb-20 ">
+      <div className="bg-white h-82 mb-20 ">
         <div className="text-center flex flex-col justify-center gap-5 px-9 py-10 md:py-20">
           <h4 className="text-[32px] md:text-[36px] font-semibold leading-[120%] ">
             Our Mission
