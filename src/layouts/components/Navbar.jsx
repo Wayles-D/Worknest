@@ -11,7 +11,7 @@ export default function Navbar() {
         <div className="container mx-auto flex justify-between items-center p-4">
           <Logo />
       
-          <div className="hidden md:flex gap-5 items-center">
+          <div className="hidden lg:flex gap-5 items-center">
             {navLink.map((item) => (
               <NavLink
                 key={item.name}

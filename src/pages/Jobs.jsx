@@ -131,7 +131,7 @@ export default function Jobs() {
 
   return (
     <div className="flex flex-col gap-12">
-      <div className="w-auto py-16 bg-[#F8E0E1]">
+      <div className="w-auto py-3 md:py-16 bg-[#F8E0E1]">
         <div className="container mx-auto px-4 flex flex-col">
           <div className="bg-[#fcedea] text-[#F57450] px-4 py-1.5 rounded-full text-xs w-fit font-bold uppercase  mb-8">
             Browse Opportunities
@@ -340,4 +340,3 @@ export default function Jobs() {
     </div>
   );
 }
-// End of file
