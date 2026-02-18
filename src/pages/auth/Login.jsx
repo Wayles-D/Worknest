@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/store";
 import { toast } from "sonner";
 import { loginUser } from "@/api/api";
+import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 
 export default function Login() {
   useMetaArgs({
@@ -104,14 +105,7 @@ export default function Login() {
           <div className="flex-1 h-px bg-gray-300" />
         </div>
         {/* google */}
-        <button
-          type="submit"
-          className="btn border border-[rgba(247,95,32,1)] text-[rgba(247,95,32,1)] mt-4 w-full rounded-lg h-11 hover:bg-[#FFA366] hover:text-white flex items-center justify-center cursor-pointer transition-all duration-300"
-          disabled={isSubmitting}
-        >
-          <img src="/gog.svg" className="w-5 h-5 mr-2" alt="google" /> Continue
-          with Google
-        </button>
+        <GoogleLoginButton />
         <div className="text-blue-950 text-sm text-center mt-2">
           <Link to="/auth/signup">
             Don’t have an account?{"   "}
