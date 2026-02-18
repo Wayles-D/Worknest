@@ -131,13 +131,14 @@ export default function Jobs() {
 
   return (
     <div className="flex flex-col gap-12">
+      <div className="w-auto py-16 bg-[#F8E0E1]">
       <div className="w-auto py-3 md:py-16">
         <div className="container mx-auto px-4 flex flex-col">
           <div className="bg-[#fcedea] text-[#F57450] px-4 py-1.5 rounded-full text-xs w-fit font-bold uppercase  mb-8">
             Browse Opportunities
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0A0A0A] mb-4 max-w-4xl tracking-tight leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0A0A0A] mb-4 max tracking-tight leading-tight">
             Find a role that matches your ambition
           </h1>
 

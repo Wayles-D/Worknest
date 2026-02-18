@@ -1,4 +1,5 @@
 import { useState } from "react";
+import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FieldBody from "@/components/FieldBody";
@@ -156,14 +157,8 @@ export default function Signup({ toggle }) {
           <div className="flex-1 h-px bg-gray-300" />
         </div>
         {/* google */}
-        <button
-          type="button"
-          className="btn border border-[rgba(247,95,32,1)] text-[rgba(247,95,32,1)] mt-4 w-full rounded-lg h-11 hover:bg-[#FFA366] hover:text-white flex items-center justify-center cursor-pointer transition-all duration-300"
-          disabled={isSubmitting}
-        >
-          <img src="/gog.svg" className="w-5 h-5 mr-2" alt="google" /> Continue
-          with Google
-        </button>
+        {/* google */}
+        <GoogleLoginButton />
         <div className="text-sm text-center mt-2">
           <Link to="/auth/login">
             Already have an account?{"   "}

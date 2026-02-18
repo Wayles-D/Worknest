@@ -8,6 +8,10 @@ export const loginUser = async (formData) => {
   return await axiosInstance.post("/auth/login", formData);
 };
 
+export const googleLoginUser = async (googleJWT) => {
+  return await axiosInstance.post("/auth/google", { googleJWT });
+};
+
 export const getAuthenticatedUser = async (accessToken) => {
   return await axiosInstance.get("/auth/user", headers(accessToken));
 };
