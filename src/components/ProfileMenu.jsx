@@ -10,7 +10,7 @@ export default function ProfileMenu() {
   return (
     <div>
       {/* desktop public links */}
-      <div className="hidden md:flex  gap-5 items-center">
+      <div className="hidden lg:flex  gap-5 items-center">
         {!user && (
           <>
             {navAuthLink.map((item) => (
@@ -35,7 +35,7 @@ export default function ProfileMenu() {
       </div>
 
       {/* mobile drawer */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <Drawer />
       </div>
     </div>
