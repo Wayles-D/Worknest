@@ -16,15 +16,14 @@ export const profileLinks = [
   { name: "Profile", path: "/profile", icon: User },
   { name: "Applications", path: "/my-applications", icon: FileText },
   { name: "Saved Jobs", path: "/saved-jobs", icon: Bookmark },
-  // { name: "My Applications", path: "/dashboard/my-applications", icon: Bookmark },
   { name: "Change Password", path: "/auth/change-password", icon: LockKeyhole },
 ];
 
 export const footerJobs = [
   { name: "Browse Jobs", path: "/jobs" },
-  { name: "Job Applications", path: "/applications" },
-  { name: "Upload Resume", path: "/applications" },
-  { name: "Job Alerts", path: "/dashboard" },
+  { name: "Job Applications", path: "/my-applications" },
+  { name: "Upload Resume", path: "/apply/:id" },
+  { name: "Job Alerts", path: "/jobs" },
 ];
 
 export const footerCompany = [
