@@ -29,9 +29,9 @@ const AboutUs = () => {
               Browse Jobs
             </button>
           </Link>
-          <Link>
+          <Link to={"/contact"}>
            <button className="text-[22px] font-semibold border border-[#F85E1E] p-4 md:py-4 md:px-9 text-[#F85E1E] rounded-[10px]">
-             Contact us{" "}
+             Contact us
            </button>
           </Link>
         </div>
@@ -39,7 +39,7 @@ const AboutUs = () => {
 
       <div className=" space-y-13 mb-27">
         <div className="space-y-2.5">
-          <h4 className="text-[34px] md:text-[36px] font-semibold leading-[100%] ">
+          <h4 className="text-[32px] md:text-[36px] font-semibold leading-[100%] ">
             Numbers at a Glance
           </h4>
           <p className="text-[20px] md:text-[22px] leading-[100%] font-normal ">
@@ -53,8 +53,8 @@ const AboutUs = () => {
               <img src={suit} alt="" className="w-12 h-12" />
             </div>
             <div className="">
-              <p className="text-[24px]  ">Jobs Posted</p>
-              <p className="text-[48px] font-extrabold text-[#F85E1E]">500K+</p>
+              <p className="text-[20px] md:text-[24px]  ">Jobs Posted</p>
+              <p className="text-[40px] md:text-[48px] font-extrabold text-[#F85E1E]">500K+</p>
             </div>
           </div>
 
@@ -63,8 +63,8 @@ const AboutUs = () => {
               <img src={users} alt="" className="w-12 h-12" />
             </div>
             <div className="">
-              <p className="text-[24px]  ">Users Hired</p>
-              <p className="text-[48px] font-extrabold text-[#F85E1E]">1.2M</p>
+              <p className="text-[20px] md:text-[24px]  ">Users Hired</p>
+              <p className="text-[40px] md:text-[48px] font-extrabold text-[#F85E1E]">1.2M</p>
             </div>
           </div>
 
@@ -73,8 +73,8 @@ const AboutUs = () => {
               <img src={office} alt="" className="w-12 h-12 " />
             </div>
             <div className="">
-              <p className="text-[24px]  ">Partner Companies </p>
-              <p className="text-[48px] font-extrabold text-[#F85E1E]">15K+</p>
+              <p className="text-[20px] md:text-[24px]  ">Partner Companies </p>
+              <p className="text-[40px] md:text-[48px] font-extrabold text-[#F85E1E]">15K+</p>
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@ const AboutUs = () => {
 
       <div className="bg-[#F0F2F4] border h-82 border-[#CCCCCC] mb-20 ">
         <div className="text-center flex flex-col justify-center gap-5 px-9 py-10 md:py-20">
-          <h4 className="text-[36px] font-semibold leading-[120%] ">
+          <h4 className="text-[32px] md:text-[36px] font-semibold leading-[120%] ">
             Our Mission
           </h4>
           <p className="text-[20px] md:text-[24px] leading-[120%] font-normal text-center">
@@ -96,7 +96,7 @@ const AboutUs = () => {
 
       <div className=" space-y-13 mb-13">
         <div className="space-y-2.5">
-          <h4 className="text-[34px] md:text-[36px] font-semibold leading-[100%] ">
+          <h4 className="text-[32px] md:text-[36px] font-semibold leading-[100%] ">
             Tailored Solutions
           </h4>
           <p className="text-[20px] md:text-[22px] leading-[100%] font-normal ">
@@ -113,13 +113,13 @@ const AboutUs = () => {
               </div>
               <div className="space-y-2.5">
                 <p className="text-[24px] font-bold leading-[100%]  ">
-                  For Job Seekers{" "}
+                  For Job Seekers
                 </p>
                 <p className="text-[20px] leading-[120%] text-[#7A7A7A]">
                   Access a curated list of opportunities personalized career
                   recommendations and a simplified application process to help
                   you land your dream role . Our platform provides insights into
-                  company culture and growth paths.{" "}
+                  company culture and growth paths.
                 </p>
               </div>
             </div>
@@ -146,11 +146,11 @@ const AboutUs = () => {
       </div>
 
       <div className="bg-[#F0F2F4] border  border-[#CCCCCC]  ">
-        <div className="h-82 text-center flex flex-col justify-center gap-10 px-9">
-          <h4 className="text-[36px] font-semibold leading-[120%] ">
+        <div className="text-center flex flex-col justify-center gap-3 md:gap-10 px-9 py-5 md:py-7">
+          <h4 className="text-[32px] md:text-[36px] font-semibold leading-[120%] ">
             Our Values
           </h4>
-          <p className="text-[24px] leading-[120%] font-normal text-center">
+          <p className="text-[20px] md:text-[24px] leading-[120%] font-normal text-center">
             The core principies that drive our decision-making and platform
             development every single day
           </p>
@@ -166,7 +166,7 @@ const AboutUs = () => {
                 <p className="text-[24px] font-bold leading-[120%]  ">
                   Innovation
                 </p>
-                <p className="text-[20px] leading-[120%] text-[#7A7A7A]">
+                <p className="text-[20px] px-10 leading-[120%] text-[#7A7A7A]">
                   We continuously push the boundaries of what’s possible in
                   recruitment to serve you better+
                 </p>
@@ -224,10 +224,10 @@ const AboutUs = () => {
           <div className="flex gap-5 items-start">
             <img src={check} alt="" />
             <div className="flex flex-col gap-4">
-              <h5 className="text-[24px] leading-[100%] font-normal ">
+              <h5 className="text-[22px] md:text-[24px] leading-[100%] font-normal ">
                 Human- Centric Design
               </h5>
-              <p className="text-[20px] leading-[100%] font-normal ">
+              <p className="text-[18px] md:text-[20px] leading-[100%] font-normal ">
                 User experience is at the core of everything we build
               </p>
             </div>
@@ -236,10 +236,10 @@ const AboutUs = () => {
           <div className="flex gap-5 items-start">
             <img src={check} alt="" />
             <div className="flex flex-col gap-4">
-              <h5 className="text-[24px] leading-[100%] font-normal ">
+              <h5 className="text-[22px] md:text-[24px] leading-[100%] font-normal ">
                 Global Reach
               </h5>
-              <p className="text-[20px] leading-[100%] font-normal ">
+              <p className="text-[18px] md:text-[20px] leading-[100%] font-normal ">
                 Connecting talent across borders and tameness seam lessy
               </p>
             </div>
@@ -248,14 +248,14 @@ const AboutUs = () => {
       </div>
 
       <div className="bg-[#000000] text-white mt-13 px-4 py-7 flex flex-col gap-4 items-center justify-center">
-        <h4 className="text-[36px] font-semibold leading-[120%] ">
+        <h4 className="text-[32px] md:text-[36px] font-semibold leading-[120%] ">
           Ready to find your next nest?
         </h4>
-        <p className="text-[25px] leading-[120%] font-normal ">
+        <p className="text-[22px] md:text-[25px] leading-[120%] font-normal ">
           Join thousands of companies and professionals growing with us.
         </p>
         <Link to={"/jobs"}>
-          <button className="text-[22px] font-semibold bg-[#F85E1E] py-[15px] px-[34px] text-white rounded-[10px] cursor-pointer">
+          <button className="text-[22px] font-semibold bg-[#F85E1E] p-4 md:py-4 md:px-8 text-white rounded-[10px] cursor-pointer">
             Browse Jobs
           </button>
         </Link>

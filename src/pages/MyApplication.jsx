@@ -37,7 +37,7 @@ export default function MyApplications() {
 
   return (
     <div className="min-h-screen bg-gray-50/50 pb-20">
-      <div className="container max-w-5xl mx-auto px-4 py-8 md:py-12">
+      <div className="container max-w-5xl mx-auto px-4 py-4 md:py-12">
         {/* Header Section */}
         <div className="mb-10">
           <button
