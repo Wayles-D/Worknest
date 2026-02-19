@@ -5,11 +5,12 @@ import { getSavedJobs } from "@/api/api";
 import { useAuth } from "@/store";
 import { useQuery } from "@tanstack/react-query";
 import JobCard from "@/components/JobCard";
-import { Search, MapPin } from "lucide-react";
+import { Search, MapPin, Filter, X } from "lucide-react";
 
 export default function Jobs() {
   const { accessToken } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Derived filters from URL - Single source of truth
   const filters = {
@@ -122,15 +123,19 @@ export default function Jobs() {
     setSearchParams(newParams);
   };
 
-  if (isLoading)
-    return (
-      <p className="text-center py-20 font-semibold text-gray-500">
-        Loading your opportunities...
-      </p>
-    );
+  // No early return for loading to preserve layout
+  // if (isLoading) return ... (REMOVED)
 
   return (
     <div className="flex flex-col gap-12">
+      {/* Mobile/Tablet Filter Drawer Overlay */}
+      {showMobileFilters && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setShowMobileFilters(false)}
+        />
+      )}
+
       <div className="w-auto py-3 md:py-16 bg-[#F8E0E1]">
         <div className="container mx-auto px-4 flex flex-col">
           <div className="bg-[#fcedea] text-[#F57450] px-4 py-1.5 rounded-full text-xs w-fit font-bold uppercase  mb-8">
@@ -155,7 +160,7 @@ export default function Jobs() {
               />
               <input
                 type="text"
-                placeholder="Job tittle, skills or keyboard"
+                placeholder="Job title, skills or keyboard"
                 value={searchInputs.search}
                 onChange={(e) =>
                   setSearchInputs({ ...searchInputs, search: e.target.value })
@@ -191,9 +196,37 @@ export default function Jobs() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-[340px_1fr] gap-8 pb-16">
-        {/* FILTERS */}
-        <aside className="bg-white p-6 rounded-xl space-y-6 h-fit border border-gray-100 shadow-sm">
+      <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-8 pb-16 relative">
+        {/* Toggle Filter Button (Visible on Mobile/Tablet) */}
+        <div className="lg:hidden mb-4">
+          <button
+            onClick={() => setShowMobileFilters(true)}
+            className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-700 shadow-sm hover:bg-gray-50"
+          >
+            <Filter size={20} />
+            <span>Filters</span>
+          </button>
+        </div>
+
+        {/* FILTERS SIDEBAR */}
+        <aside
+          className={`
+            bg-white p-6 rounded-xl space-y-6 border border-gray-100 shadow-sm h-fit overflow-y-auto
+            lg:block lg:static lg:w-auto lg:h-fit lg:z-0 lg:shadow-sm lg:translate-x-0
+            fixed inset-y-0 left-0 z-50 w-[300px] shadow-2xl transform transition-transform duration-300 ease-in-out
+            ${showMobileFilters ? "translate-x-0" : "-translate-x-full"}
+          `}
+        >
+          <div className="flex items-center justify-between lg:hidden mb-2">
+            <h3 className="font-bold text-xl text-gray-900">Filters</h3>
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              className="p-2 text-gray-500 hover:text-[#F57450]"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
           {/* JOB TYPE */}
           <div className="space-y-4 border-2 border-gray-50 p-5 rounded-2xl">
             <h3 className="font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">
@@ -287,34 +320,55 @@ export default function Jobs() {
           <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-2">
             <p className="text-gray-600 font-medium">
               Showing{" "}
-              <span className="text-[#F57450] font-bold">
-                {finalJobs.length}
-              </span>{" "}
-              of <span className="text-[#F57450] font-bold">{totalJobs}</span>{" "}
+              {isLoading ? (
+                <span className="inline-block w-4 h-4 border-2 border-[#F57450] border-t-transparent rounded-full animate-spin ml-2 align-middle"></span>
+              ) : (
+                <>
+                  <span className="text-[#F57450] font-bold">
+                    {finalJobs.length}
+                  </span>{" "}
+                  of{" "}
+                  <span className="text-[#F57450] font-bold">
+                    {totalJobs}
+                  </span>{" "}
+                </>
+              )}
               curated opportunities
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            {finalJobs.length === 0 && (
-              <div className="col-span-full py-20 text-center bg-white rounded-2xl border-2 border-dashed border-gray-100">
-                <p className="text-gray-400 text-lg">
-                  No jobs found matching your criteria.
+          <div className="min-h-[400px]">
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <div className="w-10 h-10 border-4 border-[#F57450] border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-500 font-medium">
+                  Updating opportunities...
                 </p>
               </div>
-            )}
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                {finalJobs.length === 0 && (
+                  <div className="col-span-full py-20 text-center bg-white rounded-2xl border-2 border-dashed border-gray-100">
+                    <p className="text-gray-400 text-lg">
+                      No jobs found matching your criteria.
+                    </p>
+                  </div>
+                )}
 
-            {finalJobs.map((job) => (
-              <JobCard
-                key={job._id || job.id}
-                job={job}
-                isSavedInitial={savedJobIds.has(job._id)}
-              />
-            ))}
+                {finalJobs.map((job) => (
+                  <JobCard
+                    key={job._id || job.id}
+                    job={job}
+                    isSavedInitial={savedJobIds.has(job._id)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* PAGINATION UI */}
-          {totalPages > 1 && (
+          {/* Only show pagination if NOT loading and we have pages */}
+          {!isLoading && totalPages > 1 && (
             <div className="flex items-center justify-center gap-4 mt-8 pb-8">
               <button
                 disabled={currentPage <= 1}

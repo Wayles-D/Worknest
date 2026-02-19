@@ -104,7 +104,7 @@ const AboutUs = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="shadow-2xl bg-whiterounded-[10px] pl-6 py-10 space-y-7"
+              className="bg-white rounded-[10px] shadow-sm hover:shadow-2xl transition-shadow duration-300 pl-6 py-10 space-y-7"
             >
               <div className="rounded-[10px] bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
                 <img src={stat.icon} alt={stat.title} className="w-12 h-12" />
@@ -126,7 +126,7 @@ const AboutUs = () => {
             Our Mission
           </h4>
           <p className="text-[20px] md:text-[24px] leading-[120%] font-normal text-center">
-            At Work Nest our work is to redefine the recruitment landscape by
+            At WorkNest our work is to redefine the recruitment landscape by
             creating a seamless, transparent, and efficient ecosystem where
             every professional finds their purpose and every employer finds
             their next innovator.
@@ -149,7 +149,7 @@ const AboutUs = () => {
           {solutions.map((solution, index) => (
             <div
               key={index}
-              className="bg-white shadow-2xl pl-6 py-10 space-y-7 rounded-[10px]"
+              className="bg-white rounded-[10px] shadow-sm hover:shadow-2xl transition-shadow duration-300 pl-6 py-10 space-y-7"
             >
               <div className=" py-10 px-4 space-y-7 ">
                 <div className="rounded-[10px] bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
@@ -173,7 +173,7 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="bg-[#F0F2F4] border border-[#CCCCCC]  ">
+      <div className="  ">
         <div className="text-center flex flex-col justify-center gap-3 md:gap-10 px-9 py-5 md:py-7">
           <h4 className="text-[32px] md:text-[36px] font-semibold leading-[120%] ">
             Our Values
@@ -190,7 +190,7 @@ const AboutUs = () => {
           {values.map((value, index) => (
             <div
               key={index}
-              className="space-y-7 rounded-[10px] bg-white shadow-2xl"
+              className="space-y-7 rounded-[10px] bg-white shadow-sm hover:shadow-2xl transition-shadow duration-300"
             >
               <div className="gap-5 md:gap-7 flex flex-col items-center justify-center pt-10 p-4">
                 <img src={value.icon} alt={value.title} />
@@ -216,8 +216,8 @@ const AboutUs = () => {
               Our Commitment
             </h4>
             <p className="text-[20px] leading-[120%] text-[#7F7F7F] font-normal ">
-              We committed to more than just listing jobs, we are committed to
-              building careers. Our teamwork's tirelessly to ensure that our
+              We're committed to more than just listing jobs, we are committed
+              to building careers. Our teamwork's tirelessly to ensure that our
               algorithms prioritize quality over quantity, matching candidates
               based on skills, potentials and cultural fits.
             </p>
@@ -239,11 +239,11 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="bg-[#000000] text-white mt-13 px-4 py-7 flex flex-col gap-4 items-center justify-center">
-        <h4 className="text-[32px] md:text-[36px] font-semibold leading-[120%] ">
+      <div className="bg-[#000000] rounded-md text-white mt-13 px-4 py-7 flex flex-col gap-4 items-center justify-center">
+        <h4 className="text-[32px] text-center md:text-[36px] font-semibold leading-[120%] ">
           Ready to find your next nest?
         </h4>
-        <p className="text-[22px] md:text-[25px] leading-[120%] font-normal ">
+        <p className="text-[22px] text-center md:text-[25px]">
           Join thousands of companies and professionals growing with us.
         </p>
         <Link to={"/jobs"}>
