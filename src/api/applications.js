@@ -2,6 +2,61 @@ import axiosInstance from "@/utils/axiosInstance";
 import { headers } from "@/utils/constant";
 import { getAllJobs } from "@/api/api";
 
+const parseNumericMeta = (...values) => {
+  for (const value of values) {
+    if (value === null || value === undefined || value === "") {
+      continue;
+    }
+    const parsedValue = Number(value);
+    if (Number.isFinite(parsedValue) && parsedValue >= 0) {
+      return parsedValue;
+    }
+  }
+  return null;
+};
+
+const getPaginationMeta = ({
+  body,
+  rawData,
+  itemsLength,
+  page,
+  limit,
+}) => {
+  const total = parseNumericMeta(
+    rawData?.totalApplications,
+    rawData?.total,
+    rawData?.pagination?.total,
+    body?.totalApplications,
+    body?.total,
+    body?.pagination?.total,
+    body?.data?.totalApplications,
+    body?.data?.total,
+  );
+
+  let totalPages = parseNumericMeta(
+    rawData?.totalPages,
+    rawData?.pagination?.totalPages,
+    body?.totalPages,
+    body?.pagination?.totalPages,
+    body?.data?.totalPages,
+  );
+
+  if (totalPages === null && total !== null && limit > 0) {
+    totalPages = Math.max(1, Math.ceil(total / limit));
+  }
+
+  if (totalPages === null) {
+    // Weak fallback when backend does not return pagination metadata.
+    totalPages = itemsLength === limit ? page + 1 : page;
+  }
+
+  return {
+    total:
+      total !== null ? total : Math.max((page - 1) * limit + itemsLength, 0),
+    totalPages: Math.max(1, totalPages),
+  };
+};
+
 /**
  * Normalizes an application object to a consistent shape for the UI.
  * Handles cases where 'job' is a populated object, a string ID, or a snapshot.
@@ -118,6 +173,7 @@ export const getMyApplications = async ({
     ...headers(accessToken),
   });
 
+  const body = res.data;
   const rawData =
     res.data?.data?.data ||
     res.data?.data ||
@@ -133,12 +189,21 @@ export const getMyApplications = async ({
     applications,
     accessToken,
   );
+  const paginationMeta = getPaginationMeta({
+    body,
+    rawData,
+    itemsLength: normalizedData.length,
+    page,
+    limit,
+  });
 
   return {
+    items: normalizedData,
     data: normalizedData,
-    total:
-      rawData.totalApplications || res.data?.total || normalizedData.length,
-    totalPages: rawData.totalPages || res.data?.totalPages || 1,
+    total: paginationMeta.total,
+    totalPages: paginationMeta.totalPages,
+    page,
+    limit,
   };
 };
 
@@ -157,6 +222,7 @@ export const getAllApplications = async ({
     ...headers(accessToken),
   });
 
+  const body = res.data;
   const rawData =
     res.data?.data?.data ||
     res.data?.data ||
@@ -171,12 +237,21 @@ export const getAllApplications = async ({
     applications,
     accessToken,
   );
+  const paginationMeta = getPaginationMeta({
+    body,
+    rawData,
+    itemsLength: normalizedData.length,
+    page,
+    limit,
+  });
 
   return {
+    items: normalizedData,
     data: normalizedData,
-    total:
-      rawData.totalApplications || res.data?.total || normalizedData.length,
-    totalPages: rawData.totalPages || res.data?.totalPages || 1,
+    total: paginationMeta.total,
+    totalPages: paginationMeta.totalPages,
+    page,
+    limit,
   };
 };
 

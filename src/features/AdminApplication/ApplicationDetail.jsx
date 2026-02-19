@@ -19,7 +19,7 @@ import {
 } from "@/hooks/useApplications";
 import { statusConfig, getStatusStyles } from "@/utils/constant";
 
-export default function ApplicationDetail({ applicationId }) {
+export default function ApplicationDetail({ applicationId, onBack }) {
   const navigate = useNavigate();
   const { data: application, isLoading } = useApplicationDetails(applicationId);
   const updateStatusMutation = useUpdateApplicationStatus();
@@ -50,6 +50,10 @@ export default function ApplicationDetail({ applicationId }) {
   }, [showStatusDropdown]);
 
   const handleBack = () => {
+    if (onBack) {
+      onBack();
+      return;
+    }
     navigate("/admin/applications");
   };
 

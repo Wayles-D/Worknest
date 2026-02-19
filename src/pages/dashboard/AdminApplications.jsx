@@ -1,5 +1,7 @@
 import PageWrapper from "@/components/PageWrapper";
 import Search from "@/components/Search";
+import Pagination from "@/components/common/Pagination";
+import { ADMIN_PAGE_SIZE, getSafePageNumber } from "@/constants/pagination";
 import ApplicationCard from "@/features/AdminApplication/ApplicationCard";
 import ApplicationDetail from "@/features/AdminApplication/ApplicationDetail";
 import Filter from "@/features/AdminApplication/Filter";
@@ -7,41 +9,79 @@ import JobFilter from "@/features/AdminApplication/JobFilter";
 import Table from "@/features/AdminApplication/Table";
 import { useAdminApplications } from "@/hooks/useApplications";
 import { Grid3x3, List, Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
 const AdminApplications = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const statusFilter = searchParams.get("status") || "";
   const searchQuery = searchParams.get("query") || "";
   const jobFilter = searchParams.get("job") || "";
-  const page = parseInt(searchParams.get("page") || "1");
+  const page = getSafePageNumber(searchParams.get("page"));
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    let hasChanges = false;
+
+    if (params.get("page") !== String(page)) {
+      params.set("page", String(page));
+      hasChanges = true;
+    }
+
+    if (params.get("limit") !== String(ADMIN_PAGE_SIZE)) {
+      params.set("limit", String(ADMIN_PAGE_SIZE));
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [page, searchParams, setSearchParams]);
 
   const { data: response, isLoading } = useAdminApplications({
     status: statusFilter,
+    jobId: jobFilter,
     keyword: searchQuery,
     page,
-    limit: 12,
   });
 
-  const applications = response?.data || [];
+  const applications = response?.items || response?.data || [];
   const total = response?.total || 0;
+  const totalPages = response?.totalPages || 1;
 
   const [viewMode, setViewMode] = useState("grid"); // "grid" or "list"
 
   const applicationId = searchParams.get("id");
+  const handleBackFromDetails = () => {
+    const params = new URLSearchParams(searchParams);
+    params.delete("id");
+    setSearchParams(params);
+  };
+
   if (applicationId) {
     return (
       <div className="pb-24">
-        <ApplicationDetail applicationId={applicationId} />
+        <ApplicationDetail
+          applicationId={applicationId}
+          onBack={handleBackFromDetails}
+        />
       </div>
     );
   }
 
   const handleApplicationClick = (id) => {
-    navigate(`?id=${id}`);
+    const params = new URLSearchParams(searchParams);
+    params.set("id", id);
+    navigate(`?${params.toString()}`);
+  };
+
+  const handlePageChange = (nextPage) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(nextPage));
+    params.set("limit", String(ADMIN_PAGE_SIZE));
+    setSearchParams(params);
   };
 
   return (
@@ -128,6 +168,13 @@ const AdminApplications = () => {
           Showing {applications.length} of {total} applications
         </span>
       </div>
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        isLoading={isLoading}
+        onPageChange={handlePageChange}
+      />
     </PageWrapper>
   );
 };
