@@ -1,8 +1,11 @@
 import { Menu, Bell, Search, ChevronDown } from "lucide-react";
 import { Link } from "react-router";
 import Logout from "@/components/Logout";
+import { useAuth } from "@/store";
 
 export default function AdminTopBar({ onMenuClick }) {
+    const { user } = useAuth();
+  
   return (
     <header className="bg-white shadow-sm h-16 px-6 flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -29,12 +32,22 @@ export default function AdminTopBar({ onMenuClick }) {
             role="button"
             className="flex items-center gap-2 cursor-pointer"
           >
-            <img
-              src="/tempAdmin.png"
-              alt="Admin"
-              className="w-8 h-8 rounded-full"
-            />
-            <span className="text-sm hidden sm:block">Solo Ayande</span>
+            {user?.avatar ? (
+              <img
+                src={user.avatar}
+                alt="User Avatar"
+                className="w-14 h-14 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
+                <span className="text-sm font-bold text-gray-700">
+                  {user?.fullname?.split(' ').map(n => n[0]).join('').toUpperCase()}
+                </span>
+              </div>
+            )}
+            <span className="text-[18px] text-[#000000] font-medium">
+              {user?.fullname}
+            </span>
             <ChevronDown size={16} />
           </div>
           <ul
@@ -42,7 +55,7 @@ export default function AdminTopBar({ onMenuClick }) {
             className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow mt-4"
           >
             <li>
-              <Link to="/auth/change-password">Change Password</Link>
+              <Link to="/admin/settings">Change Password</Link>
             </li>
             <li>
               <Logout className="w-full text-left">Sign Out</Logout>

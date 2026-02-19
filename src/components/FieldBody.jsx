@@ -22,7 +22,7 @@ export default function FieldBody({
   return (
     <div className='col-span-6 sm:col-span-3 mt-3'>
     <fieldset className='fieldset'>
-        <legend className='fieldset-legend text-gray-600'>{label}</legend>
+        <legend className='fieldset-legend text-gray-600 text-lg'>{label}</legend>
         {/* handles select vs input */}
         {type === "select" ? (
             <select
