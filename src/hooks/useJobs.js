@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllJobs } from "@/api/api";
 import { useAuth } from "@/store";
+import { ADMIN_PAGE_SIZE } from "@/constants/pagination";
 
 export function useJobs(filters = {}) {
   const { accessToken } = useAuth();
@@ -95,5 +96,115 @@ export function useJobs(filters = {}) {
       };
     },
     keepPreviousData: true,
+  });
+}
+
+const parseNumericMeta = (...values) => {
+  for (const value of values) {
+    if (value === null || value === undefined || value === "") {
+      continue;
+    }
+    const parsedValue = Number(value);
+    if (Number.isFinite(parsedValue) && parsedValue >= 0) {
+      return parsedValue;
+    }
+  }
+  return null;
+};
+
+const extractAdminJobsPayload = (responseBody) => {
+  const rawData =
+    responseBody?.data?.data ||
+    responseBody?.data ||
+    responseBody?.jobs ||
+    responseBody ||
+    [];
+
+  const items = Array.isArray(rawData)
+    ? rawData
+    : Array.isArray(rawData?.jobs)
+      ? rawData.jobs
+      : Array.isArray(rawData?.data)
+        ? rawData.data
+        : [];
+
+  return { rawData, items };
+};
+
+export function useAdminJobs(params = {}) {
+  const { accessToken } = useAuth();
+  const {
+    page = 1,
+    status = "",
+    search = "",
+    limit = ADMIN_PAGE_SIZE,
+  } = params;
+
+  return useQuery({
+    queryKey: ["admin-jobs", { page, limit, status, search }],
+    queryFn: async () => {
+      try {
+        const queryParams = {
+          page,
+          limit: ADMIN_PAGE_SIZE,
+        };
+
+        if (status) {
+          queryParams.status = status;
+        }
+
+        if (search) {
+          queryParams.search = search;
+          queryParams.keyword = search;
+        }
+
+        const response = await getAllJobs(queryParams, accessToken);
+        const body = response?.data;
+        const { rawData, items } = extractAdminJobsPayload(body);
+
+        const total = parseNumericMeta(
+          rawData?.total,
+          rawData?.totalJobs,
+          rawData?.pagination?.total,
+          body?.total,
+          body?.totalJobs,
+          body?.pagination?.total,
+          body?.data?.total,
+          body?.data?.totalJobs,
+        );
+
+        let totalPages = parseNumericMeta(
+          rawData?.totalPages,
+          rawData?.pagination?.totalPages,
+          body?.totalPages,
+          body?.pagination?.totalPages,
+          body?.data?.totalPages,
+        );
+
+        if (totalPages === null && total !== null && limit > 0) {
+          totalPages = Math.max(1, Math.ceil(total / limit));
+        }
+
+        if (totalPages === null) {
+          // Weak fallback when backend omits pagination metadata.
+          totalPages = items.length === limit ? page + 1 : page;
+        }
+
+        return {
+          items,
+          data: items,
+          total:
+            total !== null ? total : Math.max((page - 1) * limit + items.length, 0),
+          totalPages: Math.max(1, totalPages),
+          page,
+          limit,
+        };
+      } catch (error) {
+        console.error("Failed to fetch admin jobs:", error);
+        throw error;
+      }
+    },
+    enabled: !!accessToken,
+    placeholderData: (previousData) => previousData,
   });
 }

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PageWrapper from "@/components/PageWrapper";
 import Search from "@/components/Search";
+import Pagination from "@/components/common/Pagination";
+import { ADMIN_PAGE_SIZE, getSafePageNumber } from "@/constants/pagination";
 import ApplicationCard from "@/features/AdminApplication/ApplicationCard";
 import ApplicationDetail from "@/features/AdminApplication/ApplicationDetail";
 import Filter from "@/features/AdminApplication/Filter";
@@ -17,11 +19,30 @@ const AdminJobApplications = () => {
   const { jobId } = useParams();
   const navigate = useNavigate();
   const { accessToken } = useAuth();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const statusFilter = searchParams.get("status") || "";
   const searchQuery = searchParams.get("query") || "";
-  const page = parseInt(searchParams.get("page") || "1");
+  const page = getSafePageNumber(searchParams.get("page"));
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    let hasChanges = false;
+
+    if (params.get("page") !== String(page)) {
+      params.set("page", String(page));
+      hasChanges = true;
+    }
+
+    if (params.get("limit") !== String(ADMIN_PAGE_SIZE)) {
+      params.set("limit", String(ADMIN_PAGE_SIZE));
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [page, searchParams, setSearchParams]);
 
   // Fetch job details for display
   const { data: job } = useQuery({
@@ -38,29 +59,47 @@ const AdminJobApplications = () => {
     status: statusFilter,
     keyword: searchQuery,
     page,
-    limit: 12,
   });
 
-  const applications = response?.data || [];
+  const applications = response?.items || response?.data || [];
   const total = response?.total || 0;
+  const totalPages = response?.totalPages || 1;
 
   const [viewMode, setViewMode] = useState("grid");
 
   const applicationId = searchParams.get("id");
+  const handleBackFromDetails = () => {
+    const params = new URLSearchParams(searchParams);
+    params.delete("id");
+    setSearchParams(params);
+  };
+
   if (applicationId) {
     return (
       <div className="pb-24">
-        <ApplicationDetail applicationId={applicationId} />
+        <ApplicationDetail
+          applicationId={applicationId}
+          onBack={handleBackFromDetails}
+        />
       </div>
     );
   }
 
   const handleApplicationClick = (id) => {
-    navigate(`?id=${id}`);
+    const params = new URLSearchParams(searchParams);
+    params.set("id", id);
+    navigate(`?${params.toString()}`);
   };
 
   const handleBack = () => {
     navigate(`/admin/jobs/${jobId}`);
+  };
+
+  const handlePageChange = (nextPage) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(nextPage));
+    params.set("limit", String(ADMIN_PAGE_SIZE));
+    setSearchParams(params);
   };
 
   return (
@@ -154,6 +193,13 @@ const AdminJobApplications = () => {
           Showing {applications.length} of {total} applications
         </span>
       </div>
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        isLoading={isLoading}
+        onPageChange={handlePageChange}
+      />
     </PageWrapper>
   );
 };

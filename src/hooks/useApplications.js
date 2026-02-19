@@ -9,6 +9,7 @@ import {
 } from "@/api/applications";
 import { useAuth } from "@/store";
 import { toast } from "sonner";
+import { ADMIN_PAGE_SIZE } from "@/constants/pagination";
 
 export function useMyApplications(params = {}) {
   const { accessToken } = useAuth();
@@ -21,10 +22,37 @@ export function useMyApplications(params = {}) {
 
 export function useAdminApplications(params = {}) {
   const { accessToken } = useAuth();
+  const {
+    page = 1,
+    status = "",
+    jobId = "",
+    keyword = "",
+    startDate = "",
+    endDate = "",
+  } = params;
+
+  const queryParams = {
+    page,
+    limit: ADMIN_PAGE_SIZE,
+    status,
+    jobId,
+    keyword,
+    startDate,
+    endDate,
+  };
+
   return useQuery({
-    queryKey: ["admin-applications", params],
-    queryFn: () => getAllApplications({ ...params, accessToken }),
+    queryKey: ["admin-applications", queryParams],
+    queryFn: async () => {
+      try {
+        return await getAllApplications({ ...queryParams, accessToken });
+      } catch (error) {
+        console.error("Failed to fetch admin applications:", error);
+        throw error;
+      }
+    },
     enabled: !!accessToken,
+    placeholderData: (previousData) => previousData,
   });
 }
 

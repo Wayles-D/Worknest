@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate, useLocation, useSearchParams } from "react-router";
 import {
   Plus,
   Edit2,
@@ -11,57 +11,61 @@ import {
   Trash2,
 } from "lucide-react";
 import JobForm from "@/components/dashboard/JobForm";
-import { getAllJobs, deleteJob, updateJob } from "@/api/api";
+import { deleteJob, updateJob } from "@/api/api";
 import { toast } from "sonner";
 import { useAuth } from "@/store";
 import { useJobApplicationCounts } from "@/hooks/useApplications";
+import { useAdminJobs } from "@/hooks/useJobs";
+import Pagination from "@/components/common/Pagination";
+import { ADMIN_PAGE_SIZE, getSafePageNumber } from "@/constants/pagination";
 
 const AdminJobs = () => {
   const { accessToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState("list"); // 'list' or 'form'
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [editingJob, setEditingJob] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Status");
   const [activeDropdown, setActiveDropdown] = useState(null);
   const dropdownRef = useRef(null);
 
-  const fetchJobs = async () => {
-    try {
-      setLoading(true);
-      const params = {};
-      if (statusFilter !== "All Status") {
-        params.status = statusFilter.toLowerCase();
-      }
-      const res = await getAllJobs(params, accessToken);
-      if (res.status === 200 || res.status === 201) {
-        const responseData = res.data;
-        // Robust mapping: handle [body], [body.data], [body.jobs], or [body.data.data]
-        const jobList = Array.isArray(responseData)
-          ? responseData
-          : responseData?.data?.data ||
-            responseData?.data ||
-            responseData?.jobs ||
-            [];
-
-        setJobs(Array.isArray(jobList) ? jobList : []);
-      }
-    } catch (error) {
-      console.error("Error fetching jobs:", error);
-      toast.error("Failed to fetch jobs");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const statusFilter = searchParams.get("status") || "";
+  const searchQuery = searchParams.get("query") || "";
+  const page = getSafePageNumber(searchParams.get("page"));
 
   useEffect(() => {
-    if (accessToken) {
-      fetchJobs();
+    const params = new URLSearchParams(searchParams);
+    let hasChanges = false;
+
+    if (params.get("page") !== String(page)) {
+      params.set("page", String(page));
+      hasChanges = true;
     }
-  }, [accessToken, statusFilter]);
+
+    if (params.get("limit") !== String(ADMIN_PAGE_SIZE)) {
+      params.set("limit", String(ADMIN_PAGE_SIZE));
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [page, searchParams, setSearchParams]);
+
+  const {
+    data: jobsResponse,
+    isLoading,
+    refetch: refetchJobs,
+  } = useAdminJobs({
+    page,
+    search: searchQuery,
+    status: statusFilter,
+    limit: ADMIN_PAGE_SIZE,
+  });
+
+  const jobs = jobsResponse?.items || jobsResponse?.data || [];
+  const totalJobs = jobsResponse?.total || jobs.length;
+  const totalPages = jobsResponse?.totalPages || 1;
 
   // Handle edit from location state
   useEffect(() => {
@@ -97,7 +101,7 @@ const AdminJobs = () => {
     try {
       const res = await deleteJob(id, accessToken);
       if (res.status === 200) {
-        setJobs(jobs.filter((j) => j._id !== id));
+        await refetchJobs();
         toast.success("Job deleted successfully");
       }
     } catch (error) {
@@ -111,9 +115,7 @@ const AdminJobs = () => {
     try {
       const res = await updateJob(id, { status: "closed" }, accessToken);
       if (res.status === 200) {
-        setJobs(
-          jobs.map((j) => (j._id === id ? { ...j, status: "closed" } : j)),
-        );
+        await refetchJobs();
         toast.info("Job closed successfully");
       }
     } catch (error) {
@@ -124,24 +126,49 @@ const AdminJobs = () => {
   };
 
   const handleSaveJob = () => {
-    fetchJobs();
+    refetchJobs();
     setView("list");
   };
 
-  const filteredJobs = (Array.isArray(jobs) ? jobs : []).filter((job) => {
-    const matchesSearch =
-      (job.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (job.companyName || "").toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus =
-      statusFilter === "All Status" ||
-      (statusFilter === "Active" && job.status === "active") ||
-      (statusFilter === "Closed" && job.status === "closed") ||
-      (statusFilter === "Draft" && job.status === "draft");
-    return matchesSearch && matchesStatus;
-  });
+  const handleSearchChange = (event) => {
+    const value = event.target.value;
+    const params = new URLSearchParams(searchParams);
+
+    if (value.trim()) {
+      params.set("query", value);
+    } else {
+      params.delete("query");
+    }
+
+    params.set("page", "1");
+    params.set("limit", String(ADMIN_PAGE_SIZE));
+    setSearchParams(params);
+  };
+
+  const handleStatusChange = (event) => {
+    const value = event.target.value;
+    const params = new URLSearchParams(searchParams);
+
+    if (value) {
+      params.set("status", value);
+    } else {
+      params.delete("status");
+    }
+
+    params.set("page", "1");
+    params.set("limit", String(ADMIN_PAGE_SIZE));
+    setSearchParams(params);
+  };
+
+  const handlePageChange = (nextPage) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", String(nextPage));
+    params.set("limit", String(ADMIN_PAGE_SIZE));
+    setSearchParams(params);
+  };
 
   // Fetch application counts for visible jobs
-  const jobIds = filteredJobs.map((job) => job._id || job.id);
+  const jobIds = jobs.map((job) => job._id || job.id);
   const { data: applicationCounts = {} } = useJobApplicationCounts(jobIds);
 
   const getStatusStyle = (status) => {
@@ -196,7 +223,7 @@ const AdminJobs = () => {
             type="text"
             placeholder="Search jobs..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-300 transition-all text-sm"
           />
         </div>
@@ -207,13 +234,13 @@ const AdminJobs = () => {
           <div className="relative group w-full md:w-auto">
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={handleStatusChange}
               className="appearance-none bg-white border border-gray-200 rounded-lg px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-300 cursor-pointer w-full md:w-40"
             >
-              <option>All Status</option>
-              <option>Active</option>
-              <option>Closed</option>
-              <option>Draft</option>
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="closed">Closed</option>
+              <option value="draft">Draft</option>
             </select>
             <ChevronDown
               size={14}
@@ -253,8 +280,17 @@ const AdminJobs = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {filteredJobs.length > 0 ? (
-                filteredJobs.map((job) => (
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan="7"
+                    className="px-6 py-12 text-center text-gray-500 text-sm"
+                  >
+                    Loading jobs...
+                  </td>
+                </tr>
+              ) : jobs.length > 0 ? (
+                jobs.map((job) => (
                   <tr
                     key={job._id || job.id}
                     className="hover:bg-gray-50/50 transition-colors"
@@ -356,6 +392,17 @@ const AdminJobs = () => {
           </table>
         </div>
       </div>
+
+      <div className="mt-4 text-sm text-gray-600">
+        Showing {jobs.length} of {totalJobs} jobs
+      </div>
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        isLoading={isLoading}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

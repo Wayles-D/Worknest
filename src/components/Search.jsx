@@ -1,31 +1,31 @@
-import { useSearchParams, useNavigate } from "react-router";
-import { useRef } from "react";
-import useSearch from "@/hooks/useSearch";
+import { useSearchParams } from "react-router";
+import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { SearchIcon, X } from "lucide-react";
+import { ADMIN_PAGE_SIZE } from "@/constants/pagination";
 
 export default function Search({ id, children }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const inputRef = useRef(null);
-  const navigate = useNavigate();
   const query = searchParams.get("query") || "";
-  useSearch({
-    inputRef,
-    searchParams,
-    setSearchParams,
-    navigate,
-    query,
-  });
+  const [inputValue, setInputValue] = useState(query);
 
-  const debouncedSubmit = useDebouncedCallback((e) => {
-    e.preventDefault();
-    const value = e.target.value;
+  useEffect(() => {
+    setInputValue(query);
+  }, [query]);
+
+  const debouncedSubmit = useDebouncedCallback((value) => {
     const params = new URLSearchParams(searchParams);
-    if (value.length > 3) {
-      params.set("query", value);
+    const normalizedValue = value.trim();
+
+    if (normalizedValue.length > 3) {
+      params.set("query", normalizedValue);
     } else {
       params.delete("query");
     }
+
+    params.set("page", "1");
+    params.set("limit", String(ADMIN_PAGE_SIZE));
     setSearchParams(params);
   }, 500);
 
@@ -36,13 +36,17 @@ export default function Search({ id, children }) {
           <label className="relative input w-full">
             <SearchIcon className="text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" />
             <input
-              onChange={debouncedSubmit}
+              onChange={(event) => {
+                const value = event.target.value;
+                setInputValue(value);
+                debouncedSubmit(value);
+              }}
               type="search"
               className="w-full grow rounded-xl py-2 pl-9 pr-8"
               placeholder="Search Candidates...."
               name="query"
               aria-label="Search"
-              defaultValue={query}
+              value={inputValue}
               ref={inputRef}
             />
           </label>
@@ -52,10 +56,13 @@ export default function Search({ id, children }) {
               onClick={() => {
                 const params = new URLSearchParams(searchParams);
                 params.delete("query");
+                params.set("page", "1");
+                params.set("limit", String(ADMIN_PAGE_SIZE));
                 setSearchParams(params);
                 if (inputRef.current) {
                   inputRef.current.value = "";
                 }
+                setInputValue("");
               }}
             />
           )}

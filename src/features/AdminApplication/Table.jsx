@@ -2,10 +2,15 @@ import { useCallback } from "react";
 import { Eye } from "lucide-react";
 import { applicationColumns, getStatusStyles } from "@/utils/constant";
 import TableBody from "@/components/TableBody";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 export default function Table({ applications }) {
+  const location = useLocation();
+
   const renderCell = useCallback((row, columnKey) => {
+    const params = new URLSearchParams(location.search);
+    params.set("id", row.id);
+
     switch (columnKey) {
       case "applicantName":
         return (
@@ -49,7 +54,7 @@ export default function Table({ applications }) {
       case "action":
         return (
           <Link
-            to={`?id=${row.id}`}
+            to={`?${params.toString()}`}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-gray-900 hover:bg-gray-50 font-bold text-sm transition-all group"
           >
             <Eye
@@ -63,7 +68,7 @@ export default function Table({ applications }) {
       default:
         return <span className="text-gray-700">{row[columnKey]}</span>;
     }
-  }, []);
+  }, [location.search]);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
