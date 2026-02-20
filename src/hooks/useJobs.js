@@ -3,97 +3,215 @@ import { getAllJobs } from "@/api/api";
 import { useAuth } from "@/store";
 import { ADMIN_PAGE_SIZE } from "@/constants/pagination";
 
+const SALARY_LABEL_TO_RANGE = {
+  "₦300k - ₦380k": { min: 300000, max: 380000 },
+  "₦250k - ₦350k": { min: 250000, max: 350000 },
+  "₦200k - ₦250k": { min: 200000, max: 250000 },
+  "₦150k - ₦250k": { min: 150000, max: 250000 },
+  "₦100k - ₦150k": { min: 100000, max: 150000 },
+};
+
+const parsePositiveNumber = (value) => {
+  const parsedValue = Number(value);
+  return Number.isFinite(parsedValue) && parsedValue >= 0 ? parsedValue : null;
+};
+
+const parsePositiveInteger = (value, fallback) => {
+  const parsedValue = Number.parseInt(value, 10);
+  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : fallback;
+};
+
+const normalizeSalaryRange = (salaryRange) => {
+  if (!salaryRange) {
+    return { min: null, max: null };
+  }
+
+  if (Array.isArray(salaryRange)) {
+    const [firstRange] = salaryRange;
+    if (!firstRange) {
+      return { min: null, max: null };
+    }
+
+    if (typeof firstRange === "object") {
+      return {
+        min: parsePositiveNumber(firstRange.min),
+        max: parsePositiveNumber(firstRange.max),
+      };
+    }
+
+    const mappedRange = SALARY_LABEL_TO_RANGE[firstRange];
+    if (mappedRange) {
+      return mappedRange;
+    }
+  }
+
+  if (typeof salaryRange === "object") {
+    return {
+      min: parsePositiveNumber(salaryRange.min),
+      max: parsePositiveNumber(salaryRange.max),
+    };
+  }
+
+  if (typeof salaryRange === "string") {
+    const mappedRange = SALARY_LABEL_TO_RANGE[salaryRange];
+    if (mappedRange) {
+      return mappedRange;
+    }
+  }
+
+  return { min: null, max: null };
+};
+
+const parsePositiveQueryNumber = (value) => {
+  const parsedValue = Number(value);
+  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : null;
+};
+
+const buildPublicJobsParams = ({
+  page,
+  limit,
+  keyword,
+  category,
+  jobType,
+  salaryMin,
+  salaryMax,
+}) => {
+  const params = { page, limit };
+
+  if (keyword) {
+    params.keyword = keyword;
+  }
+  if (category) {
+    params.category = category;
+  }
+  if (jobType) {
+    params.jobType = jobType;
+  }
+
+  const normalizedSalaryMin = parsePositiveQueryNumber(salaryMin);
+  const normalizedSalaryMax = parsePositiveQueryNumber(salaryMax);
+
+  if (normalizedSalaryMin !== null) {
+    params.salaryMin = normalizedSalaryMin;
+  }
+  if (normalizedSalaryMax !== null) {
+    params.salaryMax = normalizedSalaryMax;
+  }
+
+  return params;
+};
+
+const extractPublicJobsItems = (responseBody) => {
+  if (Array.isArray(responseBody?.data?.data)) {
+    return responseBody.data.data;
+  }
+  return null;
+};
+
 export function useJobs(filters = {}) {
   const { accessToken } = useAuth();
-  const {
-    jobType = [],
-    industry = [],
-    salaryRange = [],
-    search = "",
-    location = "",
-    page = 1,
-    limit = 10,
-  } = filters;
+  const queryPage = parsePositiveInteger(filters?.page, 1);
+  const queryLimit = Math.min(parsePositiveInteger(filters?.limit, 10), 50);
 
   return useQuery({
-    queryKey: ["jobs", filters],
+    queryKey: ["jobs", { page: queryPage, limit: queryLimit, filters }],
     queryFn: async () => {
-      // Still forward filters to API as requested
-      const response = await getAllJobs(filters, accessToken);
+      const {
+        keyword = "",
+        search = "",
+        location = "",
+        category = [],
+        industry = [],
+        jobType = [],
+        salaryRange = null,
+        salaryMin,
+        salaryMax,
+        page = 1,
+        limit = 10,
+      } = filters;
 
-      // Extract raw jobs list
-      const responseData = response?.data;
-      const rawJobs = Array.isArray(responseData)
-        ? responseData
-        : responseData?.data?.data ||
-          responseData?.data ||
-          responseData?.jobs ||
-          [];
+      const normalizedPage = parsePositiveInteger(page, 1);
+      const normalizedLimit = Math.min(parsePositiveInteger(limit, 10), 50);
 
-      if (!Array.isArray(rawJobs)) return { data: [], total: 0 };
+      const keywordParts = [keyword || search, location]
+        .map((value) => (typeof value === "string" ? value.trim() : ""))
+        .filter(Boolean);
+      const mergedKeyword = keywordParts.join(" ");
 
-      // Sort by createdAt descending (latest first)
-      const sortedJobs = [...rawJobs].sort((a, b) => {
-        const dateA = new Date(a.createdAt || 0);
-        const dateB = new Date(b.createdAt || 0);
-        return dateB - dateA;
+      const categoryValues = Array.isArray(category)
+        ? category
+        : category
+          ? [category]
+          : Array.isArray(industry)
+            ? industry
+            : industry
+              ? [industry]
+              : [];
+      const selectedCategory = categoryValues[0] || "";
+      // TODO: Backend searchJobService currently accepts a single category string.
+      const selectedJobType = Array.isArray(jobType) ? jobType[0] || "" : jobType || "";
+      // TODO: Backend searchJobService currently accepts a single jobType string.
+
+      const parsedSalaryRange = normalizeSalaryRange(salaryRange);
+      const selectedSalaryMin =
+        parsePositiveNumber(salaryMin) ?? parsedSalaryRange.min;
+      const selectedSalaryMax =
+        parsePositiveNumber(salaryMax) ?? parsedSalaryRange.max;
+      const queryParams = buildPublicJobsParams({
+        page: normalizedPage,
+        limit: normalizedLimit,
+        keyword: mergedKeyword,
+        category: selectedCategory,
+        jobType: selectedJobType,
+        salaryMin: selectedSalaryMin,
+        salaryMax: selectedSalaryMax,
       });
 
-      // Make job filters actually filter the results
-      let filteredJobs = sortedJobs.filter((job) => {
-        // jobType filter
-        if (
-          jobType.length > 0 &&
-          !jobType.some((t) => job.jobType?.toLowerCase() === t.toLowerCase())
-        ) {
-          return false;
+      try {
+        const response = await getAllJobs(queryParams, accessToken);
+        const responseBody = response?.data;
+        const items = extractPublicJobsItems(responseBody);
+
+        if (!Array.isArray(items)) {
+          console.warn("Unexpected jobs response shape", responseBody);
+          return {
+            items: [],
+            data: [],
+            total: 0,
+            totalPages: 1,
+            page: normalizedPage,
+            limit: normalizedLimit,
+          };
         }
 
-        // industry filter
-        if (
-          industry.length > 0 &&
-          !industry.some((i) => job.industry?.toLowerCase() === i.toLowerCase())
-        ) {
-          return false;
-        }
+        const totalJobs = parseNumericMeta(
+          responseBody?.data?.totalJobs,
+        );
+        const resolvedTotal = totalJobs ?? items.length;
 
-        // salaryRange filter - matching the labels exactly for simplicity/consistency with UI
-        if (
-          salaryRange.length > 0 &&
-          !salaryRange.some((s) => {
-            const jobSalary = `₦${(job.salaryRange?.min / 1000).toFixed(0)}k - ₦${(job.salaryRange?.max / 1000).toFixed(0)}k`;
-            return jobSalary === s;
-          })
-        ) {
-          return false;
-        }
+        const totalPages = parseNumericMeta(
+          responseBody?.data?.totalPages,
+        );
+        const resolvedTotalPages =
+          totalPages ?? Math.max(1, Math.ceil(resolvedTotal / normalizedLimit));
 
-        // search filter (title or company)
-        if (search) {
-          const s = search.toLowerCase();
-          const matchesTitle = job.title?.toLowerCase().includes(s);
-          const matchesCompany = job.companyName?.toLowerCase().includes(s);
-          if (!matchesTitle && !matchesCompany) return false;
-        }
+        const responsePage = parsePositiveInteger(
+          responseBody?.data?.page ?? responseBody?.page,
+          normalizedPage,
+        );
 
-        // location filter
-        if (location) {
-          const l = location.toLowerCase();
-          if (!job.location?.toLowerCase().includes(l)) return false;
-        }
-
-        return true;
-      });
-
-      // Pagination must be calculated from API response (after filtering)
-      const total = filteredJobs.length;
-      const start = (page - 1) * limit;
-      const paginatedJobs = filteredJobs.slice(start, start + limit);
-
-      return {
-        data: paginatedJobs,
-        total,
-      };
+        return {
+          items,
+          data: items,
+          total: resolvedTotal,
+          totalPages: Math.max(1, resolvedTotalPages),
+          page: responsePage,
+          limit: normalizedLimit,
+        };
+      } catch (error) {
+        console.error("Failed to fetch jobs:", error);
+        throw error;
+      }
     },
     keepPreviousData: true,
   });
@@ -113,21 +231,8 @@ const parseNumericMeta = (...values) => {
 };
 
 const extractAdminJobsPayload = (responseBody) => {
-  const rawData =
-    responseBody?.data?.data ||
-    responseBody?.data ||
-    responseBody?.jobs ||
-    responseBody ||
-    [];
-
-  const items = Array.isArray(rawData)
-    ? rawData
-    : Array.isArray(rawData?.jobs)
-      ? rawData.jobs
-      : Array.isArray(rawData?.data)
-        ? rawData.data
-        : [];
-
+  const rawData = responseBody?.data || {};
+  const items = Array.isArray(rawData?.data) ? rawData.data : [];
   return { rawData, items };
 };
 
@@ -139,14 +244,15 @@ export function useAdminJobs(params = {}) {
     search = "",
     limit = ADMIN_PAGE_SIZE,
   } = params;
+  const normalizedLimit = Math.min(parsePositiveInteger(limit, ADMIN_PAGE_SIZE), 50);
 
   return useQuery({
-    queryKey: ["admin-jobs", { page, limit, status, search }],
+    queryKey: ["admin-jobs", { page, limit: normalizedLimit, status, search }],
     queryFn: async () => {
       try {
         const queryParams = {
           page,
-          limit: ADMIN_PAGE_SIZE,
+          limit: normalizedLimit,
         };
 
         if (status) {
@@ -154,7 +260,6 @@ export function useAdminJobs(params = {}) {
         }
 
         if (search) {
-          queryParams.search = search;
           queryParams.keyword = search;
         }
 
@@ -166,9 +271,6 @@ export function useAdminJobs(params = {}) {
           rawData?.total,
           rawData?.totalJobs,
           rawData?.pagination?.total,
-          body?.total,
-          body?.totalJobs,
-          body?.pagination?.total,
           body?.data?.total,
           body?.data?.totalJobs,
         );
@@ -176,28 +278,28 @@ export function useAdminJobs(params = {}) {
         let totalPages = parseNumericMeta(
           rawData?.totalPages,
           rawData?.pagination?.totalPages,
-          body?.totalPages,
-          body?.pagination?.totalPages,
           body?.data?.totalPages,
         );
 
-        if (totalPages === null && total !== null && limit > 0) {
-          totalPages = Math.max(1, Math.ceil(total / limit));
+        if (totalPages === null && total !== null && normalizedLimit > 0) {
+          totalPages = Math.max(1, Math.ceil(total / normalizedLimit));
         }
 
         if (totalPages === null) {
           // Weak fallback when backend omits pagination metadata.
-          totalPages = items.length === limit ? page + 1 : page;
+          totalPages = items.length === normalizedLimit ? page + 1 : page;
         }
 
         return {
           items,
           data: items,
           total:
-            total !== null ? total : Math.max((page - 1) * limit + items.length, 0),
+            total !== null
+              ? total
+              : Math.max((page - 1) * normalizedLimit + items.length, 0),
           totalPages: Math.max(1, totalPages),
           page,
-          limit,
+          limit: normalizedLimit,
         };
       } catch (error) {
         console.error("Failed to fetch admin jobs:", error);
