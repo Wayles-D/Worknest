@@ -16,11 +16,17 @@ const JOB_TYPE_OPTIONS = [
 ];
 
 const CATEGORY_OPTIONS = [
-  "Software Development",
+  "Development",
   "Design",
   "Product Management",
-  "Marketing",
+  "Writing",
+  "Advertising/PR",
+  "Health & Fitness",
+  "Fashion",
   "Data & Analytics",
+  "Media & Communication",
+  "Entertainment",
+  
 ];
 
 const SALARY_OPTIONS = [
