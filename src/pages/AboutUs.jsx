@@ -10,6 +10,12 @@ import plane from "/airplane.png";
 import profit from "/non-profit.png";
 
 const AboutUs = () => {
+  const stats = [
+    { icon: suit, label: "Jobs Posted", value: "500K+" },
+    { icon: users, label: "Users Hired", value: "1.2M" },
+    { icon: office, label: "Partner Companies", value: "15K+" },
+  ];
+
   return (
     <div className="container">
       <div className="about rounded-[10px] my-[50px]">
@@ -46,39 +52,26 @@ const AboutUs = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-13">
-          <div className="border border-[#F85E1E] bg-[#FFFFFF] rounded-[10px]  pl-6 py-10 space-y-7">
-            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
-              <img src={suit} alt="" className="w-12 h-12" />
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="bg-[#FFFFFF] shadow-xl rounded-[10px] pl-6 py-10 space-y-7 transition-all duration-300  hover:-translate-y-3"
+            >
+              <div className="rounded-[10px] bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
+                <img src={stat.icon} alt="" className="w-12 h-12" />
+              </div>
+              <div>
+                <p className="text-[24px]">{stat.label}</p>
+                <p className="sm:text-[48px] text-[35px] font-extrabold text-[#F85E1E]">
+                  {stat.value}
+                </p>
+              </div>
             </div>
-            <div className="">
-              <p className="text-[24px]  ">Jobs Posted</p>
-              <p className="sm:text-[48px] text-[35px] font-extrabold text-[#F85E1E]">500K+</p>
-            </div>
-          </div>
-
-          <div className="border border-[#F85E1E] bg-[#FFFFFF] rounded-[10px]  pl-6 py-10 space-y-7">
-            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
-              <img src={users} alt="" className="w-12 h-12" />
-            </div>
-            <div className="">
-              <p className="text-[24px]  ">Users Hired</p>
-              <p className="sm:text-[48px] text-[35px] font-extrabold text-[#F85E1E]">1.2M</p>
-            </div>
-          </div>
-
-          <div className="border border-[#F85E1E] bg-[#FFFFFF] rounded-[10px]  pl-6 py-10 space-y-7 ">
-            <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
-              <img src={office} alt="" className="w-12 h-12 " />
-            </div>
-            <div className="">
-              <p className="text-[24px]  ">Partner Companies </p>
-              <p className="sm:text-[48px] text-[35px] font-extrabold text-[#F85E1E]">15K+</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      <div className="bg-[#FFFFFF] border h-82 border-[#CCCCCC] mb-20 ">
+      <div className="bg-[#FFFFFF]  h-82 shadow-xl mb-20 rounded-[10px] ">
         <div className="text-center flex flex-col justify-center gap-5 sm:px-9 px-6 py-10 md:py-20">
           <h4 className="sm:text-[36px] text-[27px] font-semibold leading-[120%] ">
             Our Mission
@@ -104,7 +97,7 @@ const AboutUs = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="bg-[#FFFFFF] border border-[#CCCCCC] pl-6 py-10 space-y-7 rounded-[10px] shadow-[0_4px_10px_#0000001A]">
+          <div className="bg-[#FFFFFF]  shadow-xl pl-6 py-10 space-y-7 rounded-[10px] shadow-[0_4px_10px_#0000001A] transition-all duration-300  hover:-translate-y-3">
             <div className=" py-10 px-4 space-y-7 ">
               <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
                 <img src={user} alt="" className="w-12 h-12" />
@@ -123,7 +116,7 @@ const AboutUs = () => {
             </div>
           </div>
 
-          <div className="pl-6 py-10 space-y-7 rounded-[10px] bg-[#FFFFFF] border border-[#CCCCCC] shadow-[0_4px_10px_#0000001A]">
+          <div className="pl-6 py-10 space-y-7 rounded-[10px] bg-[#FFFFFF]  shadow-xl shadow-[0_4px_10px_#0000001A] transition-all duration-300  hover:-translate-y-3">
             <div className=" py-10 px-4 space-y-7">
               <div className="rounded-[10px]  bg-[#FFE9E3] flex justify-center items-center w-20 h-20">
                 <img src={suit} alt="" className="w-12 h-12" />
@@ -143,7 +136,7 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="bg-[#FFFFFF] border  border-[#CCCCCC]  ">
+      <div className="bg-[#FFFFFF]  shadow-xl  ">
         <div className="text-center flex flex-col justify-center sm:gap-10 gap-6 px-9 sm:py-[81px] py-[50px] ">
           <h4 className="sm:text-[36px]  text-[27px] font-semibold leading-[120%] ">
             Our Values
@@ -157,7 +150,7 @@ const AboutUs = () => {
 
       <div className=" my-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          <div className="space-y-7 rounded-[10px] bg-[#FFFFFF] border border-[#CCCCCC]">
+          <div className="space-y-7 rounded-[10px] bg-[#FFFFFF]  shadow-xl transition-all duration-300  hover:-translate-y-3">
             <div className="gap-5 md:gap-7 flex flex-col items-center justify-center md:pt-10 p-4 ">
               <img src={idea} alt="" />
               <div className="space-y-1 text-center">
@@ -172,7 +165,7 @@ const AboutUs = () => {
             </div>
           </div>
 
-          <div className="space-y-7 rounded-[10px] bg-[#FFFFFF] border border-[#CCCCCC]">
+          <div className="space-y-7 rounded-[10px] bg-[#FFFFFF]  shadow-xl transition-all duration-300  hover:-translate-y-3">
             <div className="gap-5 md:gap-7 flex flex-col items-center justify-center pt-10 p-4">
               <img src={profit} alt="" />
               <div className="space-y-1 text-center">
@@ -187,7 +180,7 @@ const AboutUs = () => {
             </div>
           </div>
 
-          <div className="space-y-7 rounded-[10px] bg-[#FFFFFF] border border-[#CCCCCC]">
+          <div className="space-y-7 rounded-[10px] bg-[#FFFFFF]  shadow-xl transition-all duration-300  hover:-translate-y-3">
             <div className="gap-7 flex flex-col items-center justify-center pt-10 p-4">
               <img src={plane} alt="" />
               <div className="space-y-1 text-center">
@@ -220,7 +213,11 @@ const AboutUs = () => {
           </div>
 
           <div className="flex gap-5 items-start">
-            <img src={check} alt="" className="sm:w-[30px] h-[30px] w-[25px] h-[25px]"/>
+            <img
+              src={check}
+              alt=""
+              className="sm:w-[30px] h-[30px] w-[25px] h-[25px]"
+            />
             <div className="flex flex-col gap-4">
               <h5 className="sm:text-[24px] text-[20px] leading-[100%] font-medium ">
                 Human- Centric Design
@@ -232,7 +229,11 @@ const AboutUs = () => {
           </div>
 
           <div className="flex gap-5 items-start">
-            <img src={check} alt="" className="sm:w-[30px] h-[30px] w-[25px] h-[25px]"/>
+            <img
+              src={check}
+              alt=""
+              className="sm:w-[30px] h-[30px] w-[25px] h-[25px]"
+            />
             <div className="flex flex-col gap-4">
               <h5 className="sm:text-[24px] text-[20px]  leading-[100%] font-medium ">
                 Global Reach
@@ -245,7 +246,7 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="bg-[#000000] text-white mt-13 px-4 py-7 flex flex-col gap-4 items-center justify-center">
+      <div className="bg-[#000000] text-white mt-13 px-4 py-7 flex flex-col gap-4 items-center justify-center rounded-[10px]">
         <h4 className="sm:text-[36px] text-[20px] font-semibold leading-[120%] ">
           Ready to find your next nest?
         </h4>

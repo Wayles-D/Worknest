@@ -76,7 +76,7 @@ const ContactUs = () => {
         <form
           onSubmit={handleSubmit}
           action=""
-          className="bg-white lg:w-174 w-full py-8 sm:px-9 px-5 gap-9 flex flex-col border border-[#CCCCCC] rounded-[10px] "
+          className="bg-white lg:w-174 w-full py-8 sm:px-9 px-5 gap-9 flex flex-col border shadow-xl rounded-[10px] "
         >
           <div className="flex sm:flex-row flex-col gap-[15.35px] items-center">
             <div className="w-full flex flex-col gap-[10.74px]">
@@ -93,7 +93,7 @@ const ContactUs = () => {
                 onChange={handleChange}
                 value={formData.fullName}
                 required
-                className="sm:text-[16px] text-[14px]  font-medium border border-[#CCCCCC] rounded-[5.12px]  pl-[13.57px] h-13"
+                className="sm:text-[16px] text-[14px]  font-medium border shadow-xl rounded-[5.12px]  pl-[13.57px] h-13"
               />
             </div>
 
@@ -111,7 +111,7 @@ const ContactUs = () => {
                 onChange={handleChange}
                 value={formData.email}
                 required
-                className="sm:text-[16px] text-[14px] font-medium  border border-[#CCCCCC] rounded-[5.12px]  pl-[13.57px] h-13"
+                className="sm:text-[16px] text-[14px] font-medium  border shadow-xl rounded-[5.12px]  pl-[13.57px] h-13"
               />
             </div>
           </div>
@@ -130,7 +130,7 @@ const ContactUs = () => {
               onChange={handleChange}
               value={formData.subject}
               required
-              className="sm:text-[16px] text-[14px] font-medium  border border-[#CCCCCC] rounded-[5.12px]  pl-[13.57px] h-13 w-full"
+              className="sm:text-[16px] text-[14px] font-medium  border shadow-xl rounded-[5.12px]  pl-[13.57px] h-13 w-full"
             />
           </div>
 
@@ -149,7 +149,7 @@ const ContactUs = () => {
               value={formData.message}
               required
               placeholder=" Tell us more about your inquiry..."
-              className="sm:text-[16px] text-[14px] font-medium  border border-[#CCCCCC] rounded-[5.12px] h-37 w-full resize-none p-3"
+              className="sm:text-[16px] text-[14px] font-medium  border shadow-xl rounded-[5.12px] h-37 w-full resize-none p-3"
             ></textarea>
           </div>
 
@@ -165,7 +165,7 @@ const ContactUs = () => {
           </button>
         </form>
 
-        <div className="bg-white py-10 sm:px-9 px-4 rounded-[10px] space-y-8 border-[#CCCCCC] border lg:w-131">
+        <div className="bg-white py-10 sm:px-9 px-4 rounded-[10px] space-y-8 shadow-xl border lg:w-131">
           <h5 className="text-[24px] font-bold tracking-tight">
             Contact Information
           </h5>
@@ -218,7 +218,7 @@ const ContactUs = () => {
             </div>
           </a>
 
-          <hr className="w-full border border-[#CCCCCC]" />
+          <hr className="w-full border shadow-xl" />
           <div className="space-y-5">
             <h6 className="text-[20px] font-bold leading-6">Follow Us</h6>
             <div className="flex  space-x-4">
