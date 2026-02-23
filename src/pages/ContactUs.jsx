@@ -179,7 +179,7 @@ const ContactUs = () => {
                 Office Address
               </p>
               <p className="sm:text-[18px] text-[16px] font-medium sm:leading-6 text-[#6B6B6B]">
-                123 Tech Plaza, Suite 400 San Francisco, CA 94105
+                No. 1 Ogunlesi Street, Off Awoyokun Street, Onipanu, Lagos, Nigeria
               </p>
             </div>
           </div>
