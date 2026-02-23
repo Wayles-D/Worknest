@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Filter as FilterIcon } from "lucide-react";
 import { useSearchParams } from "react-router";
+import { ADMIN_PAGE_SIZE } from "@/constants/pagination";
 
 export default function Filter() {
   const [openOptions, setOpenOptions] = useState(false);
-  const [filters, setFilters] = useState({ status: "" });
   const [searchParams, setSearchParams] = useSearchParams();
+  const selectedStatus = searchParams.get("status") || "";
+  const [filters, setFilters] = useState({
+    status: selectedStatus,
+  });
   const dropdownRef = useRef(null);
 
   const status = [
@@ -38,6 +42,8 @@ export default function Filter() {
       if (value) updatedSearchParams.set(key, value);
       else updatedSearchParams.delete(key);
     });
+    updatedSearchParams.set("page", "1");
+    updatedSearchParams.set("limit", String(ADMIN_PAGE_SIZE));
     setSearchParams(updatedSearchParams);
     setOpenOptions(false);
   };
@@ -46,6 +52,8 @@ export default function Filter() {
     setFilters({ status: "" });
     const params = new URLSearchParams(searchParams);
     params.delete("status");
+    params.set("page", "1");
+    params.set("limit", String(ADMIN_PAGE_SIZE));
     setSearchParams(params);
     setOpenOptions(false);
   };
@@ -53,7 +61,12 @@ export default function Filter() {
   return (
     <div className="relative inline-block" ref={dropdownRef}>
       <button
-        onClick={() => setOpenOptions((prev) => !prev)}
+        onClick={() => {
+          if (!openOptions) {
+            setFilters({ status: selectedStatus });
+          }
+          setOpenOptions((prev) => !prev);
+        }}
         className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500"
       >
         <FilterIcon className="w-4 h-4 text-gray-500" />

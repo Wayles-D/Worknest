@@ -82,16 +82,25 @@ export const deleteJob = async (id, accessToken) => {
   return await axiosInstance.delete(`/jobs/${id}/delete`, headers(accessToken));
 };
 
-export const getAllJobs = async (params) => {
-  return await axiosInstance.get("/jobs/all", { params });
+export const getAllJobs = async (params = {}, accessToken) => {
+  const config = { params };
+  if (accessToken) {
+    config.headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+  }
+  return await axiosInstance.get("/jobs/all", config);
 };
 
 export const getJobById = async (id, accessToken) => {
   return await axiosInstance.get(`/jobs/${id}`, headers(accessToken));
 };
 
-export const getSavedJobs = async (accessToken) => {
-  return await axiosInstance.get("/jobs/saved", headers(accessToken));
+export const getSavedJobs = async (accessToken, params = {}) => {
+  return await axiosInstance.get("/jobs/saved", {
+    params,
+    ...headers(accessToken),
+  });
 };
 
 export const saveJob = async (id, accessToken) => {

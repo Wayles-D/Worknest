@@ -7,67 +7,114 @@ import { useQuery } from "@tanstack/react-query";
 import JobCard from "@/components/JobCard";
 import { Search, MapPin, Filter, X } from "lucide-react";
 
+const JOB_TYPE_OPTIONS = [
+  "Full-Time",
+  "Contract",
+  "Part-Time",
+  "Internship",
+  "Freelance",
+];
+
+const CATEGORY_OPTIONS = [
+  "Development",
+  "Design",
+  "Product Management",
+  "Writing",
+  "Advertising/PR",
+  "Health & Fitness",
+  "Data & Analytics",
+  "Media & Communication",
+  "Entertainment",
+  
+];
+
+const SALARY_OPTIONS = [
+  { label: "₦300k - ₦380k", min: 300000, max: 380000 },
+  { label: "₦250k - ₦350k", min: 250000, max: 350000 },
+  { label: "₦200k - ₦250k", min: 200000, max: 250000 },
+  { label: "₦150k - ₦250k", min: 150000, max: 250000 },
+  { label: "₦100k - ₦150k", min: 100000, max: 150000 },
+];
+
+const parsePositiveInteger = (value, fallback) => {
+  const parsedValue = Number.parseInt(value, 10);
+  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : fallback;
+};
+
 export default function Jobs() {
   const { accessToken } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const pageFromUrl = parsePositiveInteger(searchParams.get("page"), 1);
+  const selectedJobType = searchParams.get("jobType");
+  const selectedCategory = searchParams.get("category") || searchParams.get("industry");
+  const salaryMinFromUrl = parsePositiveInteger(searchParams.get("salaryMin"), null);
+  const salaryMaxFromUrl = parsePositiveInteger(searchParams.get("salaryMax"), null);
 
   // Derived filters from URL - Single source of truth
   const filters = {
-    jobType: searchParams.getAll("jobType"),
-    industry: searchParams.getAll("industry"),
-    salaryRange: searchParams.getAll("salaryRange"),
-    search: searchParams.get("search") || "",
+    jobType: selectedJobType ? [selectedJobType] : [],
+    category: selectedCategory ? [selectedCategory] : [],
+    salaryMin: salaryMinFromUrl,
+    salaryMax: salaryMaxFromUrl,
+    keyword: searchParams.get("keyword") || searchParams.get("search") || "",
     location: searchParams.get("location") || "",
-    page: parseInt(searchParams.get("page") || "1"),
+    page: pageFromUrl,
     limit: 10,
   };
 
   // Local state only for the input field values to allow typing before searching
   const [searchInputs, setSearchInputs] = useState({
-    search: filters.search,
+    keyword: filters.keyword,
     location: filters.location,
   });
 
   // Sync state with URL only when URL changes (e.g. Back button)
   // This follows the React pattern for 'Get derived state from props' without useEffect
   const [prevUrlFilters, setPrevUrlFilters] = useState({
-    search: filters.search,
+    keyword: filters.keyword,
     location: filters.location,
   });
   if (
-    filters.search !== prevUrlFilters.search ||
+    filters.keyword !== prevUrlFilters.keyword ||
     filters.location !== prevUrlFilters.location
   ) {
-    setSearchInputs({ search: filters.search, location: filters.location });
+    setSearchInputs({ keyword: filters.keyword, location: filters.location });
     setPrevUrlFilters({
-      search: filters.search,
+      keyword: filters.keyword,
       location: filters.location,
     });
   }
 
   const { data: jobResponse, isLoading } = useJobs(filters);
 
-  // Directly use the filtered and paginated data from useJobs hook
-  const finalJobs = jobResponse?.data || [];
+  const finalJobs = jobResponse?.items || [];
   const totalJobs = jobResponse?.total || 0;
-  const totalPages = Math.ceil(totalJobs / filters.limit) || 1;
-  const currentPage = filters.page;
+  const totalPages = Math.max(1, jobResponse?.totalPages || 1);
+  const currentPage = jobResponse?.page || filters.page;
 
   const { data: savedJobsResponse } = useQuery({
     queryKey: ["savedJobs", accessToken],
     queryFn: async () => {
       if (!accessToken) return [];
-      const res = await getSavedJobs(accessToken);
-      if (res.status === 200) {
-        const rawData = res.data?.data || [];
-        // Handle potential nested data for saved jobs too
-        const actualSaved = Array.isArray(rawData)
-          ? rawData
-          : rawData.data || rawData.jobs || [];
-        return Array.isArray(actualSaved) ? actualSaved : [];
+      let page = 1;
+      const limit = 50;
+      let totalPages = 1;
+      const allSavedJobs = [];
+
+      while (page <= totalPages) {
+        const res = await getSavedJobs(accessToken, { page, limit });
+        if (res.status !== 200) {
+          break;
+        }
+
+        const currentPageItems = Array.isArray(res.data?.data) ? res.data.data : [];
+        allSavedJobs.push(...currentPageItems);
+        totalPages = parsePositiveInteger(res.data?.totalPages, 1);
+        page += 1;
       }
-      return [];
+
+      return allSavedJobs;
     },
     enabled: !!accessToken,
   });
@@ -78,42 +125,60 @@ export default function Jobs() {
       : [],
   );
 
-  const toggleFilter = (key, value) => {
+  const toggleSingleFilter = (key, value) => {
     const newParams = new URLSearchParams(searchParams);
-    const current = newParams.getAll(key);
-    const isSelected = current.includes(value);
-
+    const selected = newParams.get(key);
+    const isSelected = selected === value;
     if (isSelected) {
-      const filtered = current.filter((item) => item !== value);
       newParams.delete(key);
-      filtered.forEach((v) => newParams.append(key, v));
     } else {
-      newParams.append(key, value);
+      newParams.set(key, value);
     }
-    newParams.set("page", "1"); // Reset to page 1 on filter change
+    if (key === "category") {
+      newParams.delete("industry");
+    }
+    newParams.set("page", "1");
     setSearchParams(newParams);
   };
 
-  const handleTypeChange = (value) => toggleFilter("jobType", value);
-  const handleIndustryChange = (value) => toggleFilter("industry", value);
-  const handleSalaryChange = (value) => toggleFilter("salaryRange", value);
+  const handleTypeChange = (value) => toggleSingleFilter("jobType", value);
+  const handleCategoryChange = (value) => toggleSingleFilter("category", value);
+
+  const handleSalaryChange = (range) => {
+    const newParams = new URLSearchParams(searchParams);
+    const isSelected =
+      salaryMinFromUrl === range.min && salaryMaxFromUrl === range.max;
+
+    if (isSelected) {
+      newParams.delete("salaryMin");
+      newParams.delete("salaryMax");
+    } else {
+      newParams.set("salaryMin", String(range.min));
+      newParams.set("salaryMax", String(range.max));
+    }
+
+    newParams.delete("salaryRange");
+    newParams.set("page", "1");
+    setSearchParams(newParams);
+  };
 
   const handleSearch = () => {
     const newParams = new URLSearchParams(searchParams);
 
-    if (searchInputs.search) {
-      newParams.set("search", searchInputs.search);
+    if (searchInputs.keyword.trim()) {
+      newParams.set("keyword", searchInputs.keyword.trim());
     } else {
-      newParams.delete("search");
+      newParams.delete("keyword");
     }
+    newParams.delete("search");
 
-    if (searchInputs.location) {
-      newParams.set("location", searchInputs.location);
+    if (searchInputs.location.trim()) {
+      newParams.set("location", searchInputs.location.trim());
     } else {
       newParams.delete("location");
     }
 
-    newParams.set("page", "1"); // Reset to page 1 on search
+    newParams.set("page", "1");
     setSearchParams(newParams);
   };
 
@@ -161,9 +226,9 @@ export default function Jobs() {
               <input
                 type="text"
                 placeholder="Job title, skills or keyboard"
-                value={searchInputs.search}
+                value={searchInputs.keyword}
                 onChange={(e) =>
-                  setSearchInputs({ ...searchInputs, search: e.target.value })
+                  setSearchInputs({ ...searchInputs, keyword: e.target.value })
                 }
                 className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#F57450]/10 focus:border-[#F57450]/30 transition-all text-sm shadow-sm"
               />
@@ -232,13 +297,7 @@ export default function Jobs() {
             <h3 className="font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">
               Job Type
             </h3>
-            {[
-              "Full-Time",
-              "Contract",
-              "Part-Time",
-              "Internship",
-              "Freelance",
-            ].map((type) => (
+            {JOB_TYPE_OPTIONS.map((type) => (
               <label
                 key={type}
                 className="flex items-center gap-3 cursor-pointer group hover:text-[#F57450] transition-colors mb-3 last:mb-0"
@@ -261,25 +320,19 @@ export default function Jobs() {
             <h3 className="font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">
               Industry
             </h3>
-            {[
-              "Information Technology",
-              "Advertising/PR",
-              "Media & Communication",
-              "Fashion",
-              "Health & Fitness",
-            ].map((industry) => (
+            {CATEGORY_OPTIONS.map((category) => (
               <label
-                key={industry}
+                key={category}
                 className="flex items-center gap-3 cursor-pointer group hover:text-[#F57450] transition-colors mb-3 last:mb-0"
               >
                 <input
                   type="checkbox"
-                  checked={filters.industry.includes(industry)}
-                  onChange={() => handleIndustryChange(industry)}
+                  checked={filters.category.includes(category)}
+                  onChange={() => handleCategoryChange(category)}
                   className="w-4 h-4 rounded border-gray-300 text-[#F57450] focus:ring-[#F57450]"
                 />
                 <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900">
-                  {industry}
+                  {category}
                 </span>
               </label>
             ))}
@@ -290,25 +343,21 @@ export default function Jobs() {
             <h3 className="font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">
               Salary Range
             </h3>
-            {[
-              "₦300k - ₦380k",
-              "₦250k - ₦350k",
-              "₦200k - ₦250k",
-              "₦150k - ₦250k",
-              "₦100k - ₦150k",
-            ].map((salary) => (
+            {SALARY_OPTIONS.map((salary) => (
               <label
-                key={salary}
+                key={salary.label}
                 className="flex items-center gap-3 cursor-pointer group hover:text-[#F57450] transition-colors mb-3 last:mb-0"
               >
                 <input
                   type="checkbox"
-                  checked={filters.salaryRange.includes(salary)}
+                  checked={
+                    salaryMinFromUrl === salary.min && salaryMaxFromUrl === salary.max
+                  }
                   onChange={() => handleSalaryChange(salary)}
                   className="w-4 h-4 rounded border-gray-300 text-[#F57450] focus:ring-[#F57450]"
                 />
                 <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900">
-                  {salary}
+                  {salary.label}
                 </span>
               </label>
             ))}
@@ -359,7 +408,7 @@ export default function Jobs() {
                   <JobCard
                     key={job._id || job.id}
                     job={job}
-                    isSavedInitial={savedJobIds.has(job._id)}
+                    isSavedInitial={savedJobIds.has(job._id || job.id)}
                   />
                 ))}
               </div>
@@ -391,6 +440,6 @@ export default function Jobs() {
           )}
         </div>
       </div>
-    </div>
+      </div>
   );
 }
