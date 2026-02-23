@@ -22,7 +22,6 @@ const CATEGORY_OPTIONS = [
   "Writing",
   "Advertising/PR",
   "Health & Fitness",
-  "Fashion",
   "Data & Analytics",
   "Media & Communication",
   "Entertainment",
