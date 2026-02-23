@@ -66,7 +66,6 @@ export const AuthProvider = ({ children }) => {
     // refetchInterval: 60000,
     // refetchIntervalInBackground: true,
   });
-  console.log(user);
 
   useQuery({
     queryKey: ["refresh_token", isAdminPath],
