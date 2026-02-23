@@ -17,7 +17,7 @@ export default function AuthLayout() {
       {/* Left / Main Auth Content */}
       <div
         className={`flex flex-col w-full ${
-          !hideSlideshow ? "md:w-1/2" : ""
+          !hideSlideshow ? "lg:w-1/2" : ""
         } bg-white px-4 sm:px-8 md:px-16 py-6`}
       >
         <Logo />
@@ -30,7 +30,7 @@ export default function AuthLayout() {
 
       {/* Right / Slideshow */}
       {!hideSlideshow && (
-        <div className="hidden md:block md:w-1/2 h-screen fixed right-0 top-0 z-50">
+        <div className="hidden lg:block lg:w-1/2 h-screen fixed right-0 top-0 z-50">
           <AuthSlideshow />
         </div>
       )}
