@@ -13,7 +13,7 @@ export default function ErrorAlert({ error }) {
       navigate(0);
     }
   }, [error, msgs, navigate]);
-  //note our access token is saved in memory not in state  we are using useeffect to automatically load the page we checking the type of error if it a jwt, then it automatically refresh the access token
+  //note our access token is saved in memory not in state  we are using useEffect to automatically load the page we checking the type of error if it a jwt, then it automatically refresh the access token
   return (
     <>
       {msgs.includes(error) && (
