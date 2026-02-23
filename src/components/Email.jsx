@@ -1,19 +1,24 @@
+import { useRef } from "react";
 import { useNavigate } from "react-router";
 
 export default function Email() {
   const navigate = useNavigate();
+  const formRef = useRef(null);
 
   const handleSubmit = () => {
     setTimeout(() => {
-      navigate("/?subscribed=true");
+      formRef.current.reset();
+      navigate("/");
     }, 1000);
   };
 
   return (
     <div>
       <form
+        ref={formRef}
         action="https://6895434f.sibforms.com/serve/MUIFANRku4PN0KMxKahwWGO1ORB5zOu67COxJ3rr1Bso5Cs7c_JIGOSCAXZB2UNaqJ1nZSD2ieGixCGzBQr851TjxVYZ-i9Fn5bEhlSizAyEQ1xvWYXd943LhmM9ihJJc3uP4cMaStT653nVB4I4A6kM-HbIRhBjhin86M5W_uGzT_4vgJsO1z9V2FkW2u1JYjSMt5XgASPL9cL57g=="
         method="POST"
+        target="hidden_iframe"
         onSubmit={handleSubmit}
       >
         <input
@@ -31,6 +36,12 @@ export default function Email() {
           <p className="text-[18px] font-semibold">Subscribe</p>
         </button>
       </form>
+
+      <iframe
+        name="hidden_iframe"
+        style={{ display: "none" }}
+        title="hidden"
+      ></iframe>
     </div>
   );
 }
