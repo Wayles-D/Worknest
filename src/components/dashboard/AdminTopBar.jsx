@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import Logout from "@/components/Logout";
 import { useAuth } from "@/store";
 
+
 export default function AdminTopBar({ onMenuClick }) {
     const { user } = useAuth();
   
@@ -25,7 +26,7 @@ export default function AdminTopBar({ onMenuClick }) {
       </div>
       {/* Right actions */}
       <div className="flex items-center gap-6">
-        <Bell size={18} />
+        <Bell size={24} />
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}

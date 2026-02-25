@@ -110,3 +110,4 @@ export const saveJob = async (id, accessToken) => {
 export const unsaveJob = async (id, accessToken) => {
   return await axiosInstance.delete(`/jobs/${id}/save`, headers(accessToken));
 };
+
