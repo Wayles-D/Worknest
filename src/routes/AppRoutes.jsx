@@ -44,6 +44,10 @@ const AdminJobApplications = lazy(
 );
 
 const AdminSettings = lazy(() => import("@/pages/dashboard/AdminSettings.jsx"));
+const AdminNotifications = lazy(
+  () => import("@/pages/dashboard/AdminNotifications.jsx"),
+);
+
 
 export default function AppRoutes() {
   const { accessToken, user, isAuthenticating } = useAuth();
@@ -246,6 +250,14 @@ export default function AppRoutes() {
           element: (
             <Suspense fallback={<SuspenseUi />}>
               <AdminSettings />
+            </Suspense>
+          ),
+        },
+                {
+          path: "notifications",
+          element: (
+            <Suspense fallback={<SuspenseUi />}>
+              <AdminNotifications />
             </Suspense>
           ),
         },
