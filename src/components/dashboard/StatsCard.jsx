@@ -15,3 +15,4 @@ export default function StatsCard({ label, value, icon, color }) {
     </div>
   );
 }
+
