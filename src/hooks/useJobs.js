@@ -18,7 +18,9 @@ const parsePositiveNumber = (value) => {
 
 const parsePositiveInteger = (value, fallback) => {
   const parsedValue = Number.parseInt(value, 10);
-  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : fallback;
+  return Number.isFinite(parsedValue) && parsedValue > 0
+    ? parsedValue
+    : fallback;
 };
 
 const normalizeSalaryRange = (salaryRange) => {
@@ -65,6 +67,12 @@ const normalizeSalaryRange = (salaryRange) => {
 const parsePositiveQueryNumber = (value) => {
   const parsedValue = Number(value);
   return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : null;
+};
+
+const buildKeyword = (keywordOrSearch = "") => {
+  const normalizedKeyword =
+    typeof keywordOrSearch === "string" ? keywordOrSearch.trim() : "";
+  return normalizedKeyword;
 };
 
 const buildPublicJobsParams = ({
@@ -119,7 +127,6 @@ export function useJobs(filters = {}) {
       const {
         keyword = "",
         search = "",
-        location = "",
         category = [],
         industry = [],
         jobType = [],
@@ -133,23 +140,26 @@ export function useJobs(filters = {}) {
       const normalizedPage = parsePositiveInteger(page, 1);
       const normalizedLimit = Math.min(parsePositiveInteger(limit, 10), 50);
 
-      const keywordParts = [keyword || search, location]
-        .map((value) => (typeof value === "string" ? value.trim() : ""))
-        .filter(Boolean);
-      const mergedKeyword = keywordParts.join(" ");
+      const normalizedKeyword =
+        (typeof keyword === "string" && keyword.trim()) ||
+        (typeof search === "string" && search.trim()) ||
+        "";
+      const mergedKeyword = buildKeyword(normalizedKeyword);
 
       const categoryValues = Array.isArray(category)
         ? category
         : category
-          ? [category]
-          : Array.isArray(industry)
-            ? industry
-            : industry
-              ? [industry]
-              : [];
+        ? [category]
+        : Array.isArray(industry)
+        ? industry
+        : industry
+        ? [industry]
+        : [];
       const selectedCategory = categoryValues[0] || "";
       // TODO: Backend searchJobService currently accepts a single category string.
-      const selectedJobType = Array.isArray(jobType) ? jobType[0] || "" : jobType || "";
+      const selectedJobType = Array.isArray(jobType)
+        ? jobType[0] || ""
+        : jobType || "";
       // TODO: Backend searchJobService currently accepts a single jobType string.
 
       const parsedSalaryRange = normalizeSalaryRange(salaryRange);
@@ -184,20 +194,16 @@ export function useJobs(filters = {}) {
           };
         }
 
-        const totalJobs = parseNumericMeta(
-          responseBody?.data?.totalJobs,
-        );
+        const totalJobs = parseNumericMeta(responseBody?.data?.totalJobs);
         const resolvedTotal = totalJobs ?? items.length;
 
-        const totalPages = parseNumericMeta(
-          responseBody?.data?.totalPages,
-        );
+        const totalPages = parseNumericMeta(responseBody?.data?.totalPages);
         const resolvedTotalPages =
           totalPages ?? Math.max(1, Math.ceil(resolvedTotal / normalizedLimit));
 
         const responsePage = parsePositiveInteger(
           responseBody?.data?.page ?? responseBody?.page,
-          normalizedPage,
+          normalizedPage
         );
 
         return {
@@ -244,7 +250,10 @@ export function useAdminJobs(params = {}) {
     search = "",
     limit = ADMIN_PAGE_SIZE,
   } = params;
-  const normalizedLimit = Math.min(parsePositiveInteger(limit, ADMIN_PAGE_SIZE), 50);
+  const normalizedLimit = Math.min(
+    parsePositiveInteger(limit, ADMIN_PAGE_SIZE),
+    50
+  );
 
   return useQuery({
     queryKey: ["admin-jobs", { page, limit: normalizedLimit, status, search }],
@@ -272,13 +281,13 @@ export function useAdminJobs(params = {}) {
           rawData?.totalJobs,
           rawData?.pagination?.total,
           body?.data?.total,
-          body?.data?.totalJobs,
+          body?.data?.totalJobs
         );
 
         let totalPages = parseNumericMeta(
           rawData?.totalPages,
           rawData?.pagination?.totalPages,
-          body?.data?.totalPages,
+          body?.data?.totalPages
         );
 
         if (totalPages === null && total !== null && normalizedLimit > 0) {

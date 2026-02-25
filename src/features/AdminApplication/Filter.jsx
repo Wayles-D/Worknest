@@ -2,24 +2,29 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Filter as FilterIcon } from "lucide-react";
 import { useSearchParams } from "react-router";
 import { ADMIN_PAGE_SIZE } from "@/constants/pagination";
+import {
+  normalizeApplicationStatus,
+  statusConfig,
+} from "@/utils/constant";
 
 export default function Filter() {
   const [openOptions, setOpenOptions] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const selectedStatus = searchParams.get("status") || "";
+  const selectedStatus = normalizeApplicationStatus(
+    searchParams.get("status") || "",
+  );
   const [filters, setFilters] = useState({
     status: selectedStatus,
   });
   const dropdownRef = useRef(null);
 
-  const status = [
-    "Submitted",
-    "Viewed",
-    "In Review",
-    "Interview",
-    "Offer",
-    "Rejected",
-  ];
+  const statusOptions = [
+    ...statusConfig,
+    { label: "Viewed", value: "viewed" },
+    { label: "Pending", value: "pending" },
+  ].filter((status, index, statuses) => {
+    return statuses.findIndex((item) => item.value === status.value) === index;
+  });
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -38,10 +43,12 @@ export default function Filter() {
 
   const handleSubmit = () => {
     const updatedSearchParams = new URLSearchParams(searchParams);
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) updatedSearchParams.set(key, value);
-      else updatedSearchParams.delete(key);
-    });
+    const normalizedStatus = normalizeApplicationStatus(filters.status);
+    if (normalizedStatus) {
+      updatedSearchParams.set("status", normalizedStatus);
+    } else {
+      updatedSearchParams.delete("status");
+    }
     updatedSearchParams.set("page", "1");
     updatedSearchParams.set("limit", String(ADMIN_PAGE_SIZE));
     setSearchParams(updatedSearchParams);
@@ -83,9 +90,9 @@ export default function Filter() {
             className="w-full px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white cursor-pointer appearance-none"
           >
             <option value="">Select Status</option>
-            {status.map((status) => (
-              <option key={status} value={status}>
-                {status}
+            {statusOptions.map((status) => (
+              <option key={status.value} value={status.value}>
+                {status.label}
               </option>
             ))}
           </select>
