@@ -34,16 +34,32 @@ export const statusConfig = [
   { label: "Hired", value: "hired" },
 ];
 
-export const getStatusColor = (statusValue) => {
-  const colors = {
-    Submitted: "bg-orange-100 text-orange-800",
-    Interviewing: "bg-blue-100 text-blue-800",
-    Viewed: "bg-purple-100 text-purple-800",
-    Rejected: "bg-red-100 text-red-800",
-    Offer: "bg-green-100 text-green-800",
-  };
-  return colors[statusValue] || "bg-gray-100 text-gray-800";
+const normalizeStatusToken = (statusValue = "") =>
+  String(statusValue).trim().toLowerCase().replace(/\s+/g, "_");
+
+export const normalizeApplicationStatus = (statusValue = "") => {
+  if (!statusValue) return "";
+
+  const normalizedToken = normalizeStatusToken(statusValue);
+  const matchedStatus = statusConfig.find(
+    (status) =>
+      status.value === normalizedToken ||
+      normalizeStatusToken(status.label) === normalizedToken,
+  );
+
+  return matchedStatus?.value || normalizedToken;
 };
+
+// export const getStatusColor = (statusValue) => {
+//   const colors = {
+//     Submitted: "bg-orange-100 text-orange-800",
+//     Interviewing: "bg-blue-100 text-blue-800",
+//     Viewed: "bg-purple-100 text-purple-800",
+//     Rejected: "bg-red-100 text-red-800",
+//     Offer: "bg-green-100 text-green-800",
+//   };
+//   return colors[statusValue] || "bg-gray-100 text-gray-800";
+// };
 
 export const getStatusStyles = (status) => {
   // Normalize status to lowercase for comparison

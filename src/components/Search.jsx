@@ -4,11 +4,13 @@ import { useDebouncedCallback } from "use-debounce";
 import { SearchIcon, X } from "lucide-react";
 import { ADMIN_PAGE_SIZE } from "@/constants/pagination";
 
-export default function Search({ id, children }) {
+export default function Search({ id, children, minQueryLength = 4 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const inputRef = useRef(null);
   const query = searchParams.get("query") || "";
   const [inputValue, setInputValue] = useState(query);
+  const minLength =
+    Number.isInteger(minQueryLength) && minQueryLength > 0 ? minQueryLength : 4;
 
   useEffect(() => {
     setInputValue(query);
@@ -18,7 +20,7 @@ export default function Search({ id, children }) {
     const params = new URLSearchParams(searchParams);
     const normalizedValue = value.trim();
 
-    if (normalizedValue.length > 3) {
+    if (normalizedValue.length >= minLength) {
       params.set("query", normalizedValue);
     } else {
       params.delete("query");

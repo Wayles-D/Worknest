@@ -8,6 +8,7 @@ import Filter from "@/features/AdminApplication/Filter";
 import JobFilter from "@/features/AdminApplication/JobFilter";
 import Table from "@/features/AdminApplication/Table";
 import { useAdminApplications } from "@/hooks/useApplications";
+import { normalizeApplicationStatus } from "@/utils/constant";
 import { Grid3x3, List, Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
@@ -16,7 +17,8 @@ const AdminApplications = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const statusFilter = searchParams.get("status") || "";
+  const rawStatusFilter = searchParams.get("status") || "";
+  const statusFilter = normalizeApplicationStatus(rawStatusFilter);
   const searchQuery = searchParams.get("query") || "";
   const jobFilter = searchParams.get("job") || "";
   const page = getSafePageNumber(searchParams.get("page"));
@@ -35,12 +37,27 @@ const AdminApplications = () => {
       hasChanges = true;
     }
 
+    if (rawStatusFilter && rawStatusFilter !== statusFilter) {
+      if (statusFilter) {
+        params.set("status", statusFilter);
+      } else {
+        params.delete("status");
+      }
+      hasChanges = true;
+    }
+
     if (hasChanges) {
       setSearchParams(params, { replace: true });
     }
-  }, [page, searchParams, setSearchParams]);
+  }, [page, rawStatusFilter, searchParams, setSearchParams, statusFilter]);
 
-  const { data: response, isLoading } = useAdminApplications({
+  const {
+    data: response,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useAdminApplications({
     status: statusFilter,
     jobId: jobFilter,
     keyword: searchQuery,
@@ -52,6 +69,8 @@ const AdminApplications = () => {
   const totalPages = response?.totalPages || 1;
 
   const [viewMode, setViewMode] = useState("grid"); // "grid" or "list"
+  const errorMessage =
+    error?.response?.data?.message || "Failed to load applications.";
 
   const applicationId = searchParams.get("id");
   const handleBackFromDetails = () => {
@@ -95,7 +114,7 @@ const AdminApplications = () => {
 
       {/* Search + Filters + View Toggle */}
       <div className="mt-6">
-        <Search>
+        <Search minQueryLength={1}>
           <div className="hidden md:flex flex-col md:flex-row gap-2 mt-3 md:mt-0">
             <JobFilter applications={applications} />
             <Filter />
@@ -134,6 +153,16 @@ const AdminApplications = () => {
           <div className="flex flex-col items-center justify-center py-24 space-y-4">
             <Loader2 className="animate-spin text-[#F57450]" size={40} />
             <p className="text-gray-500 font-medium">Loading applications...</p>
+          </div>
+        ) : isError ? (
+          <div className="bg-white rounded-xl p-8 sm:p-12 text-center space-y-4">
+            <p className="text-red-600 font-medium">{errorMessage}</p>
+            <button
+              onClick={() => refetch()}
+              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+            >
+              Try Again
+            </button>
           </div>
         ) : applications.length > 0 ? (
           viewMode === "grid" ? (
