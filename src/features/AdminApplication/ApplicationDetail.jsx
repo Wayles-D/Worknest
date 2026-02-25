@@ -60,7 +60,7 @@ export default function ApplicationDetail({ applicationId, onBack }) {
   // Helper to get status label from value
   const getStatusLabel = (statusValue) => {
     const statusItem = statusConfig.find(
-      (s) => s.value.toLowerCase() === statusValue?.toLowerCase(),
+      (s) => s.value.toLowerCase() === statusValue?.toLowerCase()
     );
     return statusItem?.label || statusValue;
   };
@@ -275,7 +275,9 @@ export default function ApplicationDetail({ applicationId, onBack }) {
                   Current Status
                 </span>
                 <span
-                  className={`px-5 py-2 rounded-full text-[11px] font-bold shadow-sm ${getStatusStyles(application.status)}`}
+                  className={`px-5 py-2 rounded-full text-[11px] font-bold shadow-sm ${getStatusStyles(
+                    application.status
+                  )}`}
                 >
                   {application.status}
                 </span>
@@ -292,7 +294,9 @@ export default function ApplicationDetail({ applicationId, onBack }) {
                   >
                     <span>{getStatusLabel(application.status)}</span>
                     <ChevronDown
-                      className={`w-4 h-4 text-gray-400 transition-transform ${showStatusDropdown ? "rotate-180" : ""}`}
+                      className={`w-4 h-4 text-gray-400 transition-transform ${
+                        showStatusDropdown ? "rotate-180" : ""
+                      }`}
                     />
                   </button>
                   {showStatusDropdown && (

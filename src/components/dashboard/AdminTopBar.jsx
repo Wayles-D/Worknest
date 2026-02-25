@@ -14,7 +14,7 @@ export default function AdminTopBar({ onMenuClick }) {
           <Menu size={20} />
         </button>
         {/* Search */}
-        <div className="hidden sm:flex items-center gap-2 px-6 py-2 rounded-md w-72 border-[0.5px] border-[#CCCCCC]">
+        <div className="hidden sm:flex items-center gap-2 px-6 py-2 rounded-md w-72 border-[0.5px] shadow-xl">
           <Search size={20} className="text-gray-500" />
           <input
             type="text"

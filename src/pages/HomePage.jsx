@@ -28,7 +28,6 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
   const [category, setCategory] = useState("");
-  const [activeIndex, setActiveIndex] = useState(0);
 
   const handleCategoryClick = (industry) => {
     setCategory(industry);
@@ -52,14 +51,6 @@ const HomePage = () => {
   };
 
   console.log(jobs);
-
-  const handleScroll = (e) => {
-    const scrollLeft = e.target.scrollLeft;
-    const width = e.target.offsetWidth;
-
-    const index = Math.round(scrollLeft / width);
-    setActiveIndex(index);
-  };
 
   useMetaArgs({
     title: "Home - Worknest",
@@ -142,10 +133,9 @@ const HomePage = () => {
             </p>
           </div>
           <div
-            onScroll={handleScroll}
-            className="sm:grid sm:grid-cols-3 gap-6 md:gap-10 items-center flex flex-row sm:flex-none overflow-x-auto snap-x snap-mandatory scroll-smooth "
+            className="grid sm:grid-cols-3 gap-12 md:gap-10 items-center  "
           >
-            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
+            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto ">
               <div className="bg-[#D1DDF4] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <Search className="text-[#1C3FCB]  w-[18px] h-[18px]" />
               </div>
@@ -158,7 +148,7 @@ const HomePage = () => {
               </p>
             </div>
 
-            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
+            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto">
               <div className="bg-[#CCC5F0] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <Play className="text-[#3A20BC] w-5 h-5 " />
               </div>
@@ -172,7 +162,7 @@ const HomePage = () => {
               </p>
             </div>
 
-            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
+            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto ">
               <div className="bg-[#EBD9D5] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <BarChart className="text-[#F86021]  w-5 h-5" />
               </div>
@@ -187,16 +177,7 @@ const HomePage = () => {
             </div>
           </div>
 
-          <div className="flex justify-center gap-2 mt-6 sm:hidden">
-            {[0, 1, 2].map((dot) => (
-              <span
-                key={dot}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  activeIndex === dot ? "w-4 bg-black" : "w-2 bg-gray-300"
-                }`}
-              />
-            ))}
-          </div>
+       
         </div>
 
         <div className="flex flex-col gap-[50px]">
