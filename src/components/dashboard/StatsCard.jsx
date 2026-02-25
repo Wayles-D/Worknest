@@ -13,6 +13,7 @@ export default function StatsCard({ label, value, icon, color }) {
       <h2 className="text-[22px] font-semibold mt-4 text-[#0F1729]">{value}</h2>
       <p className="text-[14px] text-[#65748B]">{label}</p>
     </div>
+    
   );
 }
 
