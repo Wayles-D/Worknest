@@ -2,7 +2,7 @@ import { Menu, Bell, Search, ChevronDown } from "lucide-react";
 import { Link } from "react-router";
 import Logout from "@/components/Logout";
 import { useAuth } from "@/store";
-
+import NotificationsMenu from "@/components/dashboard/NotificationsMenu";
 
 export default function AdminTopBar({ onMenuClick }) {
     const { user } = useAuth();
@@ -26,7 +26,7 @@ export default function AdminTopBar({ onMenuClick }) {
       </div>
       {/* Right actions */}
       <div className="flex items-center gap-6">
-        <Bell size={24} />
+        <NotificationsMenu />
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
