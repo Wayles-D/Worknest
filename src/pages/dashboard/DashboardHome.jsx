@@ -1,61 +1,47 @@
 import { Link } from "react-router";
-import React from "react";
 import StatsCard from "@/components/dashboard/StatsCard";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import ApplicationOverview from "@/components/dashboard/ApplicationOverview";
 import { Briefcase, FileText, Clock } from "lucide-react";
-import { useJobs } from "@/hooks/useJobs";
-import { useAdminApplications } from "@/hooks/useApplications";
+import { useAdminDashboardStats } from "@/hooks/useAdminDashboardStats";
 
 const DashboardHome = () => {
-  const { data: jobResponse, isLoading: jobsLoading } = useJobs();
-  const { data: appsResponse, isLoading: appsLoading } = useAdminApplications();
-  const applications = appsResponse?.data || [];
+  const {
+    totalJobs,
+    activeJobs,
+    totalApplications,
+    pendingReview,
+    isLoading,
+  } = useAdminDashboardStats();
 
-  // Robust mapping for jobs
-  const responseData = jobResponse?.data;
-  const jobList = Array.isArray(responseData)
-    ? responseData
-    : responseData?.data || responseData?.jobs || [];
-  const finalJobs = Array.isArray(jobList) ? jobList : jobList.jobs || [];
-
-  const totalJobs = finalJobs.length;
-  const activeJobs = finalJobs.filter((j) => j.status === "active").length;
-  const totalApplications = Array.isArray(applications)
-    ? applications.length
-    : 0;
-  const pendingReview = applications.filter(
-    (app) =>
-      app.status?.toLowerCase() === "submitted" ||
-      app.status?.toLowerCase() === "pending",
-  ).length;
+  const toDisplayValue = (value) => (isLoading ? "..." : String(value ?? 0));
 
   const dashboardStats = [
     {
       key: "total-jobs",
       label: "Total Jobs",
-      value: jobsLoading ? "..." : totalJobs.toString(),
+      value: toDisplayValue(totalJobs),
       icon: Briefcase,
       color: "bg-[#1B294B]/10 text-gray-600",
     },
     {
       key: "active-jobs",
       label: "Active Jobs",
-      value: jobsLoading ? "..." : activeJobs.toString(),
+      value: toDisplayValue(activeJobs),
       icon: Briefcase,
       color: "bg-green-50 text-green-600",
     },
     {
       key: "total-applications",
       label: "Total Applications",
-      value: appsLoading ? "..." : totalApplications.toString(),
+      value: toDisplayValue(totalApplications),
       icon: FileText,
       color: "bg-blue-50 text-blue-600",
     },
     {
       key: "pending-review",
       label: "Pending Review",
-      value: appsLoading ? "..." : pendingReview.toString(),
+      value: toDisplayValue(pendingReview),
       icon: Clock,
       color: "bg-orange-50 text-orange-600",
     },

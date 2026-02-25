@@ -285,10 +285,14 @@ export const updateApplicationNote = async ({ id, note, accessToken }) => {
   );
 };
 
-export const getApplicationStats = async ({ jobId, accessToken }) => {
-  const params = jobId ? { jobId } : {};
+export const getApplicationsOverview = async (accessToken, params = {}) => {
   return await axiosInstance.get("/applications/stats/overview", {
     params,
     ...headers(accessToken),
   });
+};
+
+export const getApplicationStats = async ({ jobId, accessToken }) => {
+  const params = jobId ? { jobId } : {};
+  return await getApplicationsOverview(accessToken, params);
 };
