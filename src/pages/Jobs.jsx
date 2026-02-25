@@ -48,6 +48,7 @@ export default function Jobs() {
   const pageFromUrl = parsePositiveInteger(searchParams.get("page"), 1);
   const selectedJobType = searchParams.get("jobType");
   const selectedCategory = searchParams.get("category") || searchParams.get("industry");
+  const locationFilterValue = (searchParams.get("location") || "").trim();
   const salaryMinFromUrl = parsePositiveInteger(searchParams.get("salaryMin"), null);
   const salaryMaxFromUrl = parsePositiveInteger(searchParams.get("salaryMax"), null);
 
@@ -60,7 +61,7 @@ export default function Jobs() {
     keyword: searchParams.get("keyword") || searchParams.get("search") || "",
     location: searchParams.get("location") || "",
     page: pageFromUrl,
-    limit: 10,
+    limit: locationFilterValue ? 50 : 10,
   };
 
   // Local state only for the input field values to allow typing before searching
@@ -88,8 +89,18 @@ export default function Jobs() {
 
   const { data: jobResponse, isLoading } = useJobs(filters);
 
-  const finalJobs = jobResponse?.items || [];
-  const totalJobs = jobResponse?.total || 0;
+  const fetchedJobs = jobResponse?.items || [];
+  const normalizedLocationFilter = filters.location.trim().toLowerCase();
+  const finalJobs = normalizedLocationFilter
+    ? fetchedJobs.filter((job) =>
+        String(job?.location || "")
+          .toLowerCase()
+          .includes(normalizedLocationFilter),
+      )
+    : fetchedJobs;
+  const totalJobs = normalizedLocationFilter
+    ? finalJobs.length
+    : jobResponse?.total || 0;
   const totalPages = Math.max(1, jobResponse?.totalPages || 1);
   const currentPage = jobResponse?.page || filters.page;
 
