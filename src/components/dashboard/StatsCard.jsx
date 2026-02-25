@@ -1,5 +1,11 @@
+import { createElement, isValidElement, cloneElement } from "react";
+
 export default function StatsCard({ label, value, icon, color }) {
-  const iconElement = icon ? icon({ size: 20 }) : null;
+  const iconElement = isValidElement(icon)
+    ? cloneElement(icon, { size: icon.props?.size ?? 20 })
+    : icon
+      ? createElement(icon, { size: 20 })
+      : null;
 
   return (
     <div className="bg-white rounded-[5px] py-7 px-4 border border-[#7D7D7D]">
