@@ -78,6 +78,17 @@ export const updateJob = async (id, jobData, accessToken) => {
   );
 };
 
+export const uploadJobAvatar = async ({ jobId, file, accessToken }) => {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  return await axiosInstance.patch(`/jobs/${jobId}/upload-avatar`, formData, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
 export const deleteJob = async (id, accessToken) => {
   return await axiosInstance.delete(`/jobs/${id}/delete`, headers(accessToken));
 };
