@@ -149,15 +149,6 @@ export default function Signup({ toggle }) {
               : "Create Account"}
           </button>
         </form>
-        {/* or */}
-        {/* <div className="flex items-center my-6">
-          <div className="flex-1 h-px bg-gray-300" />
-          <span className="px-4 text-sm text-gray-500">OR</span>
-          <div className="flex-1 h-px bg-gray-300" />
-        </div> */}
-        {/* google */}
-        {/* google */}
-        {/* <GoogleLoginButton /> */}
         <div className="text-sm text-center mt-2">
           <Link to="/auth/login">
             Already have an account?{"   "}

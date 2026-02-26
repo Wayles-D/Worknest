@@ -98,14 +98,7 @@ export default function Login() {
             {mutation.isPending || isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
-        {/* or */}
-        {/* <div className="flex items-center my-6">
-          <div className="flex-1 h-px bg-gray-300" />
-          <span className="px-4 text-sm text-gray-500">OR</span>
-          <div className="flex-1 h-px bg-gray-300" />
-        </div> */}
-        {/* google */}
-        {/* <GoogleLoginButton /> */}
+       
         <div className="text-blue-950 text-sm text-center mt-2">
           <Link to="/auth/signup">
             Don’t have an account?{"   "}
