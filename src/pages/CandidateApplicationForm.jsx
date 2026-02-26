@@ -7,11 +7,13 @@ import {
   User,
   Phone,
   MapPin,
+  ArrowLeft,
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getJobById } from "@/api/api";
 import { applyToJob } from "@/api/applications";
+import ApplicationSuccessModal from "@/features/applicationUser/ApplicationSuccessModal";
 import { useAuth } from "@/store";
 import { toast } from "sonner";
 
@@ -26,6 +28,7 @@ export default function ApplicationForm() {
   const [cvFile, setCvFile] = useState(null);
   const [portfolioUrl, setPortfolioUrl] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   // Personal Info State
   const [personalInfo, setPersonalInfo] = useState({
@@ -55,7 +58,7 @@ export default function ApplicationForm() {
       // Invalidate my applications cache so the new one shows up
       queryClient.invalidateQueries({ queryKey: ["my-applications"] });
       queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
-      navigate("/my-applications");
+      setIsSuccessModalOpen(true);
     },
     onError: (error) => {
       const message =
@@ -142,6 +145,20 @@ export default function ApplicationForm() {
     applyMutation.mutate(formData);
   };
 
+  const handleCloseSuccessModal = () => {
+    setIsSuccessModalOpen(false);
+  };
+
+  const handleExploreMoreJobs = () => {
+    setIsSuccessModalOpen(false);
+    navigate("/jobs");
+  };
+
+  const handleTrackApplication = () => {
+    setIsSuccessModalOpen(false);
+    navigate("/my-applications");
+  };
+
   if (isLoadingJob) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -151,7 +168,8 @@ export default function ApplicationForm() {
   }
 
   return (
-    <div className="container py-8 max-w-4xl mx-auto px-4">
+    <>
+      <div className="container py-8 max-w-4xl mx-auto px-4">
       <form onSubmit={handleSubmit} className="space-y-8">
         <button
           type="button"
@@ -399,21 +417,16 @@ export default function ApplicationForm() {
           </div>
         </div>
       </form>
-    </div>
+      </div>
+      <ApplicationSuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={handleCloseSuccessModal}
+        onExploreMoreJobs={handleExploreMoreJobs}
+        onTrackApplication={handleTrackApplication}
+        companyName={job?.companyName || "Company"}
+        position={job?.title || "Position"}
+      />
+    </>
   );
 }
 
-const ArrowLeft = ({ size }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M19 12H5M12 19l-7-7 7-7" />
-  </svg>
-);

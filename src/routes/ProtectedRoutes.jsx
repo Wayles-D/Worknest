@@ -21,7 +21,7 @@ export function PublicRoutes({ children, accessToken, user }) {
     const from = isAdminAuth
       ? user.role === "admin"
         ? "/admin"
-        : "/" // non-admin should not go to /admin
+        : "/" // normal users should not go to /admin
       : typeof stateFrom === "string"
         ? stateFrom
         : stateFrom?.pathname || "/";
