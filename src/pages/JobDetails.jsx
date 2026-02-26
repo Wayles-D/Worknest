@@ -8,8 +8,6 @@ import {
   getSavedJobs,
   getAllJobs,
 } from "@/api/api";
-import { GrSend } from "react-icons/gr";
-import { SlCloudUpload } from "react-icons/sl";
 import {
   Bookmark,
   BookmarkCheck,
@@ -20,6 +18,8 @@ import {
   Calendar,
   Clock,
   User,
+  Send,
+  Upload,
 } from "lucide-react";
 import { useAuth } from "@/store";
 import { toast } from "sonner";
@@ -104,7 +104,7 @@ export default function JobDetails() {
         toast.success("Job saved successfully");
       }
       refetch();
-    } catch (error) {
+    } catch {
       toast.error("Failed to update save status");
     } finally {
       setSaving(false);
@@ -213,7 +213,7 @@ export default function JobDetails() {
                 to={`/apply/${id}`}
                 className="bg-[#F57450] text-white px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-[#E06440] transition-colors shadow-md shadow-[#F57450]/20"
               >
-                <GrSend size={16} />
+                <Send size={16} />
                 Apply Now
               </Link>
               <button
@@ -406,7 +406,7 @@ export default function JobDetails() {
                   to={`/apply/${id}`}
                   className="w-full bg-[#F57450] text-white py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-[#E06440] transition-all shadow-lg shadow-[#F57450]/20"
                 >
-                  <SlCloudUpload size={20} />
+                  <Upload size={20} />
                   Submit Application
                 </Link>
               </div>
