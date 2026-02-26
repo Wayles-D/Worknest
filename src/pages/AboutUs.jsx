@@ -35,9 +35,11 @@ const AboutUs = () => {
               Browse Jobs
             </button>
           </Link>
-          <button className="sm:text-[22px] font-semibold border-2 border-[#F85E1E] sm:py-[15px] p-4 sm:px-[34px] text-[#F57450] rounded-[10px] cursor-pointer sm:w-[231px]">
-            Contact us{" "}
-          </button>
+          <Link to={"/contact"}>
+            <button className="sm:text-[22px] font-semibold border-2 border-[#F85E1E] sm:py-[15px] p-4 sm:px-[34px] text-[#F57450] rounded-[10px] cursor-pointer sm:w-[231px]">
+              Contact us
+            </button>
+          </Link>
         </div>
       </div>
 
