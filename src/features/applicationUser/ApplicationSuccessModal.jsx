@@ -13,7 +13,7 @@ const FOCUSABLE_SELECTOR = [
 function SuccessIllustration() {
   return (
     <svg
-      className="w-[280px] mt-12 lg:mt-12 md:mt-[22px] md:w-[min(220px,55vw)]"
+      className="w-[280px] mt-12 lg:mt-12 max-md:mt-[22px] max-md:w-[min(220px,55vw)]"
       viewBox="0 0 280 200"
       aria-hidden="true"
       focusable="false"
@@ -120,9 +120,10 @@ export default function ApplicationSuccessModal({
   return (
     <div
       className="
-        fixed inset-0 z-[1200] flex items-center justify-center
+        fixed inset-0 z-[1200] flex items-center max-md:items-start justify-center
         bg-[rgba(24,24,26,0.78)]
-        p-8 md:p-6 max-sm:p-[18px]
+        overflow-y-auto
+        p-8 max-md:p-6 max-sm:p-[18px]
       "
       onClick={onClose}
     >
@@ -135,12 +136,12 @@ export default function ApplicationSuccessModal({
         onClick={(e) => e.stopPropagation()}
         className="
           relative w-full max-w-[1100px]
-          min-h-[650px] md:min-h-0
+          min-h-[650px] max-md:min-h-0
           bg-[#f8f8f8]
-          rounded-[36px] md:rounded-[28px] max-sm:rounded-[24px]
+          rounded-[36px] max-md:rounded-[28px] max-sm:rounded-[24px]
           shadow-[0_26px_60px_rgba(0,0,0,0.18)]
           px-[74px] pt-[58px] pb-[56px]
-          md:px-8 md:pt-[70px] md:pb-9
+          max-md:px-8 max-md:pt-[70px] max-md:pb-9
           max-sm:w-[92vw] max-sm:px-[18px] max-sm:pt-[62px] max-sm:pb-6
           flex flex-col items-center
         "
@@ -148,9 +149,9 @@ export default function ApplicationSuccessModal({
         <p
           className="
             absolute left-[74px] top-9
-            md:left-8 md:top-[22px]
+            max-md:left-8 max-md:top-[22px]
             max-sm:left-[18px]
-            m-0 text-[15px] md:text-[13px]
+            m-0 text-[15px] max-md:text-[13px]
             tracking-[0.08em] font-medium text-[#8f9198]
           "
         >
@@ -164,8 +165,8 @@ export default function ApplicationSuccessModal({
           onClick={onClose}
           className="
             absolute right-[34px] top-[34px]
-            md:right-5 md:top-[18px]
-            w-[78px] h-[78px] md:w-14 md:h-14
+            max-md:right-5 max-md:top-[18px]
+            w-[78px] h-[78px] max-md:w-14 max-md:h-14
             rounded-full bg-[#ff5f17] text-white
             grid place-items-center
             cursor-pointer
@@ -177,7 +178,11 @@ export default function ApplicationSuccessModal({
             focus-visible:outline-offset-[3px]
           "
         >
-          <X aria-hidden="true" className="h-10 w-10 md:h-7 md:w-7" strokeWidth={2.5} />
+          <X
+            aria-hidden="true"
+            className="h-10 w-10 max-md:h-7 max-md:w-7"
+            strokeWidth={2.5}
+          />
         </button>
 
         <SuccessIllustration />
@@ -185,10 +190,10 @@ export default function ApplicationSuccessModal({
         <h2
           id={headingId}
           className="
-            mt-7 mb-[10px] md:mt-5
+            mt-7 mb-[10px] max-md:mt-5
             text-center text-[#14151a] font-bold leading-[1.15]
             text-[clamp(34px,3.7vw,64px)]
-            md:text-[clamp(32px,8vw,48px)]
+            max-md:text-[clamp(28px,8vw,42px)]
           "
         >
           Application Submitted Successfully!
@@ -196,11 +201,11 @@ export default function ApplicationSuccessModal({
 
         <p
           className="
-            m-0 max-w-[840px] md:max-w-[640px]
+            m-0 max-w-[840px] max-md:max-w-[640px]
             text-center text-[#1a1b20] font-[450]
             leading-[1.24] max-sm:leading-[1.32]
             text-[clamp(20px,2.5vw,56px)]
-            md:text-[clamp(18px,4.8vw,30px)]
+            max-md:text-[clamp(16px,4.8vw,24px)]
           "
         >
           You applied for {position} at {companyName}. You can track your
@@ -218,23 +223,23 @@ export default function ApplicationSuccessModal({
 
         <div
           className="
-            mt-[54px] md:mt-[30px]
+            mt-[54px] max-md:mt-[30px]
             w-full max-w-[940px] max-sm:w-full
-            grid grid-cols-2 md:grid-cols-1
-            gap-[42px] md:gap-[18px]
+            grid grid-cols-2 max-md:grid-cols-1
+            gap-[42px] max-md:gap-[18px]
           "
         >
           <button
             type="button"
             onClick={onExploreMoreJobs}
             className="
-              min-h-[90px] md:min-h-[68px]
-              rounded-[22px] md:rounded-[18px]
+              min-h-[90px] max-md:min-h-[68px]
+              rounded-[22px] max-md:rounded-[18px]
               border-[3px] border-[#ff5f17]
               bg-transparent
               text-[#ff5f17]
               font-medium leading-none
-              text-[44px] md:text-[clamp(24px,5vw,34px)]
+              text-[44px] max-md:text-[clamp(20px,5vw,30px)]
               transition
               hover:border-[#e45210] hover:text-[#e45210] hover:bg-[rgba(255,95,23,0.08)]
               active:translate-y-[1px]
@@ -250,13 +255,13 @@ export default function ApplicationSuccessModal({
             type="button"
             onClick={onTrackApplication}
             className="
-              min-h-[90px] md:min-h-[68px]
-              rounded-[22px] md:rounded-[18px]
+              min-h-[90px] max-md:min-h-[68px]
+              rounded-[22px] max-md:rounded-[18px]
               border-[3px] border-transparent
               bg-[#ff5f17]
               text-[#191919]
               font-medium leading-none
-              text-[44px] md:text-[clamp(24px,5vw,34px)]
+              text-[44px] max-md:text-[clamp(20px,5vw,30px)]
               transition
               hover:bg-[#e45210]
               active:translate-y-[1px]
