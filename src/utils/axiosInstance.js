@@ -8,7 +8,7 @@ const config = {
   baseURL: BASEURL + "/api/v1",
   timeoutErrorMessage: TIMEOUTMSG,
   timeout,
-  withCredentials: true, //to allow cookies to be recieved on the client
+  withCredentials: true, //to allow cookies to be received on the client
 };
 
 const axiosInstance = axios.create(config);

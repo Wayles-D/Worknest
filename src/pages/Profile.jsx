@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Camera, User, Mail, Phone, CheckCircle, Edit2 } from "lucide-react";
+import { User, Mail, Phone, Edit2 } from "lucide-react";
 import useMetaArgs from "@/hooks/UseMeta";
 import { useAuth } from "@/store";
 import { useNavigate } from "react-router";
@@ -36,6 +36,7 @@ const Profile = () => {
       setValue("bio", user?.bio || "");
     }
   }, [user, setValue]);
+  
   const mutation = useMutation({
     mutationFn: updateUserProfile,
     onSuccess: async (response) => {

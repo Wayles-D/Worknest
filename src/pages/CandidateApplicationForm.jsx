@@ -46,7 +46,7 @@ export default function ApplicationForm() {
       const data = res.data?.data || res.data;
       return Array.isArray(data) ? data[0] : data;
     },
-    enabled: !!jobId,
+    enabled: !!jobId && !!accessToken,
   });
 
   const questions = job?.applicationQuestions || [];

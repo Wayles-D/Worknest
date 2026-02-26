@@ -78,23 +78,40 @@ export const updateJob = async (id, jobData, accessToken) => {
   );
 };
 
+export const uploadJobAvatar = async ({ jobId, file, accessToken }) => {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  return await axiosInstance.patch(`/jobs/${jobId}/upload-avatar`, formData, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
 export const deleteJob = async (id, accessToken) => {
   return await axiosInstance.delete(`/jobs/${id}/delete`, headers(accessToken));
 };
 
 export const getAllJobs = async (params = {}, accessToken) => {
-  return await axiosInstance.get("/jobs/all", {
-    params,
-    ...headers(accessToken),
-  });
+  const config = { params };
+  if (accessToken) {
+    config.headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+  }
+  return await axiosInstance.get("/jobs/all", config);
 };
 
 export const getJobById = async (id, accessToken) => {
   return await axiosInstance.get(`/jobs/${id}`, headers(accessToken));
 };
 
-export const getSavedJobs = async (accessToken) => {
-  return await axiosInstance.get("/jobs/saved", headers(accessToken));
+export const getSavedJobs = async (accessToken, params = {}) => {
+  return await axiosInstance.get("/jobs/saved", {
+    params,
+    ...headers(accessToken),
+  });
 };
 
 export const saveJob = async (id, accessToken) => {
@@ -104,3 +121,4 @@ export const saveJob = async (id, accessToken) => {
 export const unsaveJob = async (id, accessToken) => {
   return await axiosInstance.delete(`/jobs/${id}/save`, headers(accessToken));
 };
+

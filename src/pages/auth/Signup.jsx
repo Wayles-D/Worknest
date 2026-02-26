@@ -1,5 +1,4 @@
 import { useState } from "react";
-import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FieldBody from "@/components/FieldBody";
@@ -150,15 +149,6 @@ export default function Signup({ toggle }) {
               : "Create Account"}
           </button>
         </form>
-        {/* or */}
-        <div className="flex items-center my-6">
-          <div className="flex-1 h-px bg-gray-300" />
-          <span className="px-4 text-sm text-gray-500">OR</span>
-          <div className="flex-1 h-px bg-gray-300" />
-        </div>
-        {/* google */}
-        {/* google */}
-        <GoogleLoginButton />
         <div className="text-sm text-center mt-2">
           <Link to="/auth/login">
             Already have an account?{"   "}

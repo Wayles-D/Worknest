@@ -37,45 +37,43 @@ export default function JobDetails() {
     queryKey: ["job", id],
     queryFn: async () => {
       const res = await getJobById(id, accessToken);
-      const body = res.data;
-      const rawData =
-        body?.data?.data || body?.data || body?.jobs || body?.job || body;
-      const actualData = Array.isArray(rawData)
-        ? rawData[0]
-        : rawData?.jobs || rawData?.job || rawData;
-      return Array.isArray(actualData) ? actualData[0] : actualData;
+      return res.data?.data || null;
     },
+    enabled: !!id && !!accessToken,
   });
 
   const { data: relatedJobs = [] } = useQuery({
     queryKey: ["relatedJobs", "random"],
     enabled: !!job,
     queryFn: async () => {
-      // Fetch all jobs
-      const res = await getAllJobs({});
-      const body = res.data;
-      const allJobs = body?.data?.data || body?.data || body || [];
-      const jobsList = Array.isArray(allJobs) ? allJobs : allJobs.jobs || [];
-
-      // Randomize the jobs
+      const res = await getAllJobs({}, accessToken);
+      const jobsList = Array.isArray(res.data?.data?.data) ? res.data.data.data : [];
       return [...jobsList].sort(() => 0.5 - Math.random());
     },
   });
 
-  const { data: savedJobsResponse } = useQuery({
+  const { data: savedJobsResponse, refetch: refetchSavedJobs } = useQuery({
     queryKey: ["savedJobs", accessToken],
     queryFn: async () => {
       if (!accessToken) return [];
-      const res = await getSavedJobs(accessToken);
-      if (res.status === 200) {
-        const body = res.data;
-        const rawData = body?.data?.data || body?.data || body || [];
-        const actualSaved = Array.isArray(rawData)
-          ? rawData
-          : rawData.jobs || [];
-        return Array.isArray(actualSaved) ? actualSaved : [];
+      let page = 1;
+      const limit = 50;
+      let totalPages = 1;
+      const allSavedJobs = [];
+
+      while (page <= totalPages) {
+        const res = await getSavedJobs(accessToken, { page, limit });
+        if (res.status !== 200) {
+          break;
+        }
+
+        const currentPageItems = Array.isArray(res.data?.data) ? res.data.data : [];
+        allSavedJobs.push(...currentPageItems);
+        totalPages = Number(res.data?.totalPages) || 1;
+        page += 1;
       }
-      return [];
+
+      return allSavedJobs;
     },
     enabled: !!accessToken,
   });
@@ -103,7 +101,7 @@ export default function JobDetails() {
         await saveJob(id, accessToken);
         toast.success("Job saved successfully");
       }
-      refetch();
+      await Promise.all([refetch(), refetchSavedJobs()]);
     } catch {
       toast.error("Failed to update save status");
     } finally {

@@ -10,26 +10,35 @@ export default function MySavedJobs() {
   const { accessToken } = useAuth();
   const [savedJobs, setSavedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchSavedJobs = async () => {
-    if (!accessToken) return;
-    try {
-      setLoading(true);
-      const res = await getSavedJobs(accessToken);
-      if (res.status === 200) {
-        const rawData = res.data.data || [];
-        setSavedJobs(Array.isArray(rawData) ? rawData : rawData.jobs || []);
-      }
-    } catch (error) {
-      console.error("Error fetching saved jobs:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalSavedJobs, setTotalSavedJobs] = useState(0);
+  const LIMIT = 10;
 
   useEffect(() => {
+    const fetchSavedJobs = async () => {
+      if (!accessToken) {
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        const res = await getSavedJobs(accessToken, { page, limit: LIMIT });
+        if (res.status === 200) {
+          const items = Array.isArray(res.data?.data) ? res.data.data : [];
+          setSavedJobs(items);
+          setTotalSavedJobs(Number(res.data?.total) || 0);
+          setTotalPages(Math.max(1, Number(res.data?.totalPages) || 1));
+        }
+      } catch (error) {
+        console.error("Error fetching saved jobs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchSavedJobs();
-  }, [accessToken]);
+  }, [accessToken, page]);
 
   const handleBack = () => {
     navigate("/");
@@ -62,8 +71,8 @@ export default function MySavedJobs() {
               My saved Jobs
             </h1>
             <p className="text-lg text-gray-500 font-medium">
-              You have saved {savedJobs.length}{" "}
-              {savedJobs.length === 1 ? "job" : "jobs"}
+              You have saved {totalSavedJobs}{" "}
+              {totalSavedJobs === 1 ? "job" : "jobs"}
             </p>
           </div>
         </div>
@@ -82,6 +91,30 @@ export default function MySavedJobs() {
             ))
           )}
         </div>
+
+        {totalPages > 1 && (
+          <div className="mt-8 flex items-center justify-center gap-4">
+            <button
+              type="button"
+              disabled={page <= 1}
+              onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+              className="px-5 py-2 border border-gray-200 rounded-lg font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <span className="text-sm font-semibold text-gray-600">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              type="button"
+              disabled={page >= totalPages}
+              onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+              className="px-5 py-2 border border-gray-200 rounded-lg font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

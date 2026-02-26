@@ -27,10 +27,17 @@ const HomePage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
+  const [category, setCategory] = useState("");
+
+  const handleCategoryClick = (industry) => {
+    setCategory(industry);
+    navigate(`/jobs?industry=${encodeURIComponent(industry)}`);
+  };
 
   const { data: jobResponse } = useJobs({
     search: searchTerm,
     location: locationTerm,
+    industry: category,
     limit: 3,
   });
 
@@ -115,8 +122,7 @@ const HomePage = () => {
       </div>
       {/*  */}
 
-      <div
-        className="flex flex-col gap-[80px] mt-[89px]">
+      <div className="flex flex-col gap-[80px] mt-[89px]">
         <div className="bg-white flex flex-col gap-[63px] py-12 px-[64px]">
           <div className="items-center mx-auto flex flex-col gap-[14px] sm:w-[438px] w-full">
             <h4 className="sm:text-[40px] text-[26px] font-semibold whitespace-nowrap">
@@ -126,8 +132,10 @@ const HomePage = () => {
               The journey to a better career starts here
             </p>
           </div>
-          <div className="sm:grid sm:grid-cols-3 gap-6 md:gap-10 items-center flex flex-row sm:flex-none overflow-x-auto snap-x snap-mandatory scrollbar">
-            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
+          <div
+            className="grid sm:grid-cols-3 gap-12 md:gap-10 items-center  "
+          >
+            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto ">
               <div className="bg-[#D1DDF4] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <Search className="text-[#1C3FCB]  w-[18px] h-[18px]" />
               </div>
@@ -140,7 +148,7 @@ const HomePage = () => {
               </p>
             </div>
 
-            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
+            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto">
               <div className="bg-[#CCC5F0] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <Play className="text-[#3A20BC] w-5 h-5 " />
               </div>
@@ -154,7 +162,7 @@ const HomePage = () => {
               </p>
             </div>
 
-            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto snap-start">
+            <div className="gap-[29px] items-center flex flex-col min-w-[90%] sm:min-w-auto ">
               <div className="bg-[#EBD9D5] rounded-[10px] p-[15px] gap-[10px] w-[48px] h-[48px] flex items-center">
                 <BarChart className="text-[#F86021]  w-5 h-5" />
               </div>
@@ -169,12 +177,7 @@ const HomePage = () => {
             </div>
           </div>
 
-          {/* dots – mobile only */}
-          <div className="flex justify-center gap-2 mt-6 sm:hidden">
-            <span className="h-2 w-4 rounded-full bg-black" />
-            <span className="h-2 w-2 rounded-full bg-gray-300" />
-            <span className="h-2 w-2 rounded-full bg-gray-300" />
-          </div>
+       
         </div>
 
         <div className="flex flex-col gap-[50px]">
@@ -194,7 +197,10 @@ const HomePage = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[19px]">
-            <div className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition">
+            <div
+              onClick={() => handleCategoryClick("Development")}
+              className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition"
+            >
               <div className="rounded-[15px] py-5 px-[15px] w-[54px] h-[64px] flex items-center bg-[#FABBA8] group-hover:bg-[#FEEEEA] transition">
                 <LayoutGrid className="text-[#000000] w-6 h-6" />
               </div>
@@ -206,7 +212,10 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition">
+            <div
+              onClick={() => handleCategoryClick("Design")}
+              className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition"
+            >
               <div className="rounded-[15px] py-5 px-[15px] w-[54px] h-[64px] flex items-center bg-[#FABBA8] group-hover:bg-[#FEEEEA] transition">
                 <PanelsLeftBottom className="text-[#000000] w-6 h-6" />
               </div>
@@ -218,7 +227,10 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition">
+            <div
+              onClick={() => handleCategoryClick("Writing")}
+              className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition"
+            >
               <div className="rounded-[15px] py-5 px-[15px] w-[54px] h-[64px] flex items-center bg-[#FABBA8] group-hover:bg-[#FEEEEA] transition">
                 <PenLine className="text-[#000000] w-6 h-6" />
               </div>
@@ -230,7 +242,10 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition">
+            <div
+              onClick={() => handleCategoryClick("Marketing")}
+              className="group border border-[#0000002B] rounded-[15px] flex flex-col gap-[34px] px-5 py-[30px] cursor-pointer bg-white hover:bg-[#F9DFD5] transition"
+            >
               <div className="rounded-[15px] py-5 px-[15px] w-[54px] h-[64px] flex items-center bg-[#FABBA8] group-hover:bg-[#FEEEEA] transition">
                 <Megaphone className="text-[#000000] w-6 h-6" />
               </div>

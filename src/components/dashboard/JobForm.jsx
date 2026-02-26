@@ -9,13 +9,14 @@ import {
   ChevronDown,
   Loader2,
 } from "lucide-react";
-import { createJob, updateJob } from "@/api/api";
+import { createJob, updateJob, uploadJobAvatar } from "@/api/api";
 import { useAuth } from "@/store";
 import { toast } from "sonner";
 
 const JobForm = ({ job, onSave, onCancel }) => {
   const { accessToken } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [avatarFile, setAvatarFile] = useState(null);
   const submitStatusRef = useRef("active");
   const [formData, setFormData] = useState({
     title: "",
@@ -25,7 +26,6 @@ const JobForm = ({ job, onSave, onCancel }) => {
     salaryRange: { min: "", max: "" },
     companyName: "",
     companyWebsite: "",
-    companyLogo: "",
     category: "",
     jobDescription: "",
     responsibilities: "",
@@ -89,6 +89,10 @@ const JobForm = ({ job, onSave, onCancel }) => {
 
   const handleSubmit = async (e, status) => {
     if (e) e.preventDefault();
+    if (!job?._id && !avatarFile) {
+      toast.error("Please upload a company logo image");
+      return;
+    }
     const resolvedStatus = status || submitStatusRef.current || "active";
     setLoading(true);
     try {
@@ -123,16 +127,33 @@ const JobForm = ({ job, onSave, onCancel }) => {
       };
 
       let res;
+      let savedJobId = job?._id;
       if (job?._id) {
         res = await updateJob(job._id, formattedData, accessToken);
       } else {
         res = await createJob(formattedData, accessToken);
+        savedJobId =
+          res?.data?.job?._id ||
+          res?.data?.data?._id ||
+          res?.data?._id ||
+          savedJobId;
+      }
+
+      if (avatarFile && savedJobId) {
+        await uploadJobAvatar({
+          jobId: savedJobId,
+          file: avatarFile,
+          accessToken,
+        });
       }
 
       if (res.status === 201 || res.status === 200) {
         toast.success(
           job ? "Job updated successfully" : "Job created successfully",
         );
+        if (avatarFile) {
+          toast.success("Logo uploaded successfully");
+        }
         onSave();
       }
     } catch (error) {
@@ -336,16 +357,21 @@ const JobForm = ({ job, onSave, onCancel }) => {
             </div>
             <div className="md:col-span-2 space-y-1.5">
               <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                Company Logo URL (optional)
+                Company Logo Image {!job?._id ? "*" : "(optional)"}
               </label>
               <input
-                type="url"
-                name="companyLogo"
-                value={formData.companyLogo}
-                onChange={handleChange}
-                placeholder="https://example.com/logo.png"
+                type="file"
+                accept="image/*"
+                required={!job?._id}
+                onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
                 className="w-full px-4 py-2.5 border border-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-200 transition-all text-sm"
               />
+              <p className="text-xs text-gray-500">
+                Upload an image file (PNG, JPG, WEBP).
+              </p>
+              {avatarFile ? (
+                <p className="text-xs text-gray-500">{avatarFile.name}</p>
+              ) : null}
             </div>
           </div>
         </div>
