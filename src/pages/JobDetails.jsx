@@ -24,6 +24,7 @@ import {
 import { useAuth } from "@/store";
 import { toast } from "sonner";
 import officeCollab from "/office_collab.jpg";
+import Avatar from "@/components/Avatar"; // ✅ Import Avatar for company logos
 
 export default function JobDetails() {
   const { id } = useParams();
@@ -171,17 +172,14 @@ export default function JobDetails() {
             {/* Logo + Title */}
             <div className="flex items-center gap-4 mb-4">
               <div className="w-16 h-16 bg-[#E0E7FF] rounded-2xl flex items-center justify-center shrink-0 overflow-hidden">
-                {job.companyLogo ? (
-                  <img
-                    src={job.companyLogo}
-                    alt={job.companyName}
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <span className="text-2xl font-bold text-[#3B5BDB]">
-                    {job.companyName?.charAt(0) || "C"}
-                  </span>
-                )}
+                {/* ✅ Replace with Avatar component */}
+                <Avatar
+                  src={job.companyLogo?.url || job.companyLogo}
+                  name={job.companyName}
+                  alt={job.companyName}
+                  size={48} // fits inside w-16 h-16 (64px) with padding/margin
+                  className="w-full h-full object-contain"
+                />
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-[#0A0A0A]">
                 {job.title}
@@ -199,6 +197,7 @@ export default function JobDetails() {
                   <img
                     src="https://res.cloudinary.com/dmb5ggmvg/image/upload/v1771448010/temaki_money-hand_ecxsvn.png"
                     className="text-black"
+                    alt="money hand"
                   />
                   <span>{salary}</span>
                 </div>
@@ -470,15 +469,14 @@ export default function JobDetails() {
                     {/* Footer */}
                     <div className="flex items-center gap-3 w-full">
                       <div className="w-10 h-10 bg-[#E0E7FF] rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
-                        {relatedJob.companyLogo ? (
-                          <img
-                            src={relatedJob.companyLogo}
-                            alt={relatedJob.companyName}
-                            className="w-full h-full object-contain"
-                          />
-                        ) : (
-                          <Building2 size={20} className="text-[#3B5BDB]" />
-                        )}
+                        {/* ✅ Replace with Avatar for related jobs */}
+                        <Avatar
+                          src={relatedJob.companyLogo?.url || relatedJob.companyLogo}
+                          name={relatedJob.companyName}
+                          alt={relatedJob.companyName}
+                          size={32} // matches w-10 h-10
+                          className="w-full h-full object-contain"
+                        />
                       </div>
                       <div>
                         <p className="text-sm font-bold text-[#0A0A0A] line-clamp-1">

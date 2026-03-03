@@ -26,16 +26,18 @@ const Profile = () => {
     formState: { errors, isSubmitting },
   } = useForm({ resolver: zodResolver(validateUserSchema) });
 
-  useEffect(() => {
-    if (user) {
-      setValue("fullname", user?.fullname);
-      setValue("email", user?.email);
-      setValue("phone", user?.phone);
-      setValue("dateOfBirth", formatDate(user?.dateOfBirth || "", "input"));
-      setValue("country", user?.country);
-      setValue("bio", user?.bio || "");
-    }
-  }, [user, setValue]);
+useEffect(() => {
+  if (user) {
+    setValue("fullname", user?.fullname);
+    setValue("email", user?.email);
+    setValue("phone", user?.phone);
+    // Safely format date of birth
+    const dob = user?.dateOfBirth;
+    setValue("dateOfBirth", dob ? formatDate(dob, "input") : "");
+    setValue("country", user?.country);
+    setValue("bio", user?.bio || "");
+  }
+}, [user, setValue]);
   
   const mutation = useMutation({
     mutationFn: updateUserProfile,
@@ -143,7 +145,7 @@ const Profile = () => {
                 </label>
                 <div className="flex items-center gap-1 text-sm">
                   <Edit2 size={14} />
-                  <span>Verified</span>
+                  <span>Edit</span>
                 </div>
               </div>
               <div className="relative">
@@ -185,7 +187,7 @@ const Profile = () => {
                   name="dob"
                   type="text"
                   {...register("dateOfBirth")}
-                  placeholder="20 Jan 1990"
+                  placeholder="2000-01-30"
                   className="w-full border rounded-md px-4 py-3 text-sm pr-10"
                 />
                 <User

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/store";
 import { saveJob, unsaveJob } from "@/api/api";
 import { toast } from "sonner";
+import Avatar from "@/components/Avatar"; // Import Avatar for company logo fallback
 
 export default function JobCard({ job, isSavedInitial = false, onToggleSave }) {
   const { accessToken, user } = useAuth();
@@ -35,6 +36,7 @@ export default function JobCard({ job, isSavedInitial = false, onToggleSave }) {
       setLoading(false);
     }
   };
+
   return (
     <Link
       to={`/jobs/${job._id || job.id}`}
@@ -58,11 +60,14 @@ export default function JobCard({ job, isSavedInitial = false, onToggleSave }) {
       <hr className="my-4 border-gray-200" />
 
       <div className="w-fit flex space-x-2">
+        {/* Company logo with fallback initials */}
         <div>
-          <img
-            src={job.companyLogo}
+          <Avatar
+            src={job.companyLogo?.url || job.companyLogo} // handles object or string
+            name={job.companyName}
             alt={job.companyName}
-            className="w-8 h-8 object-contain"
+            size={32}
+            className="w-8 h-8 object-contain" // attempt to preserve logo aspect ratio
           />
         </div>
         <div>

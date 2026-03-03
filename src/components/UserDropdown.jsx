@@ -3,10 +3,11 @@ import { NavLink } from "react-router";
 import { profileLinks } from "@/libs/constant";
 import { useAuth } from "@/store";
 import { ChevronDown, LogOut } from "lucide-react";
-import Logout from "./Logout";
+import Avatar from "@/components/Avatar"; // Import the new Avatar component
+import LogoutButton from "./Logout"; // Renamed to avoid confusion, adjust if needed
 
 export default function UserDropdown() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth(); // Ensure logout is available from useAuth
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -24,72 +25,90 @@ export default function UserDropdown() {
     };
   }, []);
 
+  const closeDropdown = () => setOpen(false);
+
+  const handleLogout = () => {
+    if (logout) logout();
+    closeDropdown();
+  };
+
   return (
-    <>
-      <div className="relative flex items-center gap-3" ref={dropdownRef}>
-        <img
-          src={user?.avatar || user?.fullname?.charAt(0)}
-          alt="User Avatar"
-          className="w-14 h-14 rounded-full object-cover"
+    <div className="relative flex items-center gap-3" ref={dropdownRef}>
+      {/* Avatar with fallback initials */}
+      <Avatar
+        src={user?.avatar}
+        name={user?.fullname || user?.name || "User"}
+        alt={user?.fullname || "User avatar"}
+        size={56} // w-14 = 56px
+        className="w-14 h-14 rounded-full object-cover"
+      />
+      
+      <span className="text-[18px] text-[#000000] font-medium">
+        {user?.fullname || user?.name}
+      </span>
+
+      <button
+        type="button"
+        aria-label="Open profile menu"
+        onClick={() => setOpen((prev) => !prev)}
+        className="p-1 hover:bg-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+        aria-expanded={open}
+      >
+        <ChevronDown
+          size={16}
+          className={`transition-transform ${open ? "rotate-180" : ""} text-black w-6 h-6`}
         />
-        <span className="text-[18px] text-[#000000] font-medium">
-          {user?.fullname}
-        </span>
-       
-        <button
-          type="button"
-          aria-label="Open profile menu"
-          onClick={() => setOpen((prev) => !prev)}
-          className="p-1 hover:bg-gray-200 rounded"
-        >
-          <ChevronDown
-            size={16}
-            className={`transition-transform ${open ? "rotate-180" : ""}  text-black w-6 h-6`}
-          />
-        </button>
-        {/* Dropdown */}
-        {open && (
-          <div className="absolute right-0 top-full mt-3 w-56 bg-white px-3 py-4 rounded-[10px] shadow-lg">
-            {/* User info */}
-            <div className="py-3 border-b-[0.5px] border-[#A0A0A0]">
-              <p className="font-semibold text-[#0E0E0E] text-[18px]">
-                {user?.fullname}
-              </p>
-              <p className="font-light text-[14px] text-[#F85E1E]">
-                {user?.role}
-              </p>
-            </div>
+      </button>
 
-            {/* Profile Links */}
-            <div>
-              {profileLinks.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <NavLink
-                    key={link.name}
-                    to={link.path}
-                    onClick={() => setOpen?.(false)}
-                    className="flex items-center gap-2 px-1 py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md mb-1"
-                  >
-                    {Icon && <Icon className="w-5 h-5 text-[#292D32] mr-2" />}
-                    <span className="text-[18px] text-[#0E0E0E]">
-                      {link.name}
-                    </span>
-                  </NavLink>
-                );
-              })}
-            </div>
-
-            {/* Sign Out */}
-            <div>
-              <Logout className="flex items-center gap-2 w-full px-1 py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md cursor-pointer">
-                <LogOut className="w-5 h-5 text-[#292D32] mr-2 " />
-                <span className="text-[18px] text-[#0E0E0E]">Sign Out</span>
-              </Logout>
-            </div>
+      {/* Dropdown menu */}
+      {open && (
+        <div className="absolute right-0 top-full mt-3 w-56 bg-white px-3 py-4 rounded-[10px] shadow-lg z-50">
+          {/* User info */}
+          <div className="py-3 border-b-[0.5px] border-[#A0A0A0]">
+            <p className="font-semibold text-[#0E0E0E] text-[18px]">
+              {user?.fullname || user?.name}
+            </p>
+            <p className="font-light text-[14px] text-[#F85E1E]">
+              {user?.role}
+            </p>
           </div>
-        )}
-      </div>
-    </>
+
+          {/* Profile Links */}
+          <div className="mt-2">
+            {profileLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  onClick={closeDropdown}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                      isActive
+                        ? "bg-[#F85E1E] text-white"
+                        : "text-[#0E0E0E] hover:bg-[#de825a] hover:text-white"
+                    }`
+                  }
+                >
+                  {Icon && <Icon className="w-5 h-5" />}
+                  <span className="text-[16px]">{link.name}</span>
+                </NavLink>
+              );
+            })}
+          </div>
+
+          {/* Sign Out */}
+          <div className="mt-2 pt-2 border-t border-[#A0A0A0]">
+            <LogoutButton
+              onClick={handleLogout}
+              className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-[#0E0E0E] hover:bg-[#de825a] hover:text-white transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="text-[16px]">Sign Out</span>
+            </LogoutButton>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import { ArrowLeft, Search, Loader2, Building2, Calendar } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useMyApplications } from "@/hooks/useApplications";
 import { getStatusStyles, formatDate } from "@/utils/constant";
+import Avatar from "@/components/Avatar"; // ✅ Import Avatar for company logo
 
 export default function MyApplications() {
   const navigate = useNavigate();
@@ -129,16 +130,14 @@ export default function MyApplications() {
               >
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div className="flex items-center gap-5 flex-1 min-w-0">
-                    {/* Company Logo */}
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-white border border-gray-100 font-bold text-xl relative overflow-hidden group-hover:scale-105 transition-transform duration-300 shadow-sm">
-                      <img
-                        src={app.job?.companyLogo || "/placeholder.svg"}
+                    {/* Company Logo - ✅ Replaced with Avatar */}
+                    <div className="w-14 h-14 rounded-2xl shrink-0 bg-white border border-gray-100 overflow-hidden group-hover:scale-105 transition-transform duration-300 shadow-sm">
+                      <Avatar
+                        src={app.job?.companyLogo?.url || app.job?.companyLogo}
+                        name={app.job?.companyName}
                         alt={app.job?.companyName || "Company Logo"}
-                        className="w-full h-full object-contain p-2"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "/placeholder.svg";
-                        }}
+                        size={56} // matches w-14
+                        className="w-full h-full object-contain"
                       />
                     </div>
 
