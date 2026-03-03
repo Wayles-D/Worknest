@@ -3,59 +3,70 @@ import { Menu, X, LogOut } from "lucide-react";
 import { NavLink, useNavigate } from "react-router";
 import { profileLinks, navLink, navAuthLink } from "@/libs/constant";
 import { useAuth } from "@/store";
-import Logout from "./Logout";
+import Avatar from "@/components/Avatar"; // Import the new Avatar component
+import LogoutButton from "./Logout"; // Renamed to avoid confusion
 
 export default function Drawer() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
+  const closeDrawer = () => setOpen(false);
+
+  // Handle logout – assumes LogoutButton calls logout internally
+  // If not, we can add an onClick handler here
+  const handleLogout = () => {
+    logout();
+    closeDrawer();
+  };
+
   return (
     <>
-      {/* guest sees menu icon */}
-      {!user && (
-        <button onClick={() => setOpen(true)} aria-label="Open menu">
-          <Menu className="w-6 h-6" />
-        </button>
-      )}
+      {/* Menu button – unified for both guest and user */}
+      <button
+        onClick={() => setOpen(true)}
+        aria-label={user ? "Open profile menu" : "Open menu"}
+        className="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
 
-      {/* logged in user sees avatar */}
-      {user && (
-        <button onClick={() => setOpen(true)} aria-label="Open profile menu">
-          <Menu className="w-6 h-6" />
-        </button>
-      )}
-
-      {/* overlay */}
+      {/* Overlay */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/40"
-          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-40 bg-black/40 transition-opacity"
+          onClick={closeDrawer}
+          aria-hidden="true"
         />
       )}
 
-      {/* drawer */}
+      {/* Drawer */}
       <aside
-        className={`fixed top-0 right-0 h-full w-72 bg-white shadow-lg z-50 transform transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed top-0 right-0 h-full w-72 bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
+        aria-hidden={!open}
+        aria-label="Navigation drawer"
       >
-        {/* close button */}
+        {/* Close button */}
         <button
-          className="absolute top-4 right-4"
-          onClick={() => setOpen(false)}
+          className="absolute top-4 right-4 p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          onClick={closeDrawer}
           aria-label="Close menu"
         >
           <X className="w-6 h-6" />
         </button>
 
         <div className="p-6 mt-8 flex flex-col h-full">
-          {/* user info only when logged in */}
+          {/* User info – only when logged in */}
           {user && (
             <div className="mb-6 border-b pb-4">
               <div className="flex items-center gap-4 mb-2">
-                <img
-                  src={user.avatar || "/tempAvatar.png"}
-                  alt="User Avatar"
-                  className="w-12 h-12 rounded-full"
+                <Avatar
+                  src={user.avatar}
+                  name={user.name}
+                  alt={user.name}
+                  size={48}
                 />
                 <p className="font-medium text-[20px] text-[#0E0E0E]">
                   {user.name}
@@ -67,15 +78,19 @@ export default function Drawer() {
             </div>
           )}
 
-          {/* {main nav links always shown} */}
+          {/* Main navigation links – always shown */}
           <nav className="flex flex-col gap-4">
             {navLink.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.path}
-                onClick={() => setOpen(false)}
+                onClick={closeDrawer}
                 className={({ isActive }) =>
-                  `text-[18px] ${isActive ? "text-[#F75D1F]" : "text-[#0E0E0E] hover:text-[#F75D1F]"}`
+                  `text-[18px] ${
+                    isActive
+                      ? "text-[#F75D1F] font-medium"
+                      : "text-[#0E0E0E] hover:text-[#F75D1F]"
+                  } transition-colors`
                 }
               >
                 {item.name}
@@ -83,7 +98,7 @@ export default function Drawer() {
             ))}
           </nav>
 
-          {/* Auth links only shown when not logged in */}
+          {/* Authentication links – only when logged out */}
           {!user && (
             <div className="border-t pt-4 flex flex-col gap-3 mt-6">
               {navAuthLink.map((item) => (
@@ -91,9 +106,13 @@ export default function Drawer() {
                   key={item.name}
                   to={item.path}
                   className={({ isActive }) =>
-                    `text-[18px] text-[#0E0E0E] ${isActive ? "text-[#F75D1F]" : "text-[#0E0E0E] hover:text-[#F75D1F]"}`
+                    `text-[18px] ${
+                      isActive
+                        ? "text-[#F75D1F] font-medium"
+                        : "text-[#0E0E0E] hover:text-[#F75D1F]"
+                    } transition-colors`
                   }
-                  onClick={() => setOpen(false)}
+                  onClick={closeDrawer}
                 >
                   {item.name}
                 </NavLink>
@@ -101,31 +120,39 @@ export default function Drawer() {
             </div>
           )}
 
-          {/* {acct links only when logged in} */}
+          {/* Account links – only when logged in */}
           {user && (
-            <>
-              <div className="border-t mt-6 pt-4 flex flex-col gap-2">
-                {profileLinks.map((link) => {
-                  const Icon = link.icon;
-                  return (
-                    <NavLink
-                      key={link.name}
-                      to={link.path}
-                      onClick={() => setOpen?.(false)}
-                      className="flex items-center gap-2  py-2 text-[#0E0E0E] text-[18px] text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md"
-                    >
-                      {Icon && <Icon className="w-6 h-6 text-[#292D32]" />}
-                      <span>{link.name}</span>
-                    </NavLink>
-                  );
-                })}
+            <div className="border-t mt-6 pt-4 flex flex-col gap-2">
+              {profileLinks.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <NavLink
+                    key={link.name}
+                    to={link.path}
+                    onClick={closeDrawer}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 py-2 px-3 rounded-md transition-colors ${
+                        isActive
+                          ? "bg-[#F75D1F] text-white"
+                          : "text-[#0E0E0E] hover:bg-[#de825a] hover:text-white"
+                      }`
+                    }
+                  >
+                    {Icon && <Icon className="w-6 h-6" />}
+                    <span className="text-[18px]">{link.name}</span>
+                  </NavLink>
+                );
+              })}
 
-                <Logout className=" flex items-center gap-2 w-full py-2 text-sm hover:bg-[#de825a] active:bg-[#F85E1E] rounded-md cursor-pointer">
-                  <LogOut className="w-6 h-6 text-[#292D32]" />
-                  <span className="text-[#0E0E0E] text-[18px]">Sign Out</span>
-                </Logout>
-              </div>
-            </>
+              {/* Logout button – using LogoutButton component */}
+              <LogoutButton
+                onClick={handleLogout}
+                className="flex items-center gap-2 py-2 px-3 w-full text-left rounded-md text-[#0E0E0E] hover:bg-[#de825a] hover:text-white transition-colors"
+              >
+                <LogOut className="w-6 h-6" />
+                <span className="text-[18px]">Sign Out</span>
+              </LogoutButton>
+            </div>
           )}
         </div>
       </aside>

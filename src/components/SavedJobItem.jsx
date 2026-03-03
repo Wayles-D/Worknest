@@ -1,6 +1,7 @@
 import React from "react";
 import { Building2, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Avatar from "@/components/Avatar"; // ✅ Import Avatar component
 
 export default function SavedJobItem({ job }) {
   const navigate = useNavigate();
@@ -14,11 +15,13 @@ export default function SavedJobItem({ job }) {
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-6 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-6 w-full sm:w-auto">
-        {/* Company Logo */}
+        {/* Company Logo with fallback to initials */}
         <div className="w-16 h-16 rounded-lg bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 p-2">
-          <img
-            src={job.companyLogo || "/placeholder.png"}
+          <Avatar
+            src={job.companyLogo?.url || job.companyLogo} // handles object or string
+            name={job.companyName}
             alt={job.companyName}
+            size={48} // 16*3 = 48px (since w-16 h-16 is 64px, but inside p-2, the image is smaller)
             className="w-full h-full object-contain"
           />
         </div>

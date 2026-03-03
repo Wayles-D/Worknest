@@ -18,6 +18,7 @@ import {
   useUpdateApplicationNote,
 } from "@/hooks/useApplications";
 import { statusConfig, getStatusStyles } from "@/utils/constant";
+import Avatar from "@/components/Avatar"; // ✅ Import Avatar for company logo fallback
 
 export default function ApplicationDetail({ applicationId, onBack }) {
   const navigate = useNavigate();
@@ -126,16 +127,14 @@ export default function ApplicationDetail({ applicationId, onBack }) {
         </button>
 
         <div className="flex items-start gap-5">
-          {/* Company Logo in Header */}
+          {/* Company Logo in Header - ✅ Replaced with Avatar component */}
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 bg-white border border-gray-100 font-bold text-xl relative overflow-hidden shadow-sm">
-            <img
-              src={application.job?.companyLogo || "/placeholder.svg"}
+            <Avatar
+              src={application.job?.companyLogo?.url || application.job?.companyLogo}
+              name={application.job?.companyName}
               alt={application.job?.companyName || "Company Logo"}
-              className="w-full h-full object-contain p-2"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "/placeholder.svg";
-              }}
+              size={48} // fits inside w-16 h-16 (64px) with padding
+              className="w-full h-full object-contain"
             />
           </div>
 

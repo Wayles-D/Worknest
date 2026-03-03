@@ -1,12 +1,13 @@
 import { Menu, Bell, Search, ChevronDown } from "lucide-react";
 import { Link } from "react-router";
-import Logout from "@/components/Logout";
+import Logout from "../Logout";
 import { useAuth } from "@/store";
 import NotificationsMenu from "@/components/dashboard/NotificationsMenu";
+import Avatar from "@/components/Avatar"; // Import Avatar component
 
 export default function AdminTopBar({ onMenuClick }) {
-    const { user } = useAuth();
-  
+  const { user } = useAuth();
+
   return (
     <header className="bg-white shadow-sm h-16 px-6 flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -33,19 +34,14 @@ export default function AdminTopBar({ onMenuClick }) {
             role="button"
             className="flex items-center gap-2 cursor-pointer"
           >
-            {user?.avatar ? (
-              <img
-                src={user.avatar}
-                alt="User Avatar"
-                className="w-14 h-14 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center">
-                <span className="text-sm font-bold text-gray-700">
-                  {user?.fullname?.split(' ').map(n => n[0]).join('').toUpperCase()}
-                </span>
-              </div>
-            )}
+            {/* Replaced conditional img/div with Avatar component */}
+            <Avatar
+              src={user?.avatar}
+              name={user?.fullname}
+              alt={user?.fullname || "User avatar"}
+              size={56}
+              className="w-14 h-14 rounded-full object-cover"
+            />
             <span className="text-[18px] text-[#000000] font-medium">
               {user?.fullname}
             </span>
