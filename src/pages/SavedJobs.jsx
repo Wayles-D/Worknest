@@ -25,10 +25,11 @@ export default function MySavedJobs() {
         setLoading(true);
         const res = await getSavedJobs(accessToken, { page, limit: LIMIT });
         if (res.status === 200) {
-          const items = Array.isArray(res.data?.data) ? res.data.data : [];
+          const payload = res.data?.data ?? {};
+          const items = Array.isArray(payload.jobs) ? payload.jobs : [];
           setSavedJobs(items);
-          setTotalSavedJobs(Number(res.data?.total) || 0);
-          setTotalPages(Math.max(1, Number(res.data?.totalPages) || 1));
+          setTotalSavedJobs(Number(payload.total) || 0);
+          setTotalPages(Math.max(1, Number(payload.totalPages) || 1));
         }
       } catch (error) {
         console.error("Error fetching saved jobs:", error);
