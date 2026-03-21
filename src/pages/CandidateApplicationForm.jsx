@@ -137,11 +137,6 @@ export default function ApplicationForm() {
     // Append personalInfo as JSON string
     formData.append("personalInfo", JSON.stringify(personalInfo));
 
-    // Debug logging
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
-
     applyMutation.mutate(formData);
   };
 

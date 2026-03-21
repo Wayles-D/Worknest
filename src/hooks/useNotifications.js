@@ -14,17 +14,51 @@ dayjs.extend(relativeTime);
 
 const baseNotificationKeys = ["admin_notifications"];
 
-// Helper to extract notifications array from backend response
+const parseNumber = (...values) => {
+  for (const value of values) {
+    const numericValue = Number(value);
+    if (Number.isFinite(numericValue)) {
+      return numericValue;
+    }
+  }
+
+  return null;
+};
+
+// Helper to extract notifications array from multiple backend response shapes
 const extractNotificationsData = (responseData) => {
-  // responseData is the parsed JSON from axios (i.e., response.data)
-  // Expected shape: { status: "success", data: [...], total, page, totalPages, unreadCount }
+  const payloadCandidates = [responseData?.data, responseData];
+  const payload = payloadCandidates.find(
+    (candidate) => candidate && typeof candidate === "object",
+  ) || {};
+
+  const itemsCandidate = [payload?.data, payload?.items, responseData?.data, responseData?.items]
+    .find((candidate) => Array.isArray(candidate));
+  const items = Array.isArray(itemsCandidate) ? itemsCandidate : [];
+
+  const total = parseNumber(payload?.total, responseData?.total) ?? items.length;
+  const page = parseNumber(payload?.page, responseData?.page) ?? 1;
+  const totalPages = parseNumber(payload?.totalPages, responseData?.totalPages) ?? 1;
+  const unreadCount = parseNumber(payload?.unreadCount, responseData?.unreadCount) ?? 0;
+
   return {
-    items: Array.isArray(responseData?.data) ? responseData.data : [],
-    total: responseData?.total ?? 0,
-    page: responseData?.page ?? 1,
-    totalPages: responseData?.totalPages ?? 1,
-    unreadCount: responseData?.unreadCount ?? 0,
+    items,
+    total,
+    page,
+    totalPages,
+    unreadCount,
   };
+};
+
+const extractUnreadCount = (responseData) => {
+  return (
+    parseNumber(
+      responseData?.unreadCount,
+      responseData?.data?.unreadCount,
+      responseData?.count,
+      responseData?.data?.count,
+    ) ?? 0
+  );
 };
 
 export const getNotificationTitle = (notification) => {
@@ -42,20 +76,20 @@ export const getNotificationRelativeTime = (dateValue) => {
   return date.fromNow();
 };
 
-// Hook for unread count with polling
-export const useUnreadNotificationCount = ({ pollingInterval = 30000 } = {}) => {
+// Hook for unread count with low-frequency polling and manual refresh support
+export const useUnreadNotificationCount = ({ pollingInterval = 180000, enablePolling = true } = {}) => {
   const { accessToken } = useAuth();
 
   return useQuery({
     queryKey: [...baseNotificationKeys, "unread_count", accessToken],
     queryFn: async () => {
       const response = await getUnreadNotificationsCount(accessToken);
-      // response = { status: "success", unreadCount: X }
-      return response?.unreadCount ?? 0;
+      return extractUnreadCount(response);
     },
     enabled: !!accessToken,
-    refetchInterval: pollingInterval,
-    refetchOnWindowFocus: true,
+    refetchInterval: enablePolling ? pollingInterval : false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: "always",
   });
 };
 

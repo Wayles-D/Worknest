@@ -16,9 +16,12 @@ import {
   useApplicationDetails,
   useUpdateApplicationStatus,
   useUpdateApplicationNote,
+  useTriggerAIReview,
+  useUpdateApplicationPersonalInfo,
 } from "@/hooks/useApplications";
 import { statusConfig, getStatusStyles } from "@/utils/constant";
 import Avatar from "@/components/Avatar"; // ✅ Import Avatar for company logo fallback
+import { toast } from "sonner";
 
 export default function ApplicationDetail({ applicationId, onBack }) {
   const navigate = useNavigate();
@@ -28,13 +31,23 @@ export default function ApplicationDetail({ applicationId, onBack }) {
 
   const [internalNote, setInternalNote] = useState("");
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [personalInfoForm, setPersonalInfoForm] = useState({ firstname: "", lastname: "", email: "", phone: "", currentLocation: "" });
   const dropdownRef = useRef(null);
+  const triggerAIReviewMutation = useTriggerAIReview();
+  const updatePersonalInfoMutation = useUpdateApplicationPersonalInfo();
 
   useEffect(() => {
     if (application) {
       setInternalNote(application.internalNote || "");
+      setPersonalInfoForm({
+        firstname: application.personalInfo?.firstname || "",
+        lastname: application.personalInfo?.lastname || "",
+        email: application.personalInfo?.email || "",
+        phone: application.personalInfo?.phone || "",
+        currentLocation: application.personalInfo?.currentLocation || "",
+      });
     }
-  }, [application?.id, application?.internalNote]);
+  }, [application?.id, application?.internalNote, application?.personalInfo]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -97,6 +110,26 @@ export default function ApplicationDetail({ applicationId, onBack }) {
     });
   };
 
+
+  const hasRequiredPersonalInfo =
+    Boolean(personalInfoForm.firstname?.trim()) &&
+    Boolean(personalInfoForm.lastname?.trim()) &&
+    Boolean(personalInfoForm.email?.trim());
+
+  const handleSavePersonalInfo = () => {
+    updatePersonalInfoMutation.mutate({
+      applicationId: application.id,
+      personalInfo: personalInfoForm,
+    });
+  };
+
+  const handleTriggerAIReview = () => {
+    if (!hasRequiredPersonalInfo) {
+      toast.error("Firstname, lastname and email are required before AI review");
+      return;
+    }
+    triggerAIReviewMutation.mutate({ applicationId: application.id });
+  };
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-32 space-y-4">
@@ -313,6 +346,54 @@ export default function ApplicationDetail({ applicationId, onBack }) {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-6 tracking-tight">AI Review</h2>
+            <div className="space-y-4 text-sm">
+              <p><span className="font-semibold">AI Processing:</span> {application.aiProcessingStatus || "pending"}</p>
+              <p><span className="font-semibold">AI Score:</span> {application.aiScore ?? "N/A"}</p>
+              <p className="text-gray-600"><span className="font-semibold text-gray-900">Feedback:</span> {application.aiFeedback || "No feedback yet."}</p>
+              {application.interviewScore !== null && application.interviewScore !== undefined && (
+                <p><span className="font-semibold">Interview Score:</span> {application.interviewScore}</p>
+              )}
+              <button
+                onClick={handleTriggerAIReview}
+                disabled={triggerAIReviewMutation.isPending}
+                className="w-full px-4 py-2 rounded-lg bg-[#F57450] text-white font-semibold disabled:opacity-60"
+              >
+                {triggerAIReviewMutation.isPending ? "Running AI..." : "Run AI Review"}
+              </button>
+
+              <div className="border-t pt-4 space-y-3">
+                <p className="font-semibold text-gray-900">Personal Info (required for AI)</p>
+                <input className="w-full border rounded-lg px-3 py-2" placeholder="Firstname" value={personalInfoForm.firstname} onChange={(e) => setPersonalInfoForm((p) => ({ ...p, firstname: e.target.value }))} />
+                <input className="w-full border rounded-lg px-3 py-2" placeholder="Lastname" value={personalInfoForm.lastname} onChange={(e) => setPersonalInfoForm((p) => ({ ...p, lastname: e.target.value }))} />
+                <input className="w-full border rounded-lg px-3 py-2" placeholder="Email" value={personalInfoForm.email} onChange={(e) => setPersonalInfoForm((p) => ({ ...p, email: e.target.value }))} />
+                <input className="w-full border rounded-lg px-3 py-2" placeholder="Phone" value={personalInfoForm.phone} onChange={(e) => setPersonalInfoForm((p) => ({ ...p, phone: e.target.value }))} />
+                <input className="w-full border rounded-lg px-3 py-2" placeholder="Location" value={personalInfoForm.currentLocation} onChange={(e) => setPersonalInfoForm((p) => ({ ...p, currentLocation: e.target.value }))} />
+                <button
+                  onClick={handleSavePersonalInfo}
+                  disabled={updatePersonalInfoMutation.isPending}
+                  className="w-full px-4 py-2 rounded-lg border border-[#F57450] text-[#F57450] font-semibold disabled:opacity-60"
+                >
+                  Save Personal Info
+                </button>
+              </div>
+
+              {application.interviewQuestions?.length > 0 && (
+                <div className="border-t pt-4 space-y-2">
+                  <p className="font-semibold text-gray-900">Interview Questions</p>
+                  {application.interviewQuestions.map((item, index) => (
+                    <div key={index} className="rounded-lg bg-gray-50 p-3">
+                      <p className="font-medium">{index + 1}. {item.question}</p>
+                      {item.answer ? <p className="text-gray-600 mt-1">Answer: {item.answer}</p> : <p className="text-gray-400 mt-1">No answer yet</p>}
+                      {item.score !== null && item.score !== undefined && <p className="text-[#F57450] mt-1">Score: {item.score}</p>}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

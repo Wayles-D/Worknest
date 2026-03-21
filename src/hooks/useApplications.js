@@ -6,6 +6,9 @@ import {
   updateApplicationStatus,
   updateApplicationNote,
   getApplicationStats,
+  triggerAIReview,
+  submitInterviewAnswers,
+  updateApplicationPersonalInfo,
 } from "@/api/applications";
 import { useAuth } from "@/store";
 import { toast } from "sonner";
@@ -195,5 +198,65 @@ export function useJobApplicationCounts(jobIds) {
     },
     enabled: !!accessToken && jobIds && jobIds.length > 0,
     staleTime: 30000, // Cache for 30 seconds
+  });
+}
+
+
+export function useTriggerAIReview() {
+  const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
+
+  return useMutation({
+    mutationFn: ({ applicationId }) => triggerAIReview({ id: applicationId, accessToken }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["application-details", variables.applicationId] });
+      toast.success("AI review completed");
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || "AI review failed");
+    },
+  });
+}
+
+export function useSubmitInterviewAnswers() {
+  const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
+
+  return useMutation({
+    mutationFn: ({ applicationId, answers }) => submitInterviewAnswers({
+      id: applicationId,
+      answers,
+      accessToken,
+    }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["my-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["application-details", variables.applicationId] });
+      toast.success("Interview submitted successfully");
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || "Failed to submit interview");
+    },
+  });
+}
+
+export function useUpdateApplicationPersonalInfo() {
+  const queryClient = useQueryClient();
+  const { accessToken } = useAuth();
+
+  return useMutation({
+    mutationFn: ({ applicationId, personalInfo }) => updateApplicationPersonalInfo({
+      id: applicationId,
+      personalInfo,
+      accessToken,
+    }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["application-details", variables.applicationId] });
+      toast.success("Personal info updated");
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || "Failed to update personal info");
+    },
   });
 }

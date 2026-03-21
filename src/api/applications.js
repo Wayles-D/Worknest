@@ -46,7 +46,6 @@ const getPaginationMeta = ({
   }
 
   if (totalPages === null) {
-    // Weak fallback when backend does not return pagination metadata.
     totalPages = itemsLength === limit ? page + 1 : page;
   }
 
@@ -57,10 +56,6 @@ const getPaginationMeta = ({
   };
 };
 
-/**
- * Normalizes an application object to a consistent shape for the UI.
- * Handles cases where 'job' is a populated object, a string ID, or a snapshot.
- */
 export const normalizeApplication = (app) => {
   if (!app) return null;
 
@@ -70,13 +65,11 @@ export const normalizeApplication = (app) => {
     jobInfo !== null &&
     (jobInfo.title || jobInfo._id);
 
-  // Parse personalInfo if it exists (it might be a JSON string or object)
   let personalInfo = app.personalInfo || {};
   if (typeof personalInfo === "string") {
     try {
       personalInfo = JSON.parse(personalInfo);
-    } catch (e) {
-      console.error("Failed to parse personalInfo", e);
+    } catch {
       personalInfo = {};
     }
   }
@@ -98,6 +91,14 @@ export const normalizeApplication = (app) => {
     answers: Array.isArray(app.answers)
       ? app.answers
       : JSON.parse(app.answers || "[]"),
+    interviewQuestions: Array.isArray(app.interview_questions)
+      ? app.interview_questions
+      : [],
+    aiScore: app.ai_score,
+    aiFeedback: app.ai_feedback || "",
+    interviewScore: app.interview_score,
+    aiProcessingStatus: app.ai_processing_status || "pending",
+    personalInfo,
     internalNote: app.internalNote || app.note || "",
     applicant: {
       name: fullName,
@@ -128,9 +129,6 @@ export const normalizeApplication = (app) => {
   };
 };
 
-/**
- * Enriches a list of applications with job details if job IDs are not populated.
- */
 export const enrichApplicationsWithJobs = async (applications, accessToken) => {
   const needsEnrichment = applications.some(
     (app) => typeof (app.jobId || app.job) === "string",
@@ -150,14 +148,12 @@ export const enrichApplicationsWithJobs = async (applications, accessToken) => {
       }
       return normalizeApplication(app);
     });
-  } catch (error) {
-    console.error("Failed to enrich applications:", error);
+  } catch {
     return applications.map(normalizeApplication);
   }
 };
 
 export const applyToJob = async ({ jobId, formData, accessToken }) => {
-  // formData should be constructed by the caller
   return await axiosInstance.post(`/applications/${jobId}/apply`, formData, {
     ...headers(accessToken),
   });
@@ -184,7 +180,6 @@ export const getMyApplications = async ({
     ? rawData
     : rawData.applications || [];
 
-  // Return enriched/normalized data and total count
   const normalizedData = await enrichApplicationsWithJobs(
     applications,
     accessToken,
@@ -283,6 +278,37 @@ export const updateApplicationNote = async ({ id, note, accessToken }) => {
     { note },
     headers(accessToken),
   );
+};
+
+export const triggerAIReview = async ({ id, accessToken }) => {
+  const res = await axiosInstance.post(
+    `/applications/${id}/ai-review`,
+    {},
+    headers(accessToken),
+  );
+  return normalizeApplication(res.data?.data || res.data);
+};
+
+export const submitInterviewAnswers = async ({ id, answers, accessToken }) => {
+  const res = await axiosInstance.post(
+    `/applications/${id}/submit-interview`,
+    { answers },
+    headers(accessToken),
+  );
+  return normalizeApplication(res.data?.data || res.data);
+};
+
+export const updateApplicationPersonalInfo = async ({
+  id,
+  personalInfo,
+  accessToken,
+}) => {
+  const res = await axiosInstance.put(
+    `/applications/${id}/personal-info`,
+    { personalInfo },
+    headers(accessToken),
+  );
+  return normalizeApplication(res.data?.data || res.data);
 };
 
 export const getApplicationsOverview = async (accessToken, params = {}) => {

@@ -35,6 +35,7 @@ const CandidateApplicationForm = lazy(
   () => import("@/pages/CandidateApplicationForm.jsx"),
 );
 const MyApplications = lazy(() => import("@/pages/MyApplication.jsx"));
+const ApplicationInterview = lazy(() => import("@/pages/ApplicationInterview.jsx"));
 const SavedJobs = lazy(() => import("@/pages/SavedJobs.jsx"));
 const AdminJobDetails = lazy(
   () => import("@/pages/dashboard/AdminJobDetails.jsx"),
@@ -176,6 +177,16 @@ export default function AppRoutes() {
             <PrivateRoutes {...privateRouteProps}>
               <Suspense fallback={<SuspenseUi />}>
                 <MyApplications />
+              </Suspense>
+            </PrivateRoutes>
+          ),
+        },
+        {
+          path: "/applications/:id/interview",
+          element: (
+            <PrivateRoutes {...privateRouteProps}>
+              <Suspense fallback={<SuspenseUi />}>
+                <ApplicationInterview />
               </Suspense>
             </PrivateRoutes>
           ),

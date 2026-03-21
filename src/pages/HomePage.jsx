@@ -22,6 +22,7 @@ import frame2 from "/Frame 2.png";
 import { useNavigate, Link } from "react-router";
 import { useJobs } from "@/hooks/useJobs";
 import useMetaArgs from "@/hooks/UseMeta";
+import Avatar from "@/components/Avatar";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -279,9 +280,11 @@ const HomePage = () => {
               key={index}
               className="border border-[#B0B6BE] p-5 sm:p-[20px] lg:p-[30px] flex flex-col sm:flex-row gap-5 sm:gap-6 lg:gap-[55px] items-center rounded-[15px] hover:shadow-lg transition-shadow bg-white"
             >
-              <img
-                src={job.companyLogo || "/placeholder.png"}
+              <Avatar
+                src={job.companyLogo?.url || job.companyLogo}
+                name={job.companyName}
                 alt={job.companyName}
+                size={64}
                 className="w-12 h-12 sm:w-16 sm:h-16 object-contain"
               />
 

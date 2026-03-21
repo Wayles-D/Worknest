@@ -5,8 +5,8 @@ import {
   useNotifications,
   useUnreadNotificationCount,
 } from "@/hooks/useNotifications";
-import { Bell, Loader2 } from "lucide-react";
-import { useMemo } from "react";
+import { Bell, Loader2, RefreshCw } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
 
@@ -17,7 +17,11 @@ const badgeDisplayValue = (count) => {
 };
 
 export default function NotificationsMenu() {
-  const { data: unreadCount = 0 } = useUnreadNotificationCount();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const {
+    data: unreadCount = 0,
+    refetch: refetchUnreadCount,
+  } = useUnreadNotificationCount();
   const {
     data: notificationData,
     isLoading,
@@ -28,6 +32,15 @@ export default function NotificationsMenu() {
 
   const { markSingleAsRead } = useNotificationActions();
   const notifications = useMemo(() => notificationData?.items ?? [], [notificationData]);
+
+  const handleRefreshNotifications = async () => {
+    try {
+      setIsRefreshing(true);
+      await Promise.all([refetch(), refetchUnreadCount()]);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const handleMarkAsRead = async (notificationId) => {
     try {
@@ -60,14 +73,25 @@ export default function NotificationsMenu() {
         tabIndex={0}
         className="dropdown-content mt-3 w-[22rem] max-w-[calc(100vw-2rem)] rounded-xl border border-gray-100 bg-white shadow-lg z-50"
       >
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="p-4 border-b border-gray-100 flex items-center justify-between gap-3">
           <h3 className="font-semibold text-gray-900">Notifications</h3>
-          <Link
-            to="/admin/notifications"
-            className="text-sm text-[#F57450] hover:text-[#dc6644]"
-          >
-            View all
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleRefreshNotifications}
+              className="inline-flex items-center gap-1 text-sm px-2.5 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-60"
+              disabled={isRefreshing}
+            >
+              <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />
+              Refresh
+            </button>
+            <Link
+              to="/admin/notifications"
+              className="text-sm text-[#F57450] hover:text-[#dc6644]"
+            >
+              View all
+            </Link>
+          </div>
         </div>
 
         <div className="max-h-96 overflow-y-auto p-2">
