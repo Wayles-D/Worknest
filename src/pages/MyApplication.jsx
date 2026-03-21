@@ -164,7 +164,15 @@ export default function MyApplications() {
                   </div>
 
                   {/* Status Badge */}
-                  <div className="shrink-0 flex items-center">
+                  <div className="shrink-0 flex items-center gap-3">
+                    {app.status === "interview" && (
+                      <button
+                        onClick={() => navigate(`/applications/${app.id}/interview`)}
+                        className="px-4 py-2 rounded-lg bg-[#F57450] text-white text-xs font-bold"
+                      >
+                        Take Interview
+                      </button>
+                    )}
                     <span
                       className={`px-5 py-2 rounded-full text-xs font-bold shadow-sm ${getStatusStyles(
                         app.status,
